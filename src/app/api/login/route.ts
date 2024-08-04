@@ -1,3 +1,5 @@
+// api/login/route.ts
+
 import { NextResponse } from "next/server";
 import { signIn } from "@/lib/auth";
 
