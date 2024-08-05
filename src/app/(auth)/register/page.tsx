@@ -22,6 +22,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { signIn } from "next-auth/react";
 
 const FormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters long"),
@@ -84,6 +85,10 @@ const RegisterPage = () => {
         toast.error("An unexpected error occurred");
       }
     }
+  };
+
+  const signInAction = async () => {
+    await signIn("google", { redirectTo: "/dashboard" });
   };
 
   return (
@@ -258,7 +263,7 @@ const RegisterPage = () => {
             <LuGithub className="mr-2 h-4 w-4" />
             GitHub
           </Button>
-          <Button variant="outline">
+          <Button variant="outline" onClick={signInAction}>
             <FaGoogle className="mr-2 h-4 w-4" />
             Google
           </Button>

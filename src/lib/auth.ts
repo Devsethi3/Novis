@@ -1,51 +1,40 @@
-import NextAuth, { DefaultSession } from "next-auth";
+import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import { ConvexHttpClient } from "convex/browser";
-import bcrypt from "bcrypt";
 import { api } from "../../convex/_generated/api";
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
-declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-    } & DefaultSession["user"];
-  }
-}
-
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     CredentialsProvider({
-      name: "credentials",
+      name: "Credentials",
       credentials: {
-        email: { label: "email", type: "text" },
-        password: { label: "password", type: "password" },
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Invalid credentials");
+          return null;
         }
-        const user = await convex.query(api.users.getUserByEmail, {
+
+        const user = await convex.query(api.auth.getUserByEmail, {
           email: credentials.email,
         });
 
-        if (!user || !user.hashedPassword) {
-          throw new Error("Invalid credentials");
+        if (
+          user &&
+          (await convex.query(api.auth.verifyPassword, {
+            userId: user._id,
+            password: credentials.password,
+          }))
+        ) {
+          return { id: user._id, email: user.email, name: user.name };
         }
 
-        const isCorrectPassword = await bcrypt.compare(
-          credentials.password,
-          user.hashedPassword
-        );
-
-        if (!isCorrectPassword) {
-          throw new Error("Invalid credentials");
-        }
-
-        return { id: user._id, email: user.email, name: user.name };
+        return null;
       },
     }),
     GoogleProvider({
@@ -63,11 +52,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.id = user.id;
       }
       if (account && account.provider !== "credentials") {
-        const existingUser = await convex.query(api.users.getUserByEmail, {
+        const existingUser = await convex.query(api.auth.getUserByEmail, {
           email: token.email!,
         });
         if (!existingUser) {
-          const newUser = await convex.mutation(api.users.createUser, {
+          const newUser = await convex.mutation(api.auth.createUser, {
             email: token.email!,
             name: token.name!,
             provider: account.provider,
@@ -80,7 +69,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      if (session.user && token.id) {
+      if (token.id) {
         session.user.id = token.id as string;
       }
       return session;

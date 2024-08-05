@@ -3,10 +3,16 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const { data: session } = useSession();
+
+  console.log("session", session?.user.email);
+
+  // it shows session undefined in the console if after the user is registered successfully and the user created in the database
+
   const router = useRouter();
   const handleLogout = () => {
     signOut();
