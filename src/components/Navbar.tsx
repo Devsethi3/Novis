@@ -13,7 +13,6 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,9 +22,6 @@ const Navbar = () => {
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const { scrollY } = useScroll();
   const [lastScrollY, setLastScrollY] = useState(0);
-  const { data: session } = useSession();
-
-  console.log("session", session?.user.name);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     if (latest > lastScrollY && latest > 100) {

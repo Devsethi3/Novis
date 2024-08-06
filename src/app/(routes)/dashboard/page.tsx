@@ -1,30 +1,44 @@
 "use client";
 
-import { useQuery } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
-import { Button } from "@/components/ui/button";
-import { signOut, useSession } from "next-auth/react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/config/firebase.config";
+import { LuLoader } from "react-icons/lu";
 
-export default function Home() {
-  const { data: session } = useSession();
-
-  console.log("session", session?.user.email);
-
-  // it shows session undefined in the console if after the user is registered successfully and the user created in the database
-
+const DashboardPage = () => {
+  const [loading, setLoading] = useState(true);
+  const [authenticated, setAuthenticated] = useState(false);
   const router = useRouter();
-  const handleLogout = () => {
-    signOut();
-    router.push("/");
-  };
-  const tasks = useQuery(api.tasks.get);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setAuthenticated(true);
+        console.log(authenticated);
+      } else {
+        setAuthenticated(false);
+        router.push("/auth/login"); // Redirect to login page if not authenticated
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe(); // Cleanup subscription on unmount
+  }, [router]);
+
+  if (loading) {
+    return <LuLoader className="animate-spin w-5 h-5" />; // Show a loading spinner while checking authentication status
+  }
+
+  if (!authenticated) {
+    return null; // or you can return a message or redirect, depending on your use case
+  }
+
   return (
-    <main className="flex min-h-screen flex-col items-center gap-5 p-24">
-      {tasks?.map(({ _id, text }) => <div key={_id}>{text}</div>)}
-      <div>
-        <Button onClick={handleLogout}>Sign Out</Button>
-      </div>
-    </main>
+    <>
+      <div>DashboardPage</div>
+    </>
   );
-}
+};
+
+export default DashboardPage;

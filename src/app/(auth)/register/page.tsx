@@ -22,7 +22,8 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { signIn } from "next-auth/react";
+import { auth } from "@/config/firebase.config";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 const FormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters long"),
@@ -35,6 +36,7 @@ type FormValues = z.infer<typeof FormSchema>;
 const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState<string>("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const {
@@ -74,21 +76,28 @@ const RegisterPage = () => {
   };
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    setLoading(true);
     try {
-      const response = await axios.post("/api/register", data);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+      const user = userCredential.user;
+      await updateProfile(user, {
+        displayName: data.name,
+      });
       toast.success("Registration successful!");
       router.push("/dashboard");
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        toast.error(error.response.data.error || "Registration failed");
+      if (error instanceof Error) {
+        toast.error(error.message || "Registration failed");
       } else {
         toast.error("An unexpected error occurred");
       }
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const signInAction = async () => {
-    await signIn("google", { redirectTo: "/dashboard" });
   };
 
   return (
@@ -218,8 +227,8 @@ const RegisterPage = () => {
                   passwordStrength === "Strong"
                     ? "text-green-600"
                     : passwordStrength === "Too Short"
-                      ? "text-red-600"
-                      : "text-yellow-600"
+                    ? "text-red-600"
+                    : "text-yellow-600"
                 }`}
               >
                 {passwordStrength}
@@ -263,7 +272,7 @@ const RegisterPage = () => {
             <LuGithub className="mr-2 h-4 w-4" />
             GitHub
           </Button>
-          <Button variant="outline" onClick={signInAction}>
+          <Button variant="outline">
             <FaGoogle className="mr-2 h-4 w-4" />
             Google
           </Button>

@@ -20,7 +20,6 @@ import {
 import { MountainIcon } from "lucide-react";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
 import { toast } from "react-hot-toast";
 
 const FormSchema = z.object({
@@ -54,18 +53,7 @@ const LoginPage = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
-      const result = await signIn("credentials", {
-        redirect: false,
-        email: data.email,
-        password: data.password,
-      });
-
-      if (result?.error) {
-        toast.error(result.error);
-      } else {
-        toast.success("Login successful!");
-        router.push("/dashboard");
-      }
+      // login logic
     } catch (error) {
       toast.error("An unexpected error occurred");
     }
@@ -201,11 +189,17 @@ const LoginPage = () => {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <Button variant="outline" onClick={() => signIn("github")}>
+          <Button
+            variant="outline"
+            //  onClick={() => signIn("github")}
+          >
             <LuGithub className="mr-2 h-4 w-4" />
             GitHub
           </Button>
-          <Button variant="outline" onClick={() => signIn("google")}>
+          <Button
+            variant="outline"
+            //  onClick={() => signIn("google")}
+          >
             <FaGoogle className="mr-2 h-4 w-4" />
             Google
           </Button>

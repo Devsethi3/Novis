@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/ThemeProvider";
-import AuthProvider from "@/providers/AuthProvider";
-import { ConvexClientProvider } from "@/providers/ConvexClientProvider";
 import ToasterProvider from "@/providers/ToastProvider";
 
 const font = Bricolage_Grotesque({ subsets: ["latin"] });
@@ -28,9 +26,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ToasterProvider />
-          <AuthProvider>
-            <ConvexClientProvider>{children}</ConvexClientProvider>
-          </AuthProvider>
+          {children}
         </ThemeProvider>
       </body>
     </html>
