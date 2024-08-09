@@ -1,29 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { signInWithGoogle, signUp } from "@/lib/auth";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Label } from "@/components/ui/label";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { LuGithub } from "react-icons/lu";
+import { Label } from "@/components/ui/label";
 import {
   FaGoogle,
   FaEye,
   FaEyeSlash,
+  FaUser,
   FaEnvelope,
   FaLock,
-  FaUser,
 } from "react-icons/fa";
-import { MountainIcon } from "lucide-react";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
-import { toast } from "react-hot-toast";
-import { auth } from "@/config/firebase.config";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import Link from "next/link";
+import { LucideGithub, LucideLoader, Mountain } from "lucide-react";
 
 const FormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters long"),
@@ -35,258 +31,155 @@ type FormValues = z.infer<typeof FormSchema>;
 
 const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState<string>("");
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    watch,
-    trigger,
-    clearErrors,
   } = useForm<FormValues>({
     mode: "onChange",
     resolver: zodResolver(FormSchema),
   });
 
-  const password = watch("password");
-
-  const evaluatePasswordStrength = (password: string) => {
-    if (password.length === 0) return "";
-    if (password.length < 6) return "Too Short";
-    if (!/[A-Z]/.test(password)) return "Add Uppercase";
-    if (!/[a-z]/.test(password)) return "Add Lowercase";
-    if (!/[0-9]/.test(password)) return "Add Number";
-    if (!/[!@#$%^&*]/.test(password)) return "Add Special Character";
-    return "Strong";
-  };
-
-  const handleInputChange = async (
-    fieldName: "email" | "password" | "name"
-  ) => {
-    await trigger(fieldName);
-    if (!errors[fieldName]) {
-      clearErrors(fieldName);
-    }
-    if (fieldName === "password") {
-      setPasswordStrength(evaluatePasswordStrength(password));
-    }
-  };
-
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    setLoading(true);
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password
-      );
-      const user = userCredential.user;
-      await updateProfile(user, {
-        displayName: data.name,
-      });
-      toast.success("Registration successful!");
+      await signUp(data.email, data.password, data.name);
+      toast.success("Account Created Successfully!");
       router.push("/dashboard");
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message || "Registration failed");
+    } catch (error: any) {
+      if (error.message === "Email already exists.") {
+        toast.error("Account already exists. Please log in.");
       } else {
-        toast.error("An unexpected error occurred");
+        toast.error("Registration failed. Please try again.");
       }
-    } finally {
-      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+      router.push("/dashboard");
+      toast.success("Account Created Successfully!");
+    } catch (error) {
+      toast.error("Google Sign-In failed. Please try again.");
     }
   };
 
   return (
-    <div className="flex min-h-[100vh] flex-col items-center justify-center bg-background px-4 py-4 sm:px-6 lg:px-8">
-      <div className="mx-auto lg:border lg:p-6 p-2 border-muted rounded-lg lg:shadow-lg shadow-none max-w-md w-full space-y-6 lg:space-y-7">
-        <Link href="#" prefetch={false} className="flex justify-center">
-          <MountainIcon className="h-8 w-8 text-primary" />
-          <span className="sr-only">Novis</span>
-        </Link>
-        <div className="flex flex-col items-center justify-center">
-          <h2 className="text-center text-3xl font-bold tracking-tight text-foreground">
-            Create an account
-          </h2>
-        </div>
-        <form
-          className="space-y-6"
-          onSubmit={handleSubmit(onSubmit)}
-          method="POST"
-        >
-          <div>
-            <Label
-              htmlFor="name"
-              className="block text-sm font-medium text-muted-foreground"
-            >
-              Display Name
+    <div className="flex items-center justify-center min-h-screen px-4 lg:py-8 py-4">
+      <div className="w-full max-w-md bg-card text-card-foreground rounded-lg lg:shadow-lg shadow-none lg:border sm:border-none lg:p-8 p-4">
+        <h2 className="text-3xl flex items-center gap-6 flex-col font-bold text-center mb-8">
+          <Mountain className="text-primary" size={30} />
+          Register your account
+        </h2>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-1">
+            <Label htmlFor="name" className="text-sm opacity-75">
+              Name
             </Label>
-            <div className="mt-1 relative">
-              <FaUser
-                size={15}
-                className="absolute left-3 top-[0.8rem] text-muted-foreground"
-              />
+            <div className="relative">
+              <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="name"
-                {...register("name", {
-                  onChange: () => handleInputChange("name"),
-                })}
-                autoComplete="name"
-                className={`block w-full appearance-none rounded-md border ${
-                  errors.name ? "border-red-500" : "border-input"
-                } bg-background pl-10 pr-3 py-2 placeholder-muted-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm`}
-                placeholder="John Doe"
-                aria-invalid={errors.name ? "true" : "false"}
-                aria-describedby="name-error"
+                type="text"
+                placeholder="Enter your name"
+                {...register("name")}
+                className={`pl-10 ${errors.name ? "border-destructive" : ""}`}
               />
-              {errors.name && (
-                <p id="name-error" className="text-red-600 text-sm mt-1">
-                  {errors.name.message}
-                </p>
-              )}
             </div>
+            {errors.name && (
+              <p className="text-destructive text-sm">{errors.name.message}</p>
+            )}
           </div>
-          <div>
-            <Label
-              htmlFor="email"
-              className="block text-sm font-medium text-muted-foreground"
-            >
-              Email address
+          <div className="space-y-1">
+            <Label htmlFor="email" className="text-sm opacity-75">
+              Email
             </Label>
-            <div className="mt-1 relative">
-              <FaEnvelope
-                size={15}
-                className="absolute left-3 top-[0.8rem] text-muted-foreground"
-              />
+            <div className="relative">
+              <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="email"
-                {...register("email", {
-                  onChange: () => handleInputChange("email"),
-                })}
-                autoComplete="email"
-                className={`block w-full appearance-none rounded-md border ${
-                  errors.email ? "border-red-500" : "border-input"
-                } bg-background pl-10 pr-3 py-2 placeholder-muted-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm`}
-                placeholder="you@example.com"
-                aria-invalid={errors.email ? "true" : "false"}
-                aria-describedby="email-error"
+                type="email"
+                placeholder="Enter your email"
+                {...register("email")}
+                className={`pl-10 ${errors.email ? "border-destructive" : ""}`}
               />
-              {errors.email && (
-                <p id="email-error" className="text-red-600 text-sm mt-1">
-                  {errors.email.message}
-                </p>
-              )}
             </div>
+            {errors.email && (
+              <p className="text-destructive text-sm">{errors.email.message}</p>
+            )}
           </div>
-          <div>
-            <Label
-              htmlFor="password"
-              className="block text-sm font-medium text-muted-foreground"
-            >
+          <div className="space-y-1">
+            <Label htmlFor="password" className="text-sm opacity-75">
               Password
             </Label>
-            <div className="mt-1 relative">
-              <FaLock
-                size={15}
-                className="absolute left-3 top-[0.8rem] text-muted-foreground"
-              />
+            <div className="relative">
+              <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="password"
-                {...register("password", {
-                  onChange: () => handleInputChange("password"),
-                })}
                 type={showPassword ? "text" : "password"}
-                autoComplete="new-password"
-                className={`block w-full appearance-none rounded-md border ${
-                  errors.password ? "border-red-500" : "border-input"
-                } bg-background pl-10 pr-10 py-2 placeholder-muted-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm`}
-                placeholder="Password"
-                aria-invalid={errors.password ? "true" : "false"}
-                aria-describedby="password-error"
+                placeholder="Enter your password"
+                {...register("password")}
+                className={`pl-10 pr-10 ${
+                  errors.password ? "border-destructive" : ""
+                }`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3.5 text-muted-foreground focus:outline-none"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground focus:outline-none"
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
-              {errors.password && (
-                <p id="password-error" className="text-red-600 text-sm mt-1">
-                  {errors.password.message}
-                </p>
-              )}
             </div>
-            <div className="mt-2 text-sm text-muted-foreground">
-              Password Strength:{" "}
-              <span
-                className={`font-bold ${
-                  passwordStrength === "Strong"
-                    ? "text-green-600"
-                    : passwordStrength === "Too Short"
-                    ? "text-red-600"
-                    : "text-yellow-600"
-                }`}
-              >
-                {passwordStrength}
-              </span>
-            </div>
+            {errors.password && (
+              <p className="text-destructive text-sm">
+                {errors.password.message}
+              </p>
+            )}
           </div>
-          <div className="flex items-center">
-            <Checkbox id="terms" className="h-4 w-4 rounded" />
-            <Label
-              htmlFor="terms"
-              className="ml-2 block text-sm text-muted-foreground"
-            >
-              I agree to the{" "}
-              <Link href="#" className="text-primary hover:underline">
-                Terms and Conditions
-              </Link>
-            </Label>
-          </div>
-          <div>
-            <Button
-              type="submit"
-              className="flex w-full justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Registering..." : "Register"}
-            </Button>
-          </div>
+          <Button type="submit" disabled={isSubmitting} className="w-full">
+            {isSubmitting ? (
+              <>
+                <LucideLoader className="w-4 h-4 animate-spin mr-2" />
+                Registering...
+              </>
+            ) : (
+              "Register"
+            )}
+          </Button>
         </form>
-        <div className="relative">
+        <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-muted" />
+            <div className="w-full border-t border-border" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
+            <span className="bg-card px-2 text-muted-foreground">
               Or continue with
             </span>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <Button variant="outline">
-            <LuGithub className="mr-2 h-4 w-4" />
+          <Button variant="outline" /*onClick={() => signIn("github")}*/>
+            <LucideGithub className="mr-2 h-4 w-4" />
             GitHub
           </Button>
-          <Button variant="outline">
+          <Button variant="outline" onClick={handleGoogleSignIn}>
             <FaGoogle className="mr-2 h-4 w-4" />
             Google
           </Button>
         </div>
-        <div className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-sm text-muted-foreground mt-6">
           Already have an account?{" "}
           <Link
             href="/login"
             className="font-medium text-primary hover:underline"
             prefetch={false}
           >
-            Login
+            Sign in
           </Link>
-        </div>
+        </p>
       </div>
     </div>
   );

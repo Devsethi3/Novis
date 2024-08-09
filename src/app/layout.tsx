@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/providers/ThemeProvider";
-import ToasterProvider from "@/providers/ToastProvider";
+import { Toaster } from "react-hot-toast";
 
 const font = Bricolage_Grotesque({ subsets: ["latin"] });
 
@@ -19,15 +18,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={font.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <ToasterProvider />
-          {children}
-        </ThemeProvider>
+        <Toaster />
+        {children}
       </body>
     </html>
   );
