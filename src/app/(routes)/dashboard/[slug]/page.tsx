@@ -6,6 +6,7 @@ import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase.config";
 import { Button } from "@/components/ui/button";
 import Loading from "@/app/loading";
+import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 
 interface NoteData {
   title: string;
@@ -19,6 +20,7 @@ const NotePage: React.FC = () => {
   const [noteData, setNoteData] = useState<NoteData | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState<string>("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
 
   useEffect(() => {
     const noteIdFromUrl = window.location.pathname.split("/").pop();
@@ -60,6 +62,15 @@ const NotePage: React.FC = () => {
     setIsEditing(false);
   };
 
+  const handleEmojiSelect = async (emojiData: EmojiClickData) => {
+    const selectedEmoji = emojiData.emoji;
+    if (noteId && selectedEmoji !== noteData?.emoji) {
+      const noteDocRef = doc(db, "notes", noteId);
+      await updateDoc(noteDocRef, { emoji: selectedEmoji });
+    }
+    setShowEmojiPicker(false);
+  };
+
   if (!noteData) {
     return <Loading />;
   }
@@ -78,7 +89,19 @@ const NotePage: React.FC = () => {
         </Button>
       )}
       <div className="py-24 px-32">
-        <p className="text-6xl mb-16">{noteData.emoji}</p>
+        <div className="relative mb-16">
+          <span
+            className="text-6xl cursor-pointer"
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+          >
+            {noteData.emoji}
+          </span>
+          {showEmojiPicker && (
+            <div className="absolute top-16 left-0 z-10">
+              <EmojiPicker onEmojiClick={handleEmojiSelect} />
+            </div>
+          )}
+        </div>
 
         {isEditing ? (
           <input
@@ -90,7 +113,7 @@ const NotePage: React.FC = () => {
               if (e.key === "Enter") handleTitleChange();
             }}
             autoFocus
-            className="text-4xl font-bold border-b border-gray-400 outline-none"
+            className="text-4xl font-bold outline-none"
           />
         ) : (
           <h1
