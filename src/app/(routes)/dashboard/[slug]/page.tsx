@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase.config";
 import { Button } from "@/components/ui/button";
+import Loading from "@/app/loading";
 
 interface NoteData {
   title: string;
@@ -16,6 +17,8 @@ const NotePage: React.FC = () => {
   const router = useRouter();
   const [noteId, setNoteId] = useState<string | undefined>();
   const [noteData, setNoteData] = useState<NoteData | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [newTitle, setNewTitle] = useState<string>("");
 
   useEffect(() => {
     const noteIdFromUrl = window.location.pathname.split("/").pop();
@@ -30,7 +33,9 @@ const NotePage: React.FC = () => {
 
       const unsubscribe = onSnapshot(noteDocRef, (doc) => {
         if (doc.exists()) {
-          setNoteData(doc.data() as NoteData);
+          const data = doc.data() as NoteData;
+          setNoteData(data);
+          setNewTitle(data.title);
         }
       });
 
@@ -47,12 +52,20 @@ const NotePage: React.FC = () => {
     }
   };
 
+  const handleTitleChange = async () => {
+    if (noteId && newTitle !== noteData?.title) {
+      const noteDocRef = doc(db, "notes", noteId);
+      await updateDoc(noteDocRef, { title: newTitle });
+    }
+    setIsEditing(false);
+  };
+
   if (!noteData) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center w-full">
+    <div className="min-h-screen w-full">
       {noteData.banner ? (
         <img
           src={noteData.banner}
@@ -64,8 +77,30 @@ const NotePage: React.FC = () => {
           Upload Banner
         </Button>
       )}
-      <h1 className="text-4xl font-bold">{noteData.title}</h1>
-      <p className="text-6xl">{noteData.emoji}</p>
+      <div className="py-24 px-32">
+        <p className="text-6xl mb-16">{noteData.emoji}</p>
+
+        {isEditing ? (
+          <input
+            type="text"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            onBlur={handleTitleChange}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") handleTitleChange();
+            }}
+            autoFocus
+            className="text-4xl font-bold border-b border-gray-400 outline-none"
+          />
+        ) : (
+          <h1
+            className="text-4xl font-bold cursor-pointer"
+            onDoubleClick={() => setIsEditing(true)}
+          >
+            {noteData.title}
+          </h1>
+        )}
+      </div>
     </div>
   );
 };
