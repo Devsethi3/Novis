@@ -46,7 +46,7 @@ const NotePage: React.FC = () => {
   }, [noteId]);
 
   const handleUploadBanner = async () => {
-    const newBannerUrl = "https://via.placeholder.com/728x90.png"; // Example
+    const newBannerUrl = "https://via.placeholder.com/728x90.png"; // Task to do
 
     if (noteId) {
       const noteDocRef = doc(db, "notes", noteId);
