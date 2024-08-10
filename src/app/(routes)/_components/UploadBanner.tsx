@@ -11,10 +11,13 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { LucideUpload } from "lucide-react";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from "@/lib/firebase.config";
 
 const UploadBanner: React.FC = () => {
   const [banner, setBanner] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState<boolean>(false);
 
   const handleBannerUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -32,11 +35,39 @@ const UploadBanner: React.FC = () => {
 
   const handleSubmit = () => {
     if (banner) {
-      // Submit
-      console.log("Banner uploaded:", banner);
-      // Reset preview and file state
-      setBanner(null);
-      setPreview(null);
+      setUploading(true);
+
+      const storageRef = ref(storage, `banners/${banner.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, banner);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          // You can monitor the progress here if needed
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(`Upload is ${progress}% done`);
+        },
+        (error) => {
+          // Handle unsuccessful uploads
+          console.error("Upload failed:", error);
+          setUploading(false);
+        },
+        () => {
+          // Handle successful uploads
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log(
+              "Banner uploaded successfully, download URL:",
+              downloadURL
+            );
+
+            // Reset the preview and file state
+            setBanner(null);
+            setPreview(null);
+            setUploading(false);
+          });
+        }
+      );
     }
   };
 
@@ -85,7 +116,7 @@ const UploadBanner: React.FC = () => {
                   and drop
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  SVG, PNG, JPG or GIF (MAX. 800x400px)
+                  SVG, PNG, JPG, or GIF (MAX. 800x400px)
                 </p>
               </div>
             )}
@@ -101,7 +132,11 @@ const UploadBanner: React.FC = () => {
 
         {preview && (
           <div className="flex justify-center mt-4">
-            <Button variant="ghost" onClick={() => setPreview(null)}>
+            <Button
+              variant="ghost"
+              className="w-full"
+              onClick={() => setPreview(null)}
+            >
               Remove Image
             </Button>
           </div>
@@ -110,10 +145,10 @@ const UploadBanner: React.FC = () => {
         <DialogFooter>
           <Button
             onClick={handleSubmit}
-            disabled={!banner}
+            disabled={!banner || uploading}
             className="w-full"
           >
-            Submit
+            {uploading ? "Uploading..." : "Submit"}
           </Button>
         </DialogFooter>
       </DialogContent>
