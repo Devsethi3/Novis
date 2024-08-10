@@ -4,58 +4,81 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 142.1 76.2% 36.3%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
+    /* Base emerald theme */
+    --background: 160 25% 98%;
+    --foreground: 160 60% 5%;
+
+    --card: 160 25% 100%;
+    --card-foreground: 160 60% 5%;
+
+    --popover: 160 25% 100%;
+    --popover-foreground: 160 60% 5%;
+
+    --primary: 160 84% 39%;
+    --primary-foreground: 160 5% 100%;
+
+    --secondary: 160 20% 94%;
+    --secondary-foreground: 160 60% 7%;
+
+    --muted: 160 15% 92%;
+    --muted-foreground: 160 30% 40%;
+
+    --accent: 160 30% 90%;
+    --accent-foreground: 160 60% 7%;
+
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 142.1 76.2% 36.3%;
+
+    --border: 160 20% 85%;
+    --input: 160 20% 85%;
+    --ring: 160 84% 39%;
+
     --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+
+    /* Chart colors */
+    --chart-1: 160 70% 40%;
+    --chart-2: 140 60% 45%;
+    --chart-3: 180 55% 50%;
+    --chart-4: 200 65% 55%;
+    --chart-5: 120 60% 50%;
   }
 
   .dark {
-    --background: 20 14.3% 4.1%;
-    --foreground: 0 0% 95%;
-    --card: 24 9.8% 10%;
-    --card-foreground: 0 0% 95%;
-    --popover: 0 0% 9%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 142.1 70.6% 45.3%;
-    --primary-foreground: 144.9 80.4% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 15%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 12 6.5% 15.1%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 85.7% 97.3%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 142.4 71.8% 29.2%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    /* Dark emerald theme */
+    --background: 160 25% 5%;
+    --foreground: 160 15% 95%;
+
+    --card: 160 30% 8%;
+    --card-foreground: 160 15% 95%;
+
+    --popover: 160 45% 6%;
+    --popover-foreground: 160 15% 95%;
+
+    --primary: 160 80% 35%;
+    --primary-foreground: 160 5% 100%;
+
+    --secondary: 160 30% 15%;
+    --secondary-foreground: 160 10% 90%;
+
+    --muted: 160 25% 18%;
+    --muted-foreground: 160 15% 65%;
+
+    --accent: 160 35% 15%;
+    --accent-foreground: 160 10% 90%;
+
+    --destructive: 0 70% 35%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 160 30% 20%;
+    --input: 160 30% 20%;
+    --ring: 160 75% 30%;
+
+    /* Dark mode chart colors */
+    --chart-1: 160 70% 50%;
+    --chart-2: 140 65% 55%;
+    --chart-3: 180 60% 60%;
+    --chart-4: 200 70% 65%;
+    --chart-5: 120 65% 55%;
   }
 }
 

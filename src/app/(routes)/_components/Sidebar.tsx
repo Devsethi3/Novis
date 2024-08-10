@@ -12,6 +12,7 @@ import { useState } from "react";
 import { IconContext } from "react-icons/lib";
 import { usePathname } from "next/navigation";
 import { IoAddCircleOutline } from "react-icons/io5";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 interface NavItem {
   icon: React.ElementType;
@@ -41,7 +42,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="h-full overflow-y-auto relative flex shadow-xl border-r">
+    <div className="h-full bg-secondary/40 overflow-y-auto relative flex shadow-xl border-r">
       <IconContext.Provider value={{ size: "1.3em" }}>
         <motion.aside
           initial={{ width: sidebarOpen ? 256 : 75 }}
@@ -130,6 +131,10 @@ const Sidebar = () => {
           </nav>
         </motion.aside>
       </IconContext.Provider>
+
+      <div className="absolute bottom-10 mx-4">
+        <ThemeSwitcher />
+      </div>
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import { db } from "@/lib/firebase.config";
 import { addDoc, collection } from "firebase/firestore";
 import { toast } from "react-hot-toast";
+import Image from "next/image";
 
 const DashboardPage: React.FC = () => {
   const router = useRouter();
@@ -28,11 +29,14 @@ const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center flex-col w-full">
-      <Button onClick={handleCreateNote} className="text-lg py-6">
-        Create a note
-        <IoMdAddCircleOutline className="font-bold ml-3" size={20} />
-      </Button>
+    <div>
+      <div className="h-screen flex items-center gap-10 justify-center flex-col w-full">
+        <Image src="/create.svg" width={400} height={400} alt="create_a_note" />
+        <Button onClick={handleCreateNote} className="text-lg py-6">
+          Create a note
+          <IoMdAddCircleOutline className="font-bold ml-3" size={20} />
+        </Button>
+      </div>
     </div>
   );
 };

@@ -19,6 +19,7 @@ const NotePage: React.FC = () => {
   const [noteId, setNoteId] = useState<string | undefined>();
   const [noteData, setNoteData] = useState<NoteData | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isBreadcrumbEditing, setIsBreadcrumbEditing] = useState(false);
   const [newTitle, setNewTitle] = useState<string>("");
   const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
 
@@ -60,6 +61,7 @@ const NotePage: React.FC = () => {
       await updateDoc(noteDocRef, { title: newTitle });
     }
     setIsEditing(false);
+    setIsBreadcrumbEditing(false);
   };
 
   const handleEmojiSelect = async (emojiData: EmojiClickData) => {
@@ -76,34 +78,9 @@ const NotePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen w-full">
-      {noteData.banner ? (
-        <img
-          src={noteData.banner}
-          alt="Banner"
-          className="mt-4 w-96 h-32 object-cover"
-        />
-      ) : (
-        <Button onClick={handleUploadBanner} className="mt-4">
-          Upload Banner
-        </Button>
-      )}
-      <div className="py-24 px-32">
-        <div className="relative mb-16">
-          <span
-            className="text-6xl cursor-pointer"
-            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-          >
-            {noteData.emoji}
-          </span>
-          {showEmojiPicker && (
-            <div className="absolute top-16 left-0 z-10">
-              <EmojiPicker onEmojiClick={handleEmojiSelect} />
-            </div>
-          )}
-        </div>
-
-        {isEditing ? (
+    <div>
+      <div className="w-full flex h-[7vh] px-[0.75rem] max-w-[1300px] items-center justify-between">
+        {isBreadcrumbEditing ? (
           <input
             type="text"
             value={newTitle}
@@ -113,16 +90,66 @@ const NotePage: React.FC = () => {
               if (e.key === "Enter") handleTitleChange();
             }}
             autoFocus
-            className="text-4xl font-bold outline-none"
+            className="font-medium bg-transparent outline-none"
           />
         ) : (
-          <h1
-            className="text-4xl font-bold cursor-pointer"
-            onDoubleClick={() => setIsEditing(true)}
+          <p
+            className="font-medium cursor-pointer"
+            onDoubleClick={() => setIsBreadcrumbEditing(true)}
           >
             {noteData.title}
-          </h1>
+          </p>
         )}
+        <Button>Publish</Button>
+      </div>
+      <div className="min-h-[90vh] w-full">
+        {noteData.banner ? (
+          <img
+            src={noteData.banner}
+            alt="Banner"
+            className="mt-4 w-96 h-32 object-cover"
+          />
+        ) : (
+          <Button onClick={handleUploadBanner} className="mt-4">
+            Upload Banner
+          </Button>
+        )}
+        <div className="py-24 px-32">
+          <div className="relative mb-16">
+            <span
+              className="text-6xl cursor-pointer"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            >
+              {noteData.emoji}
+            </span>
+            {showEmojiPicker && (
+              <div className="absolute top-16 left-0 z-10">
+                <EmojiPicker onEmojiClick={handleEmojiSelect} />
+              </div>
+            )}
+          </div>
+
+          {isEditing ? (
+            <input
+              type="text"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              onBlur={handleTitleChange}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") handleTitleChange();
+              }}
+              autoFocus
+              className="text-4xl bg-transparent font-bold outline-none"
+            />
+          ) : (
+            <h1
+              className="text-4xl font-bold cursor-pointer"
+              onDoubleClick={() => setIsEditing(true)}
+            >
+              {noteData.title}
+            </h1>
+          )}
+        </div>
       </div>
     </div>
   );
