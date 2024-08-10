@@ -7,6 +7,7 @@ import { db } from "@/lib/firebase.config";
 import { Button } from "@/components/ui/button";
 import Loading from "@/app/loading";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
+import UploadBanner from "../../_components/UploadBanner";
 
 interface NoteData {
   title: string;
@@ -46,15 +47,6 @@ const NotePage: React.FC = () => {
     }
   }, [noteId]);
 
-  const handleUploadBanner = async () => {
-    const newBannerUrl = "https://via.placeholder.com/728x90.png"; // Task to do
-
-    if (noteId) {
-      const noteDocRef = doc(db, "notes", noteId);
-      await updateDoc(noteDocRef, { banner: newBannerUrl });
-    }
-  };
-
   const handleTitleChange = async () => {
     if (noteId && newTitle !== noteData?.title) {
       const noteDocRef = doc(db, "notes", noteId);
@@ -79,7 +71,7 @@ const NotePage: React.FC = () => {
 
   return (
     <div>
-      <div className="w-full flex h-[7vh] px-[0.75rem] max-w-[1300px] items-center justify-between">
+      <div className="w-full flex h-[7vh] px-6 items-center justify-between">
         {isBreadcrumbEditing ? (
           <input
             type="text"
@@ -103,21 +95,10 @@ const NotePage: React.FC = () => {
         <Button>Publish</Button>
       </div>
       <div className="min-h-[90vh] w-full">
-        {noteData.banner ? (
-          <img
-            src={noteData.banner}
-            alt="Banner"
-            className="mt-4 w-96 h-32 object-cover"
-          />
-        ) : (
-          <Button onClick={handleUploadBanner} className="mt-4">
-            Upload Banner
-          </Button>
-        )}
         <div className="py-24 px-32">
-          <div className="relative mb-16">
+          <div className="relative mb-10">
             <span
-              className="text-6xl cursor-pointer"
+              className="text-5xl cursor-pointer"
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
             >
               {noteData.emoji}
@@ -129,26 +110,36 @@ const NotePage: React.FC = () => {
             )}
           </div>
 
-          {isEditing ? (
-            <input
-              type="text"
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              onBlur={handleTitleChange}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") handleTitleChange();
-              }}
-              autoFocus
-              className="text-4xl bg-transparent font-bold outline-none"
-            />
-          ) : (
-            <h1
-              className="text-4xl font-bold cursor-pointer"
-              onDoubleClick={() => setIsEditing(true)}
+          <div className="relative group">
+            {isEditing ? (
+              <input
+                type="text"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                onBlur={handleTitleChange}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") handleTitleChange();
+                }}
+                autoFocus
+                className="text-4xl bg-transparent font-bold outline-none"
+              />
+            ) : (
+              <h1
+                className="text-4xl font-bold cursor-pointer"
+                onDoubleClick={() => setIsEditing(true)}
+              >
+                {noteData.title}
+              </h1>
+            )}
+            <div
+              className="absolute top-[-2.5rem] left-20 opacity-0 invisible 
+                group-hover:opacity-100 group-hover:visible
+                transition-all duration-300 ease-in-out 
+                transform group-hover:translate-y-[-10px]"
             >
-              {noteData.title}
-            </h1>
-          )}
+              <UploadBanner />
+            </div>
+          </div>
         </div>
       </div>
     </div>

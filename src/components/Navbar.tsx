@@ -12,8 +12,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "./ui/button";
 import ThemeSwitcher from "./ThemeSwitcher";
+import useAuth from "@/lib/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 const Navbar = () => {
+  const { currentUser, handleLogout, loading } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(true);
@@ -101,14 +109,6 @@ const Navbar = () => {
         { title: "SEO Optimization", href: "#" },
       ],
     },
-    // {
-    //   title: "Portfolio",
-    //   href: "/portfolio",
-    //   dropdown: [
-    //     { title: "Web Projects", href: "/portfolio/web-projects" },
-    //     { title: "Design Works", href: "/portfolio/design-works" },
-    //   ],
-    // },
     { title: "About Us", href: "#about" },
     { title: "FAQ", href: "#faq" },
     { title: "Contact", href: "#contact" },
@@ -165,7 +165,6 @@ const Navbar = () => {
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center space-x-2">
               <Image src="/logo (2).png" alt="logo" width={30} height={30} />
-              {/* <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600"></div> */}
               <span className="text-xl pl-3 font-semibold">Web Realm</span>
             </Link>
             <div className="hidden md:flex items-center space-x-10">
@@ -218,7 +217,36 @@ const Navbar = () => {
             </div>
             <ThemeSwitcher />
             <div className="flex items-center space-x-4">
-              <Button>Contact US</Button>
+              {!loading && currentUser ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <Image
+                      src={currentUser.photoURL || "/placeholder.png"}
+                      alt="User Profile"
+                      width={40}
+                      height={40}
+                      className="rounded-full w-12 p-1 hover:bg-secondary-foreground/10 h-12 object-cover cursor-pointer"
+                    />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>
+                      <Link href="/dashboard">Dashboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleLogout}>
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <div className="flex items-center gap-6">
+                  <Link href="/login">
+                    <Button>Login</Button>
+                  </Link>
+                  <Link href="/register">
+                    <Button>Register</Button>
+                  </Link>
+                </div>
+              )}
               <div className="md:hidden">
                 <button onClick={toggleMenu} className="focus:outline-none">
                   <HiMenu className="h-6 w-6" />
@@ -237,60 +265,32 @@ const Navbar = () => {
             variants={menuVariants}
             className="fixed inset-y-0 right-0 w-full max-w-sm bg-[#0e0e16] bg-opacity-95 backdrop-blur-lg z-40 md:hidden"
           >
-            <div className="flex flex-col items-start justify-center h-full p-8">
+            <div className="flex flex-col items-start justify-center h-full p-10 space-y-8">
+              <button
+                onClick={toggleMenu}
+                className="self-end focus:outline-none"
+              >
+                <MdClose className="h-8 w-8 text-white" />
+              </button>
               {menuItems.map((item, index) => (
                 <motion.div
                   key={item.title}
-                  className="my-4 w-full"
                   custom={index}
+                  initial="closed"
+                  animate="open"
+                  exit="closed"
                   variants={menuItemVariants}
                 >
-                  <motion.a
+                  <Link
                     href={item.href}
-                    className="text-white text-2xl font-semibold"
-                    whileHover={{ x: 10 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    className="block text-lg text-white font-semibold"
                   >
-                    {item.icon && <span className="mr-2">{item.icon}</span>}
+                    {item.icon && <span className="mr-1">{item.icon}</span>}
                     {item.title}
-                  </motion.a>
-                  {item.dropdown && (
-                    <div className="mt-2 ml-4">
-                      {item.dropdown.map((subItem) => (
-                        <motion.a
-                          key={subItem.title}
-                          href={subItem.href}
-                          className="block text-gray-300 text-lg my-2"
-                          whileHover={{ x: 5, color: "#ffffff" }}
-                          transition={{
-                            type: "spring",
-                            stiffness: 400,
-                            damping: 10,
-                          }}
-                        >
-                          {subItem.title}
-                        </motion.a>
-                      ))}
-                    </div>
-                  )}
+                  </Link>
                 </motion.div>
               ))}
-              <motion.button
-                className="bg-white hover:bg-white text-black px-6 py-2 rounded-lg mt-6 transition-colors duration-200"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Contact Us
-              </motion.button>
             </div>
-            <motion.button
-              className="absolute top-4 right-4 text-white"
-              onClick={toggleMenu}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <MdClose className="h-6 w-6" />
-            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
