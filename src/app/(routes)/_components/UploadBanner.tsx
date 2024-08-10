@@ -32,7 +32,7 @@ const UploadBanner: React.FC = () => {
 
   const handleSubmit = () => {
     if (banner) {
-      // Submit the
+      // Submit
       console.log("Banner uploaded:", banner);
       // Reset preview and file state
       setBanner(null);
