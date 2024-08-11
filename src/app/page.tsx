@@ -1,3 +1,4 @@
+import HeroSection from "@/components/HeroSection";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -8,6 +9,7 @@ const page = () => {
     <>
       <div>
         <Navbar />
+        <HeroSection />
       </div>
     </>
   );

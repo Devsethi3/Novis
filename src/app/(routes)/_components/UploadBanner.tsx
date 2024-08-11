@@ -1,3 +1,5 @@
+// UploadBanner.tsx
+
 "use client";
 
 import { useState } from "react";
@@ -9,12 +11,27 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { LucideUpload } from "lucide-react";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { storage } from "@/lib/firebase.config";
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
+import { doc, updateDoc } from "firebase/firestore";
+import { storage, db } from "@/lib/firebase.config";
 
-const UploadBanner: React.FC = () => {
+interface UploadBannerProps {
+  noteId: string;
+  currentBanner?: string | null;
+}
+
+const UploadBanner: React.FC<UploadBannerProps> = ({
+  noteId,
+  currentBanner,
+}) => {
   const [banner, setBanner] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
@@ -33,39 +50,49 @@ const UploadBanner: React.FC = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (banner) {
       setUploading(true);
 
-      const storageRef = ref(storage, `banners/${banner.name}`);
+      // If there's an existing banner, delete it first
+      if (currentBanner) {
+        const oldBannerRef = ref(storage, currentBanner);
+        try {
+          await deleteObject(oldBannerRef);
+        } catch (error) {
+          console.error("Error deleting old banner:", error);
+        }
+      }
+
+      const storageRef = ref(storage, `banners/${noteId}/${banner.name}`);
       const uploadTask = uploadBytesResumable(storageRef, banner);
 
       uploadTask.on(
         "state_changed",
         (snapshot) => {
-          // You can monitor the progress here if needed
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           console.log(`Upload is ${progress}% done`);
         },
         (error) => {
-          // Handle unsuccessful uploads
           console.error("Upload failed:", error);
           setUploading(false);
         },
-        () => {
-          // Handle successful uploads
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            console.log(
-              "Banner uploaded successfully, download URL:",
-              downloadURL
-            );
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          console.log(
+            "Banner uploaded successfully, download URL:",
+            downloadURL
+          );
 
-            // Reset the preview and file state
-            setBanner(null);
-            setPreview(null);
-            setUploading(false);
-          });
+          // Update the note document with the new banner URL
+          const noteDocRef = doc(db, "notes", noteId);
+          await updateDoc(noteDocRef, { banner: downloadURL });
+
+          // Reset the preview and file state
+          setBanner(null);
+          setPreview(null);
+          setUploading(false);
         }
       );
     }
@@ -74,13 +101,19 @@ const UploadBanner: React.FC = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="secondary" className="flex items-center">
-          <LucideUpload size={15} className="mr-3" /> Upload Banner
+        <Button className="flex items-center">
+          <LucideUpload size={15} className="mr-3" />
+          {currentBanner ? "Update Banner" : "Upload Banner"}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Upload Banner</DialogTitle>
+          <DialogTitle className="text-center text-xl lg:text-2xl font-bold">
+            {currentBanner ? "Update Banner" : "Upload Banner"}
+          </DialogTitle>
+          <DialogDescription className="text-center">
+            This banner will be displayed at the top of your note.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col items-center justify-center w-full">
@@ -148,7 +181,7 @@ const UploadBanner: React.FC = () => {
             disabled={!banner || uploading}
             className="w-full"
           >
-            {uploading ? "Uploading..." : "Submit"}
+            {uploading ? "Uploading..." : currentBanner ? "Update" : "Submit"}
           </Button>
         </DialogFooter>
       </DialogContent>
