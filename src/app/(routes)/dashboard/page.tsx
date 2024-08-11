@@ -20,7 +20,7 @@ const DashboardPage: React.FC = () => {
         createdAt: new Date(),
       });
 
-      // Redirect to the dynamic route with the note ID
+      // Redirect to the dynamic route with the 
       router.push(`/dashboard/${noteRef.id}`);
     } catch (error) {
       console.error("Error creating note:", error);
