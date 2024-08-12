@@ -1,23 +1,19 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { db } from "@/lib/firebase.config";
-import {
-  addDoc,
-  collection,
-  query,
-  where,
-  onSnapshot,
-} from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
+import useAuth from "@/lib/useAuth";
 
 const DashboardPage: React.FC = () => {
   const router = useRouter();
-  const [notes, setNotes] = useState<any[]>([]);
+  const { currentUser, handleLogout, loading } = useAuth();
+
+  console.log(currentUser);
 
   const handleCreateNote = async () => {
     try {
@@ -26,6 +22,7 @@ const DashboardPage: React.FC = () => {
         emoji: "📝", // Default emoji
         banner: "",
         createdAt: new Date(),
+        author: currentUser?.email,
       });
 
       router.push(`/dashboard/${noteRef.id}`);

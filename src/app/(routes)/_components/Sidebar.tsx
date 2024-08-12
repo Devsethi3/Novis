@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/accordion";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase.config";
+import useAuth from "@/lib/useAuth";
 
 interface NavItem {
   icon: React.ElementType;
@@ -44,6 +45,7 @@ const navItems: NavItem[] = [
 const Sidebar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [notes, setNotes] = useState<Note[]>([]);
+  const { currentUser } = useAuth();
   const pathname = usePathname();
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
@@ -56,21 +58,24 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
-    const q = query(collection(db, "notes"), orderBy("createdAt", "desc"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const noteList: Note[] = [];
-      snapshot.forEach((doc) => {
-        noteList.push({
-          id: doc.id,
-          title: doc.data().title,
-          emoji: doc.data().emoji,
-        });
-      });
-      setNotes(noteList);
-    });
+    if (currentUser) {
+      const q = query(collection(db, "notes"), orderBy("createdAt", "desc"));
 
-    return () => unsubscribe();
-  }, []);
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const noteList: Note[] = [];
+        snapshot.forEach((doc) => {
+          noteList.push({
+            id: doc.id,
+            title: doc.data().title,
+            emoji: doc.data().emoji,
+          });
+        });
+        setNotes(noteList);
+      });
+
+      return () => unsubscribe();
+    }
+  }, [currentUser]);
 
   return (
     <div className="h-full bg-secondary/40 overflow-y-auto relative flex shadow-xl border-r">
@@ -172,7 +177,7 @@ const Sidebar = () => {
                               <Link href={`/dashboard/${note.id}`} passHref>
                                 <motion.div
                                   className={cn(
-                                    "flex items-center rounded-md px-4 py-2 transition-colors duration-200",
+                          +          "flex items-center rounded-md px-4 py-2 transition-colors duration-200",
                                     "hover:bg-accent hover:text-accent-foreground",
                                     isActive(`/dashboard/${note.id}`) &&
                                       "bg-primary text-white hover:bg-primary hover:text-white"
