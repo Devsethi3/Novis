@@ -167,32 +167,24 @@ const Sidebar = () => {
                 <li className="my-2 px-3">
                   <Accordion type="single" collapsible className="w-full">
                     <AccordionItem value="notes">
-                      <AccordionTrigger className="py-2 px-4">
-                        Notes
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <ul className="mt-2">
-                          {notes.map((note) => (
-                            <li key={note.id} className="pl-2">
+                      <ul className="mt-2">
+                        {notes.map((note) => (
+                          <AccordionTrigger className="py-2 px-4">
+                            <li key={note.id} className="line-clamp-1">
                               <Link href={`/dashboard/${note.id}`} passHref>
                                 <motion.div
-                                  className={cn(
-                          +          "flex items-center rounded-md px-4 py-2 transition-colors duration-200",
-                                    "hover:bg-accent hover:text-accent-foreground",
-                                    isActive(`/dashboard/${note.id}`) &&
-                                      "bg-primary text-white hover:bg-primary hover:text-white"
-                                  )}
                                   whileHover={{ scale: 1.03 }}
                                   whileTap={{ scale: 0.98 }}
                                 >
-                                  <span className="mr-2">{note.emoji}</span>
+                                  <span className="">{note.emoji}</span>
                                   <span className="text-sm">{note.title}</span>
                                 </motion.div>
                               </Link>
                             </li>
-                          ))}
-                        </ul>
-                      </AccordionContent>
+                          </AccordionTrigger>
+                        ))}
+                      </ul>
+                      <AccordionContent>There is nothing</AccordionContent>
                     </AccordionItem>
                   </Accordion>
                 </li>
@@ -240,3 +232,5 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+
+// Now check this and improve this Component in according for each page, and on hover of that page show the plus and more icon to create and delete the. Try to make the file tree like notion with this existing code 
