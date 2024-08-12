@@ -1,15 +1,23 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { db } from "@/lib/firebase.config";
-import { addDoc, collection } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  query,
+  where,
+  onSnapshot,
+} from "firebase/firestore";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
 
 const DashboardPage: React.FC = () => {
   const router = useRouter();
+  const [notes, setNotes] = useState<any[]>([]);
 
   const handleCreateNote = async () => {
     try {
@@ -20,7 +28,6 @@ const DashboardPage: React.FC = () => {
         createdAt: new Date(),
       });
 
-      // Redirect to the
       router.push(`/dashboard/${noteRef.id}`);
     } catch (error) {
       console.error("Error creating note:", error);
