@@ -33,6 +33,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase.config";
 import useAuth from "@/lib/useAuth";
+import { v4 as uuidv4 } from "uuid";
 
 interface NavItem {
   icon: React.ElementType;
@@ -52,7 +53,7 @@ interface Note {
 const navItems: NavItem[] = [
   { icon: FiSearch, label: "Search", href: "/", badge: "ctrl+k" },
   { icon: FiSettings, label: "Settings", href: "/dashboard/settings" },
-  { icon: IoAddCircleOutline, label: "New Page", href: "/dashboard/new-page" },
+  { icon: FiTrash2, label: "Trash", href: "/dashboard/trash" },
 ];
 
 const Sidebar = () => {
@@ -117,6 +118,7 @@ const Sidebar = () => {
   const handleCreateSubpage = async (parentNoteId: string) => {
     if (currentUser) {
       const newSubpage = {
+        id: uuidv4(),
         title: "Untitled File",
         emoji: "📄",
         author: currentUser.email,
@@ -218,7 +220,12 @@ const Sidebar = () => {
               >
                 <div className="flex items-center">
                   <span className="mr-2">{subpage.emoji}</span>
-                  <span className="text-sm cursor-pointer">
+                  <span
+                    className="text-sm cursor-pointer"
+                    // onClick={() => router.push(
+                    //   `/dashboard/${note.id}/${note.subpages[index].id}`
+                    // )}
+                  >
                     {subpage.title}
                   </span>
                 </div>
@@ -316,16 +323,36 @@ const Sidebar = () => {
               ))}
             </ul>
           </nav>
-          <div className="px-4 py-3">
-            <Button className="w-full justify-start" onClick={handleCreatePage}>
-              <FiPlus className="mr-2 h-4 w-4" />
-              <span>New Page</span>
-            </Button>
-          </div>
-          <Accordion type="single" collapsible className="px-4 py-3">
-            {notes.map((note) => renderNoteItem(note))}
-          </Accordion>
-          <ThemeSwitcher />
+          {sidebarOpen ? (
+            <>
+              <div className="px-4 mt-4 flex gap-4 justify-between items-center">
+                <Button
+                  variant="outline"
+                  className="w-10/12"
+                  size="sm"
+                  onClick={handleCreatePage}
+                >
+                  <FiPlus className="mr-2" /> New Note
+                </Button>
+                <ThemeSwitcher />
+              </div>
+              <div className="px-4 mt-4 flex flex-col">
+                <h2 className="text-sm font-semibold border-b pb-2">Notes</h2>
+                <Accordion type="single" collapsible>
+                  {notes.map(renderNoteItem)}
+                </Accordion>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="px-4 mt-4 flex flex-col gap-4 justify-between items-center">
+                <Button variant="outline" size="sm" onClick={handleCreatePage}>
+                  <FiPlus />
+                </Button>
+                <ThemeSwitcher />
+              </div>
+            </>
+          )}
         </motion.aside>
       </IconContext.Provider>
     </div>
