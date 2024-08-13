@@ -99,7 +99,7 @@ const Sidebar = () => {
   const handleCreatePage = async () => {
     if (currentUser) {
       const newPage = {
-        title: "Untitled Page",
+        title: "Untitled",
         emoji: "📝",
         author: currentUser.email,
         createdAt: serverTimestamp(),
@@ -117,7 +117,7 @@ const Sidebar = () => {
   const handleCreateSubpage = async (parentNoteId: string) => {
     if (currentUser) {
       const newSubpage = {
-        title: "Untitled Subpage",
+        title: "Untitled File",
         emoji: "📄",
         author: currentUser.email,
         createdAt: new Date(),
@@ -218,12 +218,7 @@ const Sidebar = () => {
               >
                 <div className="flex items-center">
                   <span className="mr-2">{subpage.emoji}</span>
-                  <span
-                    className="text-sm"
-                    onClick={() =>
-                      router.push(`/dashboard/${note.id}/${index}`)
-                    }
-                  >
+                  <span className="text-sm cursor-pointer">
                     {subpage.title}
                   </span>
                 </div>
@@ -239,7 +234,7 @@ const Sidebar = () => {
             ))}
           </ul>
         ) : (
-          <p className="py-2 px-4 text-sm text-muted-foreground">No subpages</p>
+          <p className="py-2 px-4 text-sm text-muted-foreground">No files</p>
         )}
       </AccordionContent>
     </AccordionItem>
