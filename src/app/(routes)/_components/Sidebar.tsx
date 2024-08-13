@@ -7,13 +7,7 @@ import {
 } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import {
-  FiSearch,
-  FiSettings,
-  FiTrash2,
-  FiPlus,
-  FiMoreHorizontal,
-} from "react-icons/fi";
+import { FiSearch, FiSettings, FiTrash2, FiPlus } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import { IconContext } from "react-icons/lib";
 import { usePathname, useRouter } from "next/navigation";
@@ -35,6 +29,7 @@ import {
   updateDoc,
   deleteDoc,
   serverTimestamp,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase.config";
 import useAuth from "@/lib/useAuth";
@@ -84,7 +79,7 @@ const Sidebar = () => {
         const noteList: Note[] = [];
         snapshot.forEach((doc) => {
           const data = doc.data();
-          if (data.author === currentUser?.email) {
+          if (data.author === currentUser?.email && !data.deleted) {
             noteList.push({
               id: doc.id,
               title: data.title,
@@ -101,9 +96,9 @@ const Sidebar = () => {
     }
   }, [currentUser]);
 
-  const handleCreatePage = async (parentNoteId?: string) => {
+  const handleCreatePage = async () => {
     if (currentUser) {
-      const newNote = {
+      const newPage = {
         title: "Untitled Page",
         emoji: "📝",
         author: currentUser.email,
@@ -111,17 +106,35 @@ const Sidebar = () => {
         subpages: [],
       };
 
-      if (parentNoteId) {
+      try {
+        await addDoc(collection(db, "notes"), newPage);
+      } catch (error) {
+        console.error("Error creating page:", error);
+      }
+    }
+  };
+
+  const handleCreateSubpage = async (parentNoteId: string) => {
+    if (currentUser) {
+      const newSubpage = {
+        title: "Untitled Subpage",
+        emoji: "📄",
+        author: currentUser.email,
+        createdAt: new Date(),
+      };
+
+      try {
         const parentDocRef = doc(db, "notes", parentNoteId);
-        const parentDoc = await parentDocRef.get();
+        const parentDoc = await getDoc(parentDocRef);
+
         if (parentDoc.exists()) {
           const parentData = parentDoc.data();
           await updateDoc(parentDocRef, {
-            subpages: [...(parentData.subpages || []), newNote],
+            subpages: [...(parentData.subpages || []), newSubpage],
           });
         }
-      } else {
-        await addDoc(collection(db, "notes"), newNote);
+      } catch (error) {
+        console.error("Error creating subpage:", error);
       }
     }
   };
@@ -133,16 +146,37 @@ const Sidebar = () => {
         deleted: true,
         deletedAt: serverTimestamp(),
       });
+      router.push("/dashboard");
     }
   };
 
-  const renderNoteItem = (note: Note, depth = 0) => (
+  const handleDeleteSubpage = async (
+    parentNoteId: string,
+    subpageIndex: number
+  ) => {
+    if (currentUser) {
+      const noteRef = doc(db, "notes", parentNoteId);
+      const noteDoc = await getDoc(noteRef);
+
+      if (noteDoc.exists()) {
+        const noteData = noteDoc.data();
+        const updatedSubpages = [...noteData.subpages];
+        updatedSubpages.splice(subpageIndex, 1);
+
+        await updateDoc(noteRef, {
+          subpages: updatedSubpages,
+        });
+      }
+    }
+  };
+
+  const renderNoteItem = (note: Note) => (
     <AccordionItem
-      onClick={() => router.push(`/dashboard/${note.id}`)}
       value={note.id}
       key={note.id}
+      onClick={() => router.push(`/dashboard/${note.id}`)}
     >
-      <AccordionTrigger className="py-2 px-4 hover:bg-accent group">
+      <AccordionTrigger className="py-2 group">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center">
             <span className="mr-2">{note.emoji}</span>
@@ -153,7 +187,10 @@ const Sidebar = () => {
               variant="ghost"
               size="icon"
               className="h-8 w-8"
-              onClick={() => handleCreatePage(note.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCreateSubpage(note.id);
+              }}
             >
               <FiPlus className="h-4 w-4" />
             </Button>
@@ -161,12 +198,12 @@ const Sidebar = () => {
               variant="ghost"
               size="icon"
               className="h-8 w-8"
-              onClick={() => handleDeleteNote(note.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteNote(note.id);
+              }}
             >
               <FiTrash2 className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <FiMoreHorizontal className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -174,7 +211,32 @@ const Sidebar = () => {
       <AccordionContent>
         {note.subpages && note.subpages.length > 0 ? (
           <ul className="pl-4">
-            {note.subpages.map((subpage) => renderNoteItem(subpage, depth + 1))}
+            {note.subpages.map((subpage, index) => (
+              <li
+                key={index}
+                className="py-2 flex items-center justify-between"
+              >
+                <div className="flex items-center">
+                  <span className="mr-2">{subpage.emoji}</span>
+                  <span
+                    className="text-sm"
+                    onClick={() =>
+                      router.push(`/dashboard/${note.id}/${index}`)
+                    }
+                  >
+                    {subpage.title}
+                  </span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => handleDeleteSubpage(note.id, index)}
+                >
+                  <FiTrash2 className="h-4 w-4" />
+                </Button>
+              </li>
+            ))}
           </ul>
         ) : (
           <p className="py-2 px-4 text-sm text-muted-foreground">No subpages</p>
@@ -247,20 +309,9 @@ const Sidebar = () => {
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -10 }}
                             transition={{ duration: 0.2 }}
-                            className="ml-3 whitespace-nowrap text-sm font-medium"
+                            className="ml-3 font-medium"
                           >
                             {item.label}
-                            {item.badge && (
-                              <motion.span
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -10 }}
-                                transition={{ duration: 0.2 }}
-                                className="bg-secondary ml-4 px-2 py-1.5 rounded-lg text-xs opacity-65"
-                              >
-                                {item.badge}
-                              </motion.span>
-                            )}
                           </motion.span>
                         )}
                       </AnimatePresence>
@@ -268,23 +319,18 @@ const Sidebar = () => {
                   </Link>
                 </li>
               ))}
-
-              {sidebarOpen && (
-                <li className="my-3 mt-8">
-                  <Accordion type="single" collapsible>
-                    <p className="text-xs mb-1 uppercase font-semibold tracking-wider text-muted-foreground px-4">
-                      Notes
-                    </p>
-                    {notes.map((note) => renderNoteItem(note))}
-                  </Accordion>
-                </li>
-              )}
             </ul>
           </nav>
-
-          <div className="absolute bottom-4 left-0 w-full">
-            <ThemeSwitcher />
+          <div className="px-4 py-3">
+            <Button className="w-full justify-start" onClick={handleCreatePage}>
+              <FiPlus className="mr-2 h-4 w-4" />
+              <span>New Page</span>
+            </Button>
           </div>
+          <Accordion type="single" collapsible className="px-4 py-3">
+            {notes.map((note) => renderNoteItem(note))}
+          </Accordion>
+          <ThemeSwitcher />
         </motion.aside>
       </IconContext.Provider>
     </div>
