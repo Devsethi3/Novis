@@ -11,7 +11,6 @@ import { FiSearch, FiSettings, FiTrash2, FiPlus } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import { IconContext } from "react-icons/lib";
 import { usePathname, useRouter } from "next/navigation";
-import { IoAddCircleOutline } from "react-icons/io5";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import {
   Accordion,
