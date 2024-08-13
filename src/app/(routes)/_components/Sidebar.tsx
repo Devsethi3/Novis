@@ -47,7 +47,12 @@ interface Note {
   title: string;
   emoji: string;
   author: string;
-  subpages?: Note[];
+  subpages?: {
+    id: string;
+    title: string;
+    emoji: string;
+    author: string;
+  }[];
 }
 
 const navItems: NavItem[] = [
@@ -117,8 +122,9 @@ const Sidebar = () => {
 
   const handleCreateSubpage = async (parentNoteId: string) => {
     if (currentUser) {
+      const newSubpageId = uuidv4();
       const newSubpage = {
-        id: uuidv4(),
+        id: newSubpageId,
         title: "Untitled File",
         emoji: "📄",
         author: currentUser.email,
@@ -134,6 +140,7 @@ const Sidebar = () => {
           await updateDoc(parentDocRef, {
             subpages: [...(parentData.subpages || []), newSubpage],
           });
+          router.push(`/dashboard/${parentNoteId}/${newSubpageId}`);
         }
       } catch (error) {
         console.error("Error creating subpage:", error);
@@ -215,25 +222,25 @@ const Sidebar = () => {
           <ul className="pl-4">
             {note.subpages.map((subpage, index) => (
               <li
-                key={index}
+                key={subpage.id}
                 className="py-2 flex items-center justify-between"
               >
                 <div className="flex items-center">
                   <span className="mr-2">{subpage.emoji}</span>
-                  <span
-                    className="text-sm cursor-pointer"
-                    // onClick={() => router.push(
-                    //   `/dashboard/${note.id}/${note.subpages[index].id}`
-                    // )}
-                  >
-                    {subpage.title}
-                  </span>
+                  <Link href={`/dashboard/${note.id}/${subpage.id}`}>
+                    <span className="text-sm cursor-pointer">
+                      {subpage.title}
+                    </span>
+                  </Link>
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8"
-                  onClick={() => handleDeleteSubpage(note.id, index)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteSubpage(note.id, index);
+                  }}
                 >
                   <FiTrash2 className="h-4 w-4" />
                 </Button>
@@ -360,3 +367,48 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+
+// implement the completely different route to work with and user can navigate to the subpage easily. Implement the user navigation using router or link for the subpage to their specific route from specific id from firebase database
+
+// the data stored in the database is like this
+
+// author
+// "pain@gmail.com"
+// (string)
+
+// createdAt
+// August 13, 2024 at 8:39:18 PM UTC+5:30
+// (timestamp)
+
+// emoji
+// "📝"
+// (string)
+
+// subpages
+// (array)
+
+// 0
+// (map)
+
+// author
+// "pain@gmail.com"
+// (string)
+
+// createdAt
+// August 13, 2024 at 8:39:57 PM UTC+5:30
+// (timestamp)
+
+// emoji
+// "📄"
+// (string)
+
+// id
+// "b538d422-c15b-4a06-996b-a9e77dbb8266"
+// (string)
+
+// title
+// "Untitled File"
+// (string)
+
+// title
+// "Where are you from ?"
