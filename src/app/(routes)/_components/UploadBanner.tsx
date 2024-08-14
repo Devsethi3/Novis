@@ -20,17 +20,21 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { storage, db } from "@/lib/firebase.config";
 
 interface UploadBannerProps {
   noteId: string;
+  subpageId?: string;
   currentBanner?: string | null;
+  onBannerUpdate: (url: string) => void;
 }
 
 const UploadBanner: React.FC<UploadBannerProps> = ({
   noteId,
+  subpageId,
   currentBanner,
+  onBannerUpdate,
 }) => {
   const [banner, setBanner] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -87,7 +91,24 @@ const UploadBanner: React.FC<UploadBannerProps> = ({
 
           // Update the note document with the new banner URL
           const noteDocRef = doc(db, "notes", noteId);
-          await updateDoc(noteDocRef, { banner: downloadURL });
+
+          if (subpageId) {
+            // If it's a subpage, update the subpage's banner
+            const noteDoc = await getDoc(noteDocRef);
+            if (noteDoc.exists()) {
+              const noteData = noteDoc.data();
+              const updatedSubpages = noteData.subpages.map((sp: any) =>
+                sp.id === subpageId ? { ...sp, banner: downloadURL } : sp
+              );
+              await updateDoc(noteDocRef, { subpages: updatedSubpages });
+            }
+          } else {
+            // If it's the main note, update the note's banner
+            await updateDoc(noteDocRef, { banner: downloadURL });
+          }
+
+          // Call the onBannerUpdate callback with the new URL
+          onBannerUpdate(downloadURL);
 
           // Reset the preview and file state
           setBanner(null);
