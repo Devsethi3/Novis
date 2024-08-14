@@ -103,7 +103,7 @@ const UploadBanner: React.FC<UploadBannerProps> = ({
               await updateDoc(noteDocRef, { subpages: updatedSubpages });
             }
           } else {
-            // If it's the main note, update 
+            // If it's the main note
             await updateDoc(noteDocRef, { banner: downloadURL });
           }
 
