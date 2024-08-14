@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase.config";
 import Loading from "@/app/loading";
-import NotePageContent from "@/app/(routes)/_components/NoteContent";
+import NotePageContent from "@/app/(routes)/_components/NotePageContent";
 
 interface SubpageData {
   id: string;
