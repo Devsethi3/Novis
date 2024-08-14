@@ -1,4 +1,4 @@
-// NotePage.tsx
+// /dashboard/[slug]/page.tsx
 
 "use client";
 

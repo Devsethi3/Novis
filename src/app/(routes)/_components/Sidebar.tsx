@@ -179,16 +179,17 @@ const Sidebar = () => {
   };
 
   const renderNoteItem = (note: Note) => (
-    <AccordionItem
-      value={note.id}
-      key={note.id}
-      onClick={() => router.push(`/dashboard/${note.id}`)}
-    >
+    <AccordionItem value={note.id} key={note.id}>
       <AccordionTrigger className="py-2 group">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center">
             <span className="mr-2">{note.emoji}</span>
-            <span className="text-sm line-clamp-1">{note.title}</span>
+            <span
+              className="text-sm line-clamp-1"
+              onClick={() => router.push(`/dashboard/${note.id}`)}
+            >
+              {note.title}
+            </span>
           </div>
           <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
             <Button
@@ -222,14 +223,15 @@ const Sidebar = () => {
             {note.subpages.map((subpage, index) => (
               <li
                 key={subpage.id}
-                className="py-2 flex items-center justify-between"
+                className="py-2 flex border-t items-center justify-between"
               >
                 <div className="flex items-center">
                   <span className="mr-2">{subpage.emoji}</span>
-                  <Link href={`/dashboard/${note.id}/${subpage.id}`}>
-                    <span className="text-sm cursor-pointer">
-                      {subpage.title}
-                    </span>
+                  <Link
+                    href={`/dashboard/${note.id}/${subpage.id}`}
+                    className="text-sm cursor-pointer line-clamp-1 hover:underline"
+                  >
+                    {subpage.title}
                   </Link>
                 </div>
                 <Button
@@ -366,48 +368,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
-// implement the completely different route to work with and user can navigate to the subpage easily. Implement the user navigation using router or link for the subpage to their specific route from specific id from firebase database
-
-// the data stored in the database is like this
-
-// author
-// "pain@gmail.com"
-// (string)
-
-// createdAt
-// August 13, 2024 at 8:39:18 PM UTC+5:30
-// (timestamp)
-
-// emoji
-// "📝"
-// (string)
-
-// subpages
-// (array)
-
-// 0
-// (map)
-
-// author
-// "pain@gmail.com"
-// (string)
-
-// createdAt
-// August 13, 2024 at 8:39:57 PM UTC+5:30
-// (timestamp)
-
-// emoji
-// "📄"
-// (string)
-
-// id
-// "b538d422-c15b-4a06-996b-a9e77dbb8266"
-// (string)
-
-// title
-// "Untitled File"
-// (string)
-
-// title
-// "Where are you from ?"
