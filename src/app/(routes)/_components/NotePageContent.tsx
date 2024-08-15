@@ -102,7 +102,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
         )}
         <Button>Publish</Button>
       </div>
-      <div className="min-h-[190vh] w-full">
+      <div className="w-full">
         <div className="mb-10 relative">
           {bannerUrl && (
             <img
@@ -174,9 +174,9 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
             />
           )}
         </div>
-        <div>
-          <TextEditor />
-        </div>
+      </div>
+      <div>
+        <TextEditor />
       </div>
     </div>
   );
