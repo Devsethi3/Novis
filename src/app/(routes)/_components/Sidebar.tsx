@@ -237,7 +237,7 @@ const Sidebar = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8"
+                  className="h-8 w-8 px-2 mx-1"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDeleteSubpage(note.id, index);

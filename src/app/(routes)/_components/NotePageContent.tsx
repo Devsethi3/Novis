@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { IoClose } from "react-icons/io5";
 import UploadBanner from "./UploadBanner";
+import TextEditor from "./TextEditor";
 
 interface NoteData {
   id: string;
@@ -172,6 +173,9 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
               onBannerUpdate={handleBannerUpdate}
             />
           )}
+        </div>
+        <div>
+          <TextEditor />
         </div>
       </div>
     </div>
