@@ -16,9 +16,10 @@ import CheckList from "@editorjs/checklist";
 import Delimiter from "@editorjs/delimiter";
 import InlineCode from "@editorjs/inline-code";
 import Table from "@editorjs/table";
+import Alert from 'editorjs-alert';
 
 const TextEditor: React.FC = () => {
-  const editorRef = useRef<EditorJS | null>(null);
+const editorRef = useRef<EditorJS | null>(null);
 
   useEffect(() => {
     const initEditor = async () => {
@@ -34,6 +35,16 @@ const TextEditor: React.FC = () => {
                 placeholder: "Enter a header",
                 levels: [1, 2, 3, 4],
                 defaultLevel: 3,
+              },
+            },
+            alert: {
+              class: Alert,
+              inlineToolbar: true,
+              shortcut: 'CMD+SHIFT+A',
+              config: {
+                alertTypes: ['primary', 'secondary', 'info', 'success', 'warning', 'danger', 'light', 'dark'],
+                defaultType: 'primary',
+                messagePlaceholder: 'Enter something',
               },
             },
             list: {
@@ -53,7 +64,12 @@ const TextEditor: React.FC = () => {
               },
             },
             code: Code,
-            linkTool: LinkTool,
+            linkTool: {
+              class: LinkTool,
+              config: {
+                endpoint: "/api/link",
+              },
+            },
             raw: Raw,
             embed: Embed,
             quote: Quote,
@@ -83,7 +99,7 @@ const TextEditor: React.FC = () => {
   }, []);
 
   return (
-    <div className="px-20 py-4">
+    <div className="px-20 -ml-[400px] py-4">
       <div id="editorjs"></div>
     </div>
   );
