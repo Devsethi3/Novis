@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import EditorJS from "@editorjs/editorjs";
+import EditorJS, { OutputData } from "@editorjs/editorjs";
 
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
@@ -16,10 +16,17 @@ import CheckList from "@editorjs/checklist";
 import Delimiter from "@editorjs/delimiter";
 import InlineCode from "@editorjs/inline-code";
 import Table from "@editorjs/table";
-import Alert from 'editorjs-alert';
+import Alert from "editorjs-alert";
+import { API } from "@editorjs/editorjs";
 
 const TextEditor: React.FC = () => {
-const editorRef = useRef<EditorJS | null>(null);
+  const editorRef = useRef<EditorJS | null>(null);
+
+  const saveDocument = () => {
+    editorRef.current.save().then((outputData:any) => {
+      console.log(outputData);
+    });
+  };
 
   useEffect(() => {
     const initEditor = async () => {
@@ -27,6 +34,9 @@ const editorRef = useRef<EditorJS | null>(null);
         const editor = new EditorJS({
           holder: "editorjs",
           placeholder: "Type here to write your note...",
+          onChange: (api: any, event: CustomEvent) => {
+            saveDocument();
+          },
           tools: {
             header: {
               class: Header,
@@ -40,11 +50,20 @@ const editorRef = useRef<EditorJS | null>(null);
             alert: {
               class: Alert,
               inlineToolbar: true,
-              shortcut: 'CMD+SHIFT+A',
+              shortcut: "CMD+SHIFT+A",
               config: {
-                alertTypes: ['primary', 'secondary', 'info', 'success', 'warning', 'danger', 'light', 'dark'],
-                defaultType: 'primary',
-                messagePlaceholder: 'Enter something',
+                alertTypes: [
+                  "primary",
+                  "secondary",
+                  "info",
+                  "success",
+                  "warning",
+                  "danger",
+                  "light",
+                  "dark",
+                ],
+                defaultType: "primary",
+                messagePlaceholder: "Enter something",
               },
             },
             list: {
@@ -99,10 +118,12 @@ const editorRef = useRef<EditorJS | null>(null);
   }, []);
 
   return (
-    <div className="px-20 -ml-[400px] py-4">
+    <div className="px-20 py-4">
       <div id="editorjs"></div>
     </div>
   );
 };
 
 export default TextEditor;
+
+// Implement the real time saving in the firebase database for this text editor. This will be using for two files, so store the data in real time according to them

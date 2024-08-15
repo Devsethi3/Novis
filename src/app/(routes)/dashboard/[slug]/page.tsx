@@ -9,7 +9,7 @@ import TextEditor from "../../_components/TextEditor";
 
 interface NoteData {
   id: string;
-  title: string;
+  title: string;  
   emoji: string;
   banner: string;
 }
