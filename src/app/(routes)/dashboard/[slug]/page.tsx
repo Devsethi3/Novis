@@ -5,11 +5,10 @@ import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase.config";
 import Loading from "@/app/loading";
 import NotePageContent from "../../_components/NotePageContent";
-import TextEditor from "../../_components/TextEditor";
 
 interface NoteData {
   id: string;
-  title: string;  
+  title: string;
   emoji: string;
   banner: string;
 }

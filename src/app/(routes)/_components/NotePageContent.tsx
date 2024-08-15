@@ -176,7 +176,10 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
         </div>
       </div>
       <div>
-        <TextEditor />
+        <TextEditor
+          noteId={noteId}
+          subpageId={isSubpage ? data.id : undefined}
+        />
       </div>
     </div>
   );

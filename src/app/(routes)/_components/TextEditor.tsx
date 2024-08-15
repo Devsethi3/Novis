@@ -1,7 +1,10 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import EditorJS, { OutputData } from "@editorjs/editorjs";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "@/lib/firebase.config";
 
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
@@ -17,94 +20,151 @@ import Delimiter from "@editorjs/delimiter";
 import InlineCode from "@editorjs/inline-code";
 import Table from "@editorjs/table";
 import Alert from "editorjs-alert";
-import { API } from "@editorjs/editorjs";
 
-const TextEditor: React.FC = () => {
+interface TextEditorProps {
+  noteId: string;
+  subpageId?: string;
+}
+
+type EditorJS = /*unresolved*/ any;
+
+const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
   const editorRef = useRef<EditorJS | null>(null);
-
-  const saveDocument = () => {
-    editorRef.current.save().then((outputData:any) => {
-      console.log(outputData);
-    });
-  };
+  const [initialData, setInitialData] = useState<any | null>(null);
 
   useEffect(() => {
-    const initEditor = async () => {
-      if (!editorRef.current) {
-        const editor = new EditorJS({
-          holder: "editorjs",
-          placeholder: "Type here to write your note...",
-          onChange: (api: any, event: CustomEvent) => {
-            saveDocument();
-          },
-          tools: {
-            header: {
-              class: Header,
-              inlineToolbar: ["marker", "link"],
-              config: {
-                placeholder: "Enter a header",
-                levels: [1, 2, 3, 4],
-                defaultLevel: 3,
-              },
-            },
-            alert: {
-              class: Alert,
-              inlineToolbar: true,
-              shortcut: "CMD+SHIFT+A",
-              config: {
-                alertTypes: [
-                  "primary",
-                  "secondary",
-                  "info",
-                  "success",
-                  "warning",
-                  "danger",
-                  "light",
-                  "dark",
-                ],
-                defaultType: "primary",
-                messagePlaceholder: "Enter something",
-              },
-            },
-            list: {
-              class: List,
-              inlineToolbar: true,
-              config: {
-                defaultStyle: "unordered",
-              },
-            },
-            image: {
-              class: Image,
-              config: {
-                endpoints: {
-                  byFile: "http://localhost:8008/uploadFile",
-                  byUrl: "http://localhost:3000/fetchUrl",
-                },
-              },
-            },
-            code: Code,
-            linkTool: {
-              class: LinkTool,
-              config: {
-                endpoint: "/api/link",
-              },
-            },
-            raw: Raw,
-            embed: Embed,
-            quote: Quote,
-            marker: Marker,
-            checklist: CheckList,
-            delimiter: Delimiter,
-            inlineCode: InlineCode,
-            table: Table,
-          },
-        });
+    const fetchInitialData = async () => {
+      const noteDocRef = doc(db, "notes", noteId);
+      const noteSnapshot = await getDoc(noteDocRef);
 
-        editorRef.current = editor;
+      if (noteSnapshot.exists()) {
+        const noteData = noteSnapshot.data();
+        if (subpageId) {
+          const subpage = noteData.subpages.find(
+            (sp: any) => sp.id === subpageId
+          );
+          setInitialData(subpage?.content || {});
+        } else {
+          setInitialData(noteData.content || {});
+        }
       }
     };
 
-    initEditor();
+    fetchInitialData();
+  }, [noteId, subpageId]);
+
+  const saveDocument = async (outputData: any) => {
+    const noteDocRef = doc(db, "notes", noteId);
+
+    if (subpageId) {
+      const noteSnapshot = await getDoc(noteDocRef);
+      if (noteSnapshot.exists()) {
+        const noteData = noteSnapshot.data();
+        const updatedSubpages = noteData.subpages.map((sp: any) =>
+          sp.id === subpageId ? { ...sp, content: outputData } : sp
+        );
+        await updateDoc(noteDocRef, { subpages: updatedSubpages });
+      }
+    } else {
+      await updateDoc(noteDocRef, { content: outputData });
+    }
+  };
+
+  const uploadImageToFirebase = async (file: File): Promise<string> => {
+    const storageRef = ref(storage, `images/${noteId}/${file.name}`);
+    await uploadBytes(storageRef, file);
+    return getDownloadURL(storageRef);
+  };
+
+  useEffect(() => {
+    if (initialData) {
+      const initEditor = async () => {
+        if (!editorRef.current) {
+          const editor = new EditorJS({
+            holder: "editorjs",
+            data: initialData,
+            placeholder: "Type here to write your note...",
+            onChange: (api: any, event: CustomEvent) => {
+              api.saver.save().then((outputData: any) => {
+                saveDocument(outputData);
+              });
+            },
+            tools: {
+              header: {
+                class: Header,
+                inlineToolbar: ["marker", "link"],
+                config: {
+                  placeholder: "Enter a header",
+                  levels: [1, 2, 3, 4],
+                  defaultLevel: 3,
+                },
+              },
+              alert: {
+                class: Alert,
+                inlineToolbar: true,
+                shortcut: "CMD+SHIFT+A",
+                config: {
+                  alertTypes: [
+                    "primary",
+                    "secondary",
+                    "info",
+                    "success",
+                    "warning",
+                    "danger",
+                    "light",
+                    "dark",
+                  ],
+                  defaultType: "primary",
+                  messagePlaceholder: "Enter something",
+                },
+              },
+              list: {
+                class: List,
+                inlineToolbar: true,
+                config: {
+                  defaultStyle: "unordered",
+                },
+              },
+              image: {
+                class: Image,
+                config: {
+                  uploader: {
+                    uploadByFile: async (file: File) => {
+                      const url = await uploadImageToFirebase(file);
+                      return {
+                        success: 1,
+                        file: {
+                          url,
+                        },
+                      };
+                    },
+                  },
+                },
+              },
+              code: Code,
+              linkTool: {
+                class: LinkTool,
+                config: {
+                  endpoint: "/api/link",
+                },
+              },
+              raw: Raw,
+              embed: Embed,
+              quote: Quote,
+              marker: Marker,
+              checklist: CheckList,
+              delimiter: Delimiter,
+              inlineCode: InlineCode,
+              table: Table,
+            },
+          });
+
+          editorRef.current = editor;
+        }
+      };
+
+      initEditor();
+    }
 
     return () => {
       if (
@@ -112,10 +172,10 @@ const TextEditor: React.FC = () => {
         typeof editorRef.current.destroy === "function"
       ) {
         editorRef.current.destroy();
-        editorRef.current = null; // Reset the reference to ensure it's cleaned up
+        editorRef.current = null;
       }
     };
-  }, []);
+  }, [initialData]);
 
   return (
     <div className="px-20 py-4">
@@ -125,5 +185,3 @@ const TextEditor: React.FC = () => {
 };
 
 export default TextEditor;
-
-// Implement the real time saving in the firebase database for this text editor. This will be using for two files, so store the data in real time according to them

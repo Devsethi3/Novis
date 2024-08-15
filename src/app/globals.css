@@ -6,6 +6,15 @@
   display: none;
 }
 
+.codex-editor__redactor {
+  overflow: hidden;
+}
+
+.image-tool__image-picture {
+  max-width: 100%;
+  height: auto;
+}
+
 h1.ce-header {
   @apply text-3xl font-bold;
 }
