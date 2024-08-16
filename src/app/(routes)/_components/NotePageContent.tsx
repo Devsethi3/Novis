@@ -1,9 +1,10 @@
+// NotePageContent.tsx
+
 "use client";
 
-import React, { useState } from "react";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import React, { useState, useEffect } from "react";
 import { ref, getDownloadURL, deleteObject } from "firebase/storage";
-import { db, storage } from "@/lib/firebase.config";
+import { storage } from "@/lib/firebase.config";
 import { Button } from "@/components/ui/button";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { IoClose } from "react-icons/io5";
@@ -15,6 +16,8 @@ interface NoteData {
   title: string;
   emoji: string;
   banner: string;
+  isPublished: boolean;
+  publishedUrl: string | null;
 }
 
 interface NotePageContentProps {
@@ -35,8 +38,12 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
   const [newTitle, setNewTitle] = useState<string>(data.title);
   const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
   const [bannerUrl, setBannerUrl] = useState<string | null>(null);
+  const [isPublished, setIsPublished] = useState<boolean>(data.isPublished);
+  const [publishedUrl, setPublishedUrl] = useState<string | null>(
+    data.publishedUrl
+  );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (data.banner) {
       const bannerRef = ref(storage, data.banner);
       getDownloadURL(bannerRef).then(setBannerUrl);
@@ -77,6 +84,21 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
     }
   };
 
+  const handlePublish = async () => {
+    const newPublishedUrl = `/published/${noteId}`;
+    await onUpdate("isPublished", true);
+    await onUpdate("publishedUrl", newPublishedUrl);
+    setIsPublished(true);
+    setPublishedUrl(newPublishedUrl);
+  };
+
+  const handleUnpublish = async () => {
+    await onUpdate("isPublished", false);
+    await onUpdate("publishedUrl", null);
+    setIsPublished(false);
+    setPublishedUrl(null);
+  };
+
   return (
     <div>
       <div className="w-full flex h-[7vh] px-6 items-center justify-between">
@@ -100,7 +122,19 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
             {data.title}
           </p>
         )}
-        <Button>Publish</Button>
+        {isPublished ? (
+          <div className="flex items-center gap-4">
+            <input
+              type="text"
+              value={`${window.location.origin}${publishedUrl}`}
+              readOnly
+              className="bg-gray-100 px-3 py-2 rounded"
+            />
+            <Button onClick={handleUnpublish}>Unpublish</Button>
+          </div>
+        ) : (
+          <Button onClick={handlePublish}>Publish</Button>
+        )}
       </div>
       <div className="w-full">
         <div className="mb-10 relative">
