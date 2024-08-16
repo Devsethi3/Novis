@@ -10,6 +10,14 @@ import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { IoClose } from "react-icons/io5";
 import UploadBanner from "./UploadBanner";
 import TextEditor from "./TextEditor";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { TbWorld } from "react-icons/tb";
+import { Input } from "@/components/ui/input";
 
 interface NoteData {
   id: string;
@@ -122,6 +130,39 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
             {data.title}
           </p>
         )}
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            {isPublished ? (
+              <Button>Unpublish</Button>
+            ) : (
+              <Button>Publish</Button>
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="flex items-center flex-col px-8 py-6">
+            <TbWorld size={30} className="opacity-60" />
+            <h3 className="text-xl font-bold mt-3 opacity-60">
+              Publish this note
+            </h3>
+            <p className="text-sm">Share your work with others</p>
+            {isPublished ? (
+              <div className="flex items-center w-full flex-col mt-4 gap-4">
+                <Input
+                  type="text"
+                  value={`${window.location.origin}${publishedUrl}`}
+                  readOnly
+                  className="bg-gray-100 px-3 py-2 rounded"
+                />
+                <Button className="mt-2 w-full" onClick={handleUnpublish}>
+                  Unpublish
+                </Button>
+              </div>
+            ) : (
+              <Button onClick={handlePublish} className="w-full mt-4">
+                Publish
+              </Button>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
         {isPublished ? (
           <div className="flex items-center gap-4">
             <input
