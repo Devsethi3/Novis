@@ -4,7 +4,7 @@ import React from "react";
 import { getDoc, doc } from "firebase/firestore";
 import { getDownloadURL, ref } from "firebase/storage";
 import { db, storage } from "@/lib/firebase.config";
-import EditorJSParser from "editorjs-html"; // Import 
+import EditorJSParser from "editorjs-html"; 
 
 interface PublishedNoteProps {
   params: {
