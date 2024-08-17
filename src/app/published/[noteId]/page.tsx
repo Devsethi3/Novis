@@ -62,7 +62,7 @@ export async function generateMetadata(
 
   if (!note) {
     return {
-      title: "Note Not Found",
+      title: "Page Not Found",
     };
   }
 
