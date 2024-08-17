@@ -1,5 +1,3 @@
-// NotePageContent.tsx
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -18,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { TbWorld } from "react-icons/tb";
 import { Input } from "@/components/ui/input";
+import { toast } from "react-hot-toast";
 
 interface NoteData {
   id: string;
@@ -63,6 +62,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
   const handleTitleChange = async () => {
     if (newTitle !== data.title) {
       await onUpdate("title", newTitle);
+      toast.success("Title updated successfully");
     }
     setIsEditing(false);
     setIsBreadcrumbEditing(false);
@@ -70,12 +70,14 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
 
   const handleBannerUpdate = (url: string) => {
     onUpdate("banner", url);
+    toast.success("Banner updated successfully");
   };
 
   const handleEmojiSelect = async (emojiData: EmojiClickData) => {
     const selectedEmoji = emojiData.emoji;
     if (selectedEmoji !== data.emoji) {
       await onUpdate("emoji", selectedEmoji);
+      toast.success("Emoji updated successfully");
     }
     setShowEmojiPicker(false);
   };
@@ -85,26 +87,47 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
       const bannerRef = ref(storage, data.banner);
       try {
         await deleteObject(bannerRef);
+        await onUpdate("banner", null);
+        toast.success("Banner removed successfully");
       } catch (error) {
         console.error("Error deleting banner from storage:", error);
+        toast.error("Failed to remove banner");
       }
-      await onUpdate("banner", null);
     }
   };
 
   const handlePublish = async () => {
     const newPublishedUrl = `/published/${noteId}`;
-    await onUpdate("isPublished", true);
-    await onUpdate("publishedUrl", newPublishedUrl);
-    setIsPublished(true);
-    setPublishedUrl(newPublishedUrl);
+    try {
+      await onUpdate("isPublished", true);
+      await onUpdate("publishedUrl", newPublishedUrl);
+      setIsPublished(true);
+      setPublishedUrl(newPublishedUrl);
+      toast.success("Note published successfully");
+    } catch (error) {
+      console.error("Error publishing note:", error);
+      toast.error("Failed to publish note");
+    }
   };
 
   const handleUnpublish = async () => {
-    await onUpdate("isPublished", false);
-    await onUpdate("publishedUrl", null);
-    setIsPublished(false);
-    setPublishedUrl(null);
+    try {
+      await onUpdate("isPublished", false);
+      await onUpdate("publishedUrl", null);
+      setIsPublished(false);
+      setPublishedUrl(null);
+      toast.success("Note unpublished successfully");
+    } catch (error) {
+      console.error("Error unpublishing note:", error);
+      toast.error("Failed to unpublish note");
+    }
+  };
+
+  const copyPublishedUrl = () => {
+    if (publishedUrl) {
+      navigator.clipboard.writeText(`${window.location.origin}${publishedUrl}`);
+      toast.success("Published URL copied to clipboard");
+    }
   };
 
   return (
@@ -131,51 +154,47 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
           </p>
         )}
         <DropdownMenu>
-          <DropdownMenuTrigger>
-            {isPublished ? (
-              <Button>Unpublish</Button>
-            ) : (
-              <Button>Publish</Button>
-            )}
+          <DropdownMenuTrigger asChild>
+            <Button>{isPublished ? "Published" : "Publish"}</Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="flex items-center flex-col px-8 py-6">
-            <TbWorld size={30} className="opacity-60" />
-            <h3 className="text-xl font-bold mt-3 opacity-60">
-              Publish this note
-            </h3>
-            <p className="text-sm">Share your work with others</p>
-            {isPublished ? (
-              <div className="flex items-center w-full flex-col mt-4 gap-4">
-                <Input
-                  type="text"
-                  value={`${window.location.origin}${publishedUrl}`}
-                  readOnly
-                  className="bg-gray-100 px-3 py-2 rounded"
-                />
-                <Button className="mt-2 w-full" onClick={handleUnpublish}>
-                  Unpublish
+          <DropdownMenuContent className="w-56">
+            <div className="flex items-center flex-col px-4 py-3">
+              <TbWorld size={30} className="opacity-60" />
+              <h3 className="text-xl font-bold mt-2 opacity-60">
+                {isPublished ? "Manage publication" : "Publish this note"}
+              </h3>
+              <p className="text-sm text-center mt-1">
+                {isPublished
+                  ? "Your note is live on the web"
+                  : "Share your work with others"}
+              </p>
+              {isPublished ? (
+                <div className="w-full mt-4 space-y-2">
+                  <Input
+                    type="text"
+                    value={`${window.location.origin}${publishedUrl}`}
+                    readOnly
+                    className="bg-gray-100 px-3 py-2 rounded text-sm"
+                  />
+                  <Button className="w-full" onClick={copyPublishedUrl}>
+                    Copy link
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    className="w-full"
+                    onClick={handleUnpublish}
+                  >
+                    Unpublish
+                  </Button>
+                </div>
+              ) : (
+                <Button onClick={handlePublish} className="w-full mt-4">
+                  Publish
                 </Button>
-              </div>
-            ) : (
-              <Button onClick={handlePublish} className="w-full mt-4">
-                Publish
-              </Button>
-            )}
+              )}
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
-        {isPublished ? (
-          <div className="flex items-center gap-4">
-            <input
-              type="text"
-              value={`${window.location.origin}${publishedUrl}`}
-              readOnly
-              className="bg-gray-100 px-3 py-2 rounded"
-            />
-            <Button onClick={handleUnpublish}>Unpublish</Button>
-          </div>
-        ) : (
-          <Button onClick={handlePublish}>Publish</Button>
-        )}
       </div>
       <div className="w-full">
         <div className="mb-10 relative">
