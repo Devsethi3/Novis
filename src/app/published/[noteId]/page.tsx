@@ -82,7 +82,7 @@ const PublishedNote: React.FC<PublishedNoteProps> = async ({ params }) => {
 
   if (!note) {
     return (
-      <div className="text-center mt-10">Note not found or not published.</div>
+      <div className="text-center mt-10">Page not found or not published.</div>
     );
   }
 
