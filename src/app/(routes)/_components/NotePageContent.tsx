@@ -157,10 +157,10 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
           <DropdownMenuTrigger asChild>
             <Button>{isPublished ? "Published" : "Publish"}</Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56">
+          <DropdownMenuContent className="w-64">
             <div className="flex items-center flex-col px-4 py-3">
               <TbWorld size={30} className="opacity-60" />
-              <h3 className="text-xl font-bold mt-2 opacity-60">
+              <h3 className="text-xl font-bold text-center mt-2 opacity-60">
                 {isPublished ? "Manage publication" : "Publish this note"}
               </h3>
               <p className="text-sm text-center mt-1">
