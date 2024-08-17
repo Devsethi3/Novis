@@ -11,7 +11,6 @@ import TextEditor from "./TextEditor";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { TbWorld } from "react-icons/tb";
