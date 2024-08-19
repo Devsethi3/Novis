@@ -16,6 +16,7 @@ import {
 import { TbWorld } from "react-icons/tb";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-hot-toast";
+import GenerateAIContent from "./GenerateAIContent";
 
 interface NoteData {
   id: string;
@@ -276,6 +277,9 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
           noteId={noteId}
           subpageId={isSubpage ? data.id : undefined}
         />
+      </div>
+      <div className="fixed bottom-5 md:ml-80 left-0 z-10">
+        <GenerateAIContent />
       </div>
     </div>
   );

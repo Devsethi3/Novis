@@ -23,6 +23,7 @@
     "@editorjs/quote": "^2.6.0",
     "@editorjs/raw": "^2.5.0",
     "@editorjs/table": "^2.3.0",
+    "@google/generative-ai": "^0.17.0",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-checkbox": "^1.1.1",
