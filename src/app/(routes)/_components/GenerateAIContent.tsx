@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,8 +14,20 @@ import { SiGooglegemini } from "react-icons/si";
 import GradientText from "@/components/GradientText";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { chatSession } from "@/lib/AiModel";
 
 const GenerateAIContent = () => {
+  const [userInput, setUserInput] = useState<string>();
+  const [loading, setLoading] = useState(false);
+
+  const GenerateFromAI = async () => {
+    setLoading(true);
+
+    const PROMPT = "Generate template for editor.js in JSON for" + userInput;
+    const result = await chatSession.sendMessage("INSERT_INPUT_HERE");
+    console.log(result.response.text());
+  };
   return (
     <div>
       <Dialog>
@@ -43,13 +57,20 @@ const GenerateAIContent = () => {
             </Label>
             <Input
               id="notePrompt"
+              onChange={(e) => setUserInput(e?.target.value)}
               className="col-span-3 p-2 border rounded-md"
               placeholder="e.g., Outline the key points for a marketing strategy"
             />
           </div>
           <DialogFooter>
             <Button variant="secondary">Cancel</Button>
-            <Button type="submit">Generate Content</Button>
+            <Button
+              type="submit"
+              disabled={!userInput || loading}
+              onClick={() => GenerateFromAI()}
+            >
+              Generate Content
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
