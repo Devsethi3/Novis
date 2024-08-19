@@ -77,8 +77,14 @@ const style = {
     container: {
       fontStyle: "italic",
       marginBlock: "2rem",
+      padding: "1rem 1.5rem",
+      borderRadius: "4px",
     },
-    content: { fontSize: "1rem", lineHeight: "1.5rem" },
+    content: {
+      fontSize:
+        "1.125rem" /* Slightly larger font size for better readability */,
+      lineHeight: "1.75rem" /* Increased line height for better readability */,
+    },
   },
   table: {
     table: { borderCollapse: "collapse", width: "100%", marginBottom: "1rem" },
