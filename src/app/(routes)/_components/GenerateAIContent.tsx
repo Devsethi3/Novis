@@ -20,9 +20,9 @@ const GenerateAIContent = () => {
         <DialogTrigger asChild>
           <button>
             <GradientText
-              animationSpeed={5} // Custom animation speed in seconds
-              showBorder={true} // Show or hide border
-              className="custom-class" // Add one or more custom classes
+              animationSpeed={5}
+              showBorder={true}
+              className="custom-class"
             >
               Generate with AI
             </GradientText>
