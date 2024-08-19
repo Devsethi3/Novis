@@ -17,6 +17,7 @@ const renderers = {
   code: CustomCodeRenderer,
   embed: CustomEmbedRenderer,
   list: CustomListRenderer,
+  table: CustomTableRenderer,
   alert: CustomAlertRenderer,
 };
 
@@ -113,6 +114,43 @@ function CustomListRenderer({ data }: any) {
         </li>
       ))}
     </ListTag>
+  );
+}
+
+function CustomTableRenderer({ data }: any) {
+  const rows = data.content.map((row: string) => row.split(","));
+
+  return (
+    <div className="overflow-x-auto my-4">
+      <table className="w-full border-collapse border border-gray-300">
+        <thead>
+          <tr>
+            {rows[0].map((header: string, index: number) => (
+              <th
+                key={index}
+                className="border border-gray-300 p-2 bg-gray-100 font-semibold text-left"
+              >
+                {header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.slice(1).map((row: string[], rowIndex: number) => (
+            <tr key={rowIndex}>
+              {row.map((cell: string, cellIndex: number) => (
+                <td
+                  key={cellIndex}
+                  className="border border-gray-300 p-2 text-left"
+                >
+                  {cell}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
@@ -226,7 +264,6 @@ function CustomAlertRenderer({ data }: any) {
 }
 
 const EditorOutput: React.FC<EditorOutputProps> = ({ content }) => {
-  console.log(content);
   return (
     <Output
       data={content}
