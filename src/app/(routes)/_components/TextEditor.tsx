@@ -26,7 +26,7 @@ interface TextEditorProps {
   subpageId?: string;
 }
 
-type EditorJS = /*unresolved*/ any;
+type EditorJS = /* unresolved */ any;
 
 const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
   const editorRef = useRef<EditorJS | null>(null);
@@ -53,20 +53,43 @@ const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
     fetchInitialData();
   }, [noteId, subpageId]);
 
+  const flattenTableData = (data: any) => {
+    if (Array.isArray(data)) {
+      return data.map((row: any) => (Array.isArray(row) ? row.join(",") : row));
+    }
+    return data;
+  };
+
   const saveDocument = async (outputData: any) => {
     const noteDocRef = doc(db, "notes", noteId);
+
+    // Flatten any nested arrays, especially in table blocks
+    const processedData = {
+      ...outputData,
+      blocks: outputData.blocks.map((block: any) => {
+        if (block.type === "table") {
+          return {
+            ...block,
+            data: {
+              content: flattenTableData(block.data.content),
+            },
+          };
+        }
+        return block;
+      }),
+    };
 
     if (subpageId) {
       const noteSnapshot = await getDoc(noteDocRef);
       if (noteSnapshot.exists()) {
         const noteData = noteSnapshot.data();
         const updatedSubpages = noteData.subpages.map((sp: any) =>
-          sp.id === subpageId ? { ...sp, content: outputData } : sp
+          sp.id === subpageId ? { ...sp, content: processedData } : sp
         );
         await updateDoc(noteDocRef, { subpages: updatedSubpages });
       }
     } else {
-      await updateDoc(noteDocRef, { content: outputData });
+      await updateDoc(noteDocRef, { content: processedData });
     }
   };
 

@@ -96,7 +96,10 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
   };
 
   const handlePublish = async () => {
-    const newPublishedUrl = `/published/${noteId}`;
+    const newPublishedUrl = isSubpage
+      ? `/published/${noteId}/${data.id}`
+      : `/published/${noteId}`;
+
     try {
       await onUpdate("isPublished", true);
       await onUpdate("publishedUrl", newPublishedUrl);
@@ -156,7 +159,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
           <DropdownMenuTrigger asChild>
             <Button>{isPublished ? "Published" : "Publish"}</Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-64">
+          <DropdownMenuContent className="w-64 m-2 shadow-xl">
             <div className="flex items-center flex-col px-4 py-3">
               <TbWorld size={30} className="opacity-60" />
               <h3 className="text-xl font-bold text-center mt-2 opacity-60">

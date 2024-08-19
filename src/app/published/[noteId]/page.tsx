@@ -2,9 +2,13 @@ import React from "react";
 import { getDoc, doc } from "firebase/firestore";
 import { getDownloadURL, ref } from "firebase/storage";
 import { db, storage } from "@/lib/firebase.config";
-import EditorJSParser from "editorjs-html";
 import { Metadata, ResolvingMetadata } from "next";
+import dynamic from "next/dynamic";
+import Image from "next/image";
 
+const EditorOutput = dynamic(() => import("@/components/EditorOutput"), {
+  ssr: false,
+});
 interface PublishedNoteProps {
   params: {
     noteId: string;
@@ -56,7 +60,6 @@ async function getPublishedNote(noteId: string): Promise<NoteData | null> {
 
 export async function generateMetadata(
   { params }: PublishedNoteProps,
-  parent: ResolvingMetadata
 ): Promise<Metadata> {
   const note = await getPublishedNote(params.noteId);
 
@@ -66,6 +69,9 @@ export async function generateMetadata(
     };
   }
 
+  // Create a base64-encoded favicon using the emoji
+  const faviconUrl = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%22.9em%22 font-size=%2232%22>${note.emoji}</text></svg>`;
+
   return {
     title: note.title,
     description: `${note.emoji} ${note.title}`,
@@ -74,7 +80,40 @@ export async function generateMetadata(
       description: `${note.emoji} ${note.title}`,
       images: note.bannerUrl ? [note.bannerUrl] : [],
     },
+    icons: {
+      icon: faviconUrl,
+    },
   };
+}
+
+const renderers = {
+  image: CustomImageRenderer,
+  code: CustomCodeRenderer,
+};
+
+const style = {
+  paragraph: {
+    fontSize: "0.875rem",
+    lineHeight: "1.25rem",
+  },
+};
+
+function CustomImageRenderer({ data }: any) {
+  const src = data.file.url;
+
+  return (
+    <div className="relative w-full min-h-[15rem]">
+      <Image alt="image" className="object-contain" fill src={src} />
+    </div>
+  );
+}
+
+function CustomCodeRenderer({ data }: any) {
+  return (
+    <pre className="bg-gray-800 rounded-md p-4">
+      <code className="text-gray-100 text-sm">{data.code}</code>
+    </pre>
+  );
 }
 
 const PublishedNote: React.FC<PublishedNoteProps> = async ({ params }) => {
@@ -86,26 +125,22 @@ const PublishedNote: React.FC<PublishedNoteProps> = async ({ params }) => {
     );
   }
 
-  const editorJSParser = EditorJSParser();
-  const htmlContent = editorJSParser.parse(note.content).join("");
-
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <div className="flex items-center gap-4 mb-6">
-        <span className="text-5xl">{note.emoji}</span>
-        <h1 className="text-4xl font-bold">{note.title}</h1>
+    <div className="max-w-7xl mx-auto p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+        <span className="text-4xl sm:text-5xl">{note.emoji}</span>
+        <h1 className="text-3xl sm:text-3xl md:text-4xl font-bold">
+          {note.title}
+        </h1>
       </div>
       {note.bannerUrl && (
         <img
           src={note.bannerUrl}
           alt="Note banner"
-          className="w-full h-64 object-cover mb-6 rounded-lg"
+          className="w-full h-40 sm:h-56 md:h-64 object-cover mb-4 sm:mb-6 rounded-lg"
         />
       )}
-      <div
-        className="prose max-w-none"
-        dangerouslySetInnerHTML={{ __html: htmlContent }}
-      />
+      <EditorOutput content={note.content} />
     </div>
   );
 };
