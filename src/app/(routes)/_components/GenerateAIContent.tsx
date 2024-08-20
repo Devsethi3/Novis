@@ -10,14 +10,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { SiGooglegemini } from "react-icons/si";
 import GradientText from "@/components/GradientText";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { chatSession } from "@/lib/AiModel";
 import { toast } from "react-hot-toast";
-import { LucideLoader } from "lucide-react";
 
 interface GenerateAIContentProps {
   onContentGenerated?: (content: any) => void;
@@ -106,9 +104,7 @@ const GenerateAIContent: React.FC<GenerateAIContentProps> = ({
             disabled={!userInput || loading}
             onClick={generateFromAI}
           >
-            {loading
-              ? `Generating... ${(<LucideLoader className="ml-2 h-4 w-4" />)}`
-              : "Generate Content"}
+            {loading ? "Generating..." : "Generate Content"}
           </Button>
         </DialogFooter>
       </DialogContent>

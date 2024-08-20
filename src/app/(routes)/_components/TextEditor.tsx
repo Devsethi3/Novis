@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import EditorJS, { any } from "@editorjs/editorjs";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
@@ -59,6 +57,18 @@ const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
     return {
       ...content,
       blocks: content.blocks.map((block: any) => {
+        if (block.type === "table") {
+          return {
+            ...block,
+            data: {
+              ...block.data,
+              content: block.data.content.map(
+                (row: string[]) =>
+                  row.map((cell) => cell.trim().replace(/\s+/g, " ")) // Trim + replace multiple spaces with single space
+              ),
+            },
+          };
+        }
         if (block.type === "header") {
           return {
             ...block,
@@ -77,37 +87,41 @@ const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
             },
           };
         }
-        if (block.type === "table") {
-          return {
-            ...block,
-            data: {
-              ...block.data,
-              content: block.data.content.map((row: string[]) =>
-                row.map((cell) => cell.trim())
-              ),
-            },
-          };
-        }
         return block;
       }),
     };
   };
 
-  const saveDocument = async (any: any) => {
-    const noteDocRef = doc(db, "notes", noteId);
-    const processedData = processContent(any);
+  // const saveDocument = async (any: any) => {
+  //   // const noteDocRef = doc(db, "notes", noteId);
+  //   // const processedData = processContent(any);
 
-    if (subpageId) {
-      const noteSnapshot = await getDoc(noteDocRef);
-      if (noteSnapshot.exists()) {
-        const noteData = noteSnapshot.data();
-        const updatedSubpages = noteData.subpages.map((sp: any) =>
-          sp.id === subpageId ? { ...sp, content: processedData } : sp
-        );
-        await updateDoc(noteDocRef, { subpages: updatedSubpages });
+  //   // if (subpageId) {
+  //   //   const noteSnapshot = await getDoc(noteDocRef);
+  //   //   if (noteSnapshot.exists()) {
+  //   //     const noteData = noteSnapshot.data();
+  //   //     const updatedSubpages = noteData.subpages.map((sp: any) =>
+  //   //       sp.id === subpageId ? { ...sp, content: processedData } : sp
+  //   //     );
+  //   //     await updateDoc(noteDocRef, { subpages: updatedSubpages });
+  //   //   }
+  //   // } else {
+  //   //   await updateDoc(noteDocRef, { content: processedData });
+  //   // }
+
+  // };
+
+  const saveDocument = async () => {
+    if (editorRef.current) {
+      try {
+        const outputData = await editorRef.current.save();
+        console.log(outputData);
+        // Process and save the data as needed
+      } catch (error) {
+        console.error("Error saving document:", error);
       }
     } else {
-      await updateDoc(noteDocRef, { content: processedData });
+      console.error("Editor instance is not initialized.");
     }
   };
 
@@ -126,10 +140,15 @@ const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
       holder: "editorjs",
       data: data,
       placeholder: "Type here to write your note...",
-      onChange: async () => {
+      // onChange: async () => {
+      //   if (editorRef.current) {
+      //     const any = await editorRef.current.save();
+      //     saveDocument(any);
+      //   }
+      // },
+      onChange: () => {
         if (editorRef.current) {
-          const any = await editorRef.current.save();
-          saveDocument(any);
+          saveDocument();
         }
       },
       tools: {
