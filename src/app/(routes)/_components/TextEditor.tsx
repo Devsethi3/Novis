@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import EditorJS from "@editorjs/editorjs";
+import EditorJS, { OutputData } from "@editorjs/editorjs";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/lib/firebase.config";
+import GenerateAIContent from "./GenerateAIContent";
 
+// Import all your EditorJS tools here
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
 import Embed from "@editorjs/embed";
@@ -26,11 +28,9 @@ interface TextEditorProps {
   subpageId?: string;
 }
 
-type EditorJS = /* unresolved */ any;
-
 const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
   const editorRef = useRef<EditorJS | null>(null);
-  const [initialData, setInitialData] = useState<any | null>(null);
+  const [initialData, setInitialData] = useState<OutputData | null>(null);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -53,31 +53,47 @@ const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
     fetchInitialData();
   }, [noteId, subpageId]);
 
-  const flattenTableData = (data: any) => {
-    if (Array.isArray(data)) {
-      return data.map((row: any) => (Array.isArray(row) ? row.join(",") : row));
-    }
-    return data;
-  };
-
-  const saveDocument = async (outputData: any) => {
-    const noteDocRef = doc(db, "notes", noteId);
-
-    // Flatten any nested arrays, especially in table blocks
-    const processedData = {
-      ...outputData,
-      blocks: outputData.blocks.map((block: any) => {
+  const processContent = (content: OutputData): OutputData => {
+    return {
+      ...content,
+      blocks: content.blocks.map((block) => {
+        if (block.type === "header") {
+          return {
+            ...block,
+            data: {
+              ...block.data,
+              text: block.data.text.replace(/^#+\s*/, ""),
+            },
+          };
+        }
+        if (block.type === "paragraph") {
+          return {
+            ...block,
+            data: {
+              ...block.data,
+              text: block.data.text.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>"),
+            },
+          };
+        }
         if (block.type === "table") {
           return {
             ...block,
             data: {
-              content: flattenTableData(block.data.content),
+              ...block.data,
+              content: block.data.content.map((row: string[]) =>
+                row.map((cell) => cell.trim())
+              ),
             },
           };
         }
         return block;
       }),
     };
+  };
+
+  const saveDocument = async (outputData: OutputData) => {
+    const noteDocRef = doc(db, "notes", noteId);
+    const processedData = processContent(outputData);
 
     if (subpageId) {
       const noteSnapshot = await getDoc(noteDocRef);
@@ -99,94 +115,74 @@ const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
     return getDownloadURL(storageRef);
   };
 
+  const initializeEditor = (data: OutputData) => {
+    if (editorRef.current) {
+      editorRef.current.destroy();
+    }
+
+    editorRef.current = new EditorJS({
+      holder: "editorjs",
+      data: data,
+      placeholder: "Type here to write your note...",
+      onChange: async () => {
+        if (editorRef.current) {
+          const outputData = await editorRef.current.save();
+          saveDocument(outputData);
+        }
+      },
+      tools: {
+        header: {
+          class: Header,
+          inlineToolbar: ["marker", "link"],
+          config: {
+            placeholder: "Enter a header",
+            levels: [1, 2, 3, 4],
+            defaultLevel: 3,
+          },
+        },
+        alert: Alert,
+        list: {
+          class: List,
+          inlineToolbar: true,
+        },
+        image: {
+          class: Image,
+          config: {
+            uploader: {
+              uploadByFile: async (file: File) => {
+                const url = await uploadImageToFirebase(file);
+                return {
+                  success: 1,
+                  file: {
+                    url,
+                  },
+                };
+              },
+            },
+          },
+        },
+        code: Code,
+        linkTool: {
+          class: LinkTool,
+          config: {
+            endpoint: "/api/link",
+          },
+        },
+        raw: Raw,
+        embed: Embed,
+        quote: Quote,
+        marker: Marker,
+        checklist: CheckList,
+        delimiter: Delimiter,
+        inlineCode: InlineCode,
+        table: Table,
+      },
+    });
+  };
+
   useEffect(() => {
     if (initialData) {
-      const initEditor = async () => {
-        if (!editorRef.current) {
-          const editor = new EditorJS({
-            holder: "editorjs",
-            data: initialData,
-            placeholder: "Type here to write your note...",
-            onChange: (api: any, event: CustomEvent) => {
-              api.saver.save().then((outputData: any) => {
-                saveDocument(outputData);
-              });
-            },
-            tools: {
-              header: {
-                class: Header,
-                inlineToolbar: ["marker", "link"],
-                config: {
-                  placeholder: "Enter a header",
-                  levels: [1, 2, 3, 4],
-                  defaultLevel: 3,
-                },
-              },
-              alert: {
-                class: Alert,
-                inlineToolbar: true,
-                shortcut: "CMD+SHIFT+A",
-                config: {
-                  alertTypes: [
-                    "primary",
-                    "secondary",
-                    "info",
-                    "success",
-                    "warning",
-                    "danger",
-                    "light",
-                    "dark",
-                  ],
-                  defaultType: "primary",
-                  messagePlaceholder: "Enter something",
-                },
-              },
-              list: {
-                class: List,
-                inlineToolbar: true,
-                config: {
-                  defaultStyle: "unordered",
-                },
-              },
-              image: {
-                class: Image,
-                config: {
-                  uploader: {
-                    uploadByFile: async (file: File) => {
-                      const url = await uploadImageToFirebase(file);
-                      return {
-                        success: 1,
-                        file: {
-                          url,
-                        },
-                      };
-                    },
-                  },
-                },
-              },
-              code: Code,
-              linkTool: {
-                class: LinkTool,
-                config: {
-                  endpoint: "/api/link",
-                },
-              },
-              raw: Raw,
-              embed: Embed,
-              quote: Quote,
-              marker: Marker,
-              checklist: CheckList,
-              delimiter: Delimiter,
-              inlineCode: InlineCode,
-              table: Table,
-            },
-          });
-
-          editorRef.current = editor;
-        }
-      };
-
-      initEditor();
+      initializeEditor(initialData);
     }
 
     return () => {
@@ -200,8 +196,20 @@ const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
     };
   }, [initialData]);
 
+  const handleAIContentGenerated = (content: OutputData) => {
+    const processedContent = processContent(content);
+    if (editorRef.current) {
+      editorRef.current.render(processedContent);
+    } else {
+      initializeEditor(processedContent);
+    }
+  };
+
   return (
     <div className="px-20 py-4">
+      <div className="fixed bottom-5 md:ml-80 left-0 z-10">
+        <GenerateAIContent onContentGenerated={handleAIContentGenerated} />
+      </div>
       <div id="editorjs"></div>
     </div>
   );
