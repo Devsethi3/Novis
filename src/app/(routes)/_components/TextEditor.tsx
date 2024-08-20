@@ -64,7 +64,7 @@ const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
               ...block.data,
               content: block.data.content.map(
                 (row: string[]) =>
-                  row.map((cell) => cell.trim().replace(/\s+/g, " ")) // Trim + replace multiple spaces with 
+                  row.map((cell) => cell.trim().replace(/\s+/g, " ")) // Trim + replace multiple spaces with single space
               ),
             },
           };
