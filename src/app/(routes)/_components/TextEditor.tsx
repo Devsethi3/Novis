@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import EditorJS, { OutputData } from "@editorjs/editorjs";
+import EditorJS, { any } from "@editorjs/editorjs";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/lib/firebase.config";
@@ -28,9 +28,11 @@ interface TextEditorProps {
   subpageId?: string;
 }
 
+type EditorJS = /*unresolved*/ any;
+
 const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
   const editorRef = useRef<EditorJS | null>(null);
-  const [initialData, setInitialData] = useState<OutputData | null>(null);
+  const [initialData, setInitialData] = useState<any | null>(null);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -53,10 +55,10 @@ const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
     fetchInitialData();
   }, [noteId, subpageId]);
 
-  const processContent = (content: OutputData): OutputData => {
+  const processContent = (content: any): any => {
     return {
       ...content,
-      blocks: content.blocks.map((block) => {
+      blocks: content.blocks.map((block: any) => {
         if (block.type === "header") {
           return {
             ...block,
@@ -91,9 +93,9 @@ const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
     };
   };
 
-  const saveDocument = async (outputData: OutputData) => {
+  const saveDocument = async (any: any) => {
     const noteDocRef = doc(db, "notes", noteId);
-    const processedData = processContent(outputData);
+    const processedData = processContent(any);
 
     if (subpageId) {
       const noteSnapshot = await getDoc(noteDocRef);
@@ -115,7 +117,7 @@ const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
     return getDownloadURL(storageRef);
   };
 
-  const initializeEditor = (data: OutputData) => {
+  const initializeEditor = (data: any) => {
     if (editorRef.current) {
       editorRef.current.destroy();
     }
@@ -126,8 +128,8 @@ const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
       placeholder: "Type here to write your note...",
       onChange: async () => {
         if (editorRef.current) {
-          const outputData = await editorRef.current.save();
-          saveDocument(outputData);
+          const any = await editorRef.current.save();
+          saveDocument(any);
         }
       },
       tools: {
@@ -196,7 +198,7 @@ const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
     };
   }, [initialData]);
 
-  const handleAIContentGenerated = (content: OutputData) => {
+  const handleAIContentGenerated = (content: any) => {
     const processedContent = processContent(content);
     if (editorRef.current) {
       editorRef.current.render(processedContent);
