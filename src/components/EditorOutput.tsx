@@ -1,10 +1,11 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Image from "next/image";
-import React from "react";
 import CustomCodeRenderer from "./CustomCodeRenderer";
-
+import CustomTableRenderer from "./CustomTableRenderer";
+import CustomAlertRenderer from "./CustomAlertRenderer";
+import CustomImageRenderer from "./CustomImageRenderer";
+import CustomListRenderer from "./CustomListRenderer";
 
 // Dynamically import the editorjs-react-renderer without SSR
 const Output = dynamic(
@@ -161,121 +162,6 @@ const style = {
   },
 };
 
-function CustomListRenderer({ data }: any) {
-  const listType = data.style === "ordered" ? "ol" : "ul";
-  const ListTag = listType as keyof JSX.IntrinsicElements;
-
-  // Function to remove HTML tags from a string
-  const stripHtml = (html: string) => {
-    const tmp = document.createElement("DIV");
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || "";
-  };
-
-  return (
-    <ListTag className="list-inside my-4 ml-4">
-      {data.items.map((item: string, index: number) => (
-        <li key={index} className="mb-2">
-          {listType === "ol" ? `${index + 1}. ` : "• "}
-          {stripHtml(item)}
-        </li>
-      ))}
-    </ListTag>
-  );
-}
-
-function CustomTableRenderer({ data }: any) {
-  return (
-    <div className="overflow-x-auto my-4">
-      <table className="w-full border-collapse">
-        <thead>
-          {data.withHeadings && (
-            <tr>
-              {data.content[0].map((heading: string, index: number) => (
-                <th
-                  key={index}
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-gray-200 dark:bg-gray-700 text-left text-gray-700 dark:text-gray-300 font-semibold"
-                >
-                  {heading}
-                </th>
-              ))}
-            </tr>
-          )}
-        </thead>
-        <tbody>
-          {data.content
-            .slice(data.withHeadings ? 1 : 0)
-            .map((row: string[], rowIndex: number) => (
-              <tr
-                key={rowIndex}
-                className={
-                  rowIndex % 2 === 0
-                    ? "bg-white dark:bg-gray-800"
-                    : "bg-gray-50 dark:bg-gray-900"
-                }
-              >
-                {row.map((cell: string, cellIndex: number) => (
-                  <td
-                    key={cellIndex}
-                    className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-700 dark:text-gray-300"
-                  >
-                    {cell}
-                  </td>
-                ))}
-              </tr>
-            ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function CustomImageRenderer({ data }: any) {
-  const src = data.file?.url || data.url;
-  const caption = data.caption || "";
-  const stretched = data.stretched || false;
-  const withBackground = data.withBackground || false;
-  const withBorder = data.withBorder || false;
-
-  let imageClasses = "max-w-full h-auto my-4";
-  let containerClasses = "relative";
-
-  if (stretched) {
-    containerClasses += " w-full";
-  } else {
-    containerClasses += " max-w-2xl mx-auto";
-  }
-
-  if (withBackground) {
-    containerClasses += " bg-gray-100 p-4";
-  }
-
-  if (withBorder) {
-    imageClasses += " border border-gray-300";
-  }
-
-  return (
-    <figure className={containerClasses}>
-      <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-        {" "}
-        {/* 16:9 aspect ratio */}
-        <Image
-          src={src}
-          alt={caption}
-          layout="fill"
-          objectFit="contain"
-          className={imageClasses}
-        />
-      </div>
-      {caption && (
-        <figcaption className="text-center text-sm text-gray-500 mt-2">
-          {caption}
-        </figcaption>
-      )}
-    </figure>
-  );
-}
-
 function CustomEmbedRenderer({ data }: any) {
   if (!data.embed) return null;
 
@@ -295,38 +181,6 @@ function CustomEmbedRenderer({ data }: any) {
       {data.caption && (
         <p className="text-center text-sm text-gray-500 mt-2">{data.caption}</p>
       )}
-    </div>
-  );
-}
-
-function CustomAlertRenderer({ data }: any) {
-  const type = data.type || "info";
-  const alignment = data.align || "left";
-
-  const typeToColor = {
-    primary: "bg-blue-100 border-blue-500 text-blue-700",
-    secondary: "bg-gray-100 border-gray-500 text-gray-700",
-    info: "bg-blue-100 border-blue-500 text-blue-700",
-    success: "bg-green-100 border-green-500 text-green-700",
-    warning: "bg-yellow-100 border-yellow-500 text-yellow-700",
-    danger: "bg-red-100 border-red-500 text-red-700",
-    light: "bg-gray-50 border-gray-300 text-gray-800",
-    dark: "bg-gray-800 border-gray-900 text-gray-100",
-  };
-
-  const alignmentClasses = {
-    left: "text-left",
-    center: "text-center",
-    right: "text-right",
-  };
-
-  return (
-    <div
-      className={`border rounded-md p-3 my-4 ${
-        typeToColor[type as keyof typeof typeToColor]
-      } ${alignmentClasses[alignment as keyof typeof alignmentClasses]}`}
-    >
-      <p className="m-0">{data.message}</p>
     </div>
   );
 }
