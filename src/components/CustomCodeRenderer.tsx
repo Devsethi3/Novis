@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { FiCopy, FiCheck } from "react-icons/fi";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { atomOneDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 interface CodeRendererProps {
   data: {
@@ -13,7 +13,6 @@ interface CodeRendererProps {
 
 const CustomCodeRenderer = ({ data }: CodeRendererProps) => {
   const [copied, setCopied] = useState(false);
-  SyntaxHighlighter.supportedLanguages;
   const [showCheckmark, setShowCheckmark] = useState(false);
 
   useEffect(() => {
@@ -23,6 +22,7 @@ const CustomCodeRenderer = ({ data }: CodeRendererProps) => {
       setShowCheckmark(true);
       timeout = setTimeout(() => {
         setShowCheckmark(false);
+        setCopied(false); // Reset the copied state
       }, 1000);
     }
 
@@ -37,34 +37,30 @@ const CustomCodeRenderer = ({ data }: CodeRendererProps) => {
     <div className="relative my-4">
       <CopyToClipboard text={data.code} onCopy={() => setCopied(true)}>
         <button
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-200 focus:outline-none"
+          className={`absolute top-2 right-2 p-2 rounded-md transition-transform hover:bg-gray-700 focus:outline-none text-gray-300`}
           aria-label="Copy to clipboard"
+          style={{ transition: "transform 0.2s" }}
         >
           {showCheckmark ? (
-            <FiCheck size={20} className="text-green-500" />
+            <FiCheck size={20} className="text-white" />
           ) : (
             <FiCopy size={20} />
           )}
         </button>
       </CopyToClipboard>
 
-      {copied && (
-        <div className="absolute top-2 right-8 text-xs text-green-500">
-          Copied!
-        </div>
-      )}
+      <div
+        className={`absolute top-4 right-14 text-sm text-gray-400 transition-opacity ${
+          copied ? "opacity-100" : "opacity-0"
+        }`}
+        style={{ transition: "opacity 0.5s" }}
+      >
+        Copied!
+      </div>
 
       <SyntaxHighlighter
         language={data.language || "javascript"}
         style={atomOneDark}
-        // customStyle={{
-        //   backgroundColor: "#303030",
-        //   color: "#d4d4d4",
-        //   fontFamily: "Menlo, Monaco, 'Courier New', monospace",
-        //   padding: "1rem",
-        //   borderRadius: "0.25rem",
-        //   overflowX: "auto",
-        // }}
         showLineNumbers={true}
         wrapLines={true}
         PreTag="div"
@@ -76,3 +72,4 @@ const CustomCodeRenderer = ({ data }: CodeRendererProps) => {
 };
 
 export default CustomCodeRenderer;
+
