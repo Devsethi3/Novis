@@ -2,7 +2,9 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import React from "react";
 
+// Dynamically import the editorjs-react-renderer without SSR
 const Output = dynamic(
   async () => (await import("editorjs-react-renderer")).default,
   { ssr: false }
@@ -118,36 +120,45 @@ function CustomListRenderer({ data }: any) {
 }
 
 function CustomTableRenderer({ data }: any) {
-  const rows = data.content.map((row: string) => row.split(","));
-
   return (
     <div className="overflow-x-auto my-4">
-      <table className="w-full border-collapse border border-gray-300">
+      <table className="w-full border-collapse">
         <thead>
-          <tr>
-            {rows[0].map((header: string, index: number) => (
-              <th
-                key={index}
-                className="border border-gray-300 p-2 bg-gray-100 font-semibold text-left"
-              >
-                {header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.slice(1).map((row: string[], rowIndex: number) => (
-            <tr key={rowIndex}>
-              {row.map((cell: string, cellIndex: number) => (
-                <td
-                  key={cellIndex}
-                  className="border border-gray-300 p-2 text-left"
+          {data.withHeadings && (
+            <tr>
+              {data.content[0].map((heading: string, index: number) => (
+                <th
+                  key={index}
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-gray-200 dark:bg-gray-700 text-left text-gray-700 dark:text-gray-300 font-semibold"
                 >
-                  {cell}
-                </td>
+                  {heading}
+                </th>
               ))}
             </tr>
-          ))}
+          )}
+        </thead>
+        <tbody>
+          {data.content
+            .slice(data.withHeadings ? 1 : 0)
+            .map((row: string[], rowIndex: number) => (
+              <tr
+                key={rowIndex}
+                className={
+                  rowIndex % 2 === 0
+                    ? "bg-white dark:bg-gray-800"
+                    : "bg-gray-50 dark:bg-gray-900"
+                }
+              >
+                {row.map((cell: string, cellIndex: number) => (
+                  <td
+                    key={cellIndex}
+                    className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-700 dark:text-gray-300"
+                  >
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>
@@ -264,9 +275,22 @@ function CustomAlertRenderer({ data }: any) {
 }
 
 const EditorOutput: React.FC<EditorOutputProps> = ({ content }) => {
+  let parsedContent;
+  try {
+    parsedContent = typeof content === "string" ? JSON.parse(content) : content;
+  } catch (error) {
+    console.error("Error parsing content:", error);
+    return <div>Invalid content format</div>;
+  }
+
+  // Check if the content has blocks
+  if (!parsedContent || !parsedContent.blocks) {
+    return <div>No content to display</div>;
+  }
+
   return (
     <Output
-      data={content}
+      data={parsedContent}
       style={style}
       className="text-sm"
       renderers={renderers}
