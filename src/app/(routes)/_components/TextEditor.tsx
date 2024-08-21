@@ -28,6 +28,9 @@ interface TextEditorProps {
   subpageId?: string;
 }
 
+type OutputData = /*unresolved*/ any;
+type EditorJS = /*unresolved*/ any;
+
 const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
   const editorRef = useRef<EditorJS | null>(null);
   const [initialData, setInitialData] = useState<OutputData | null>(null);

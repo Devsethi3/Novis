@@ -27,42 +27,90 @@ const style = {
   paragraph: {
     fontSize: "0.875rem",
     lineHeight: "1.25rem",
+    "@media (min-width: 640px)": {
+      fontSize: "1rem",
+      lineHeight: "1.5rem",
+    },
+    "@media (min-width: 768px)": {
+      fontSize: "1.125rem",
+      lineHeight: "1.75rem",
+    },
   },
   header: {
     h1: {
-      fontSize: "1.875rem",
-      fontWeight: "600",
-      lineHeight: "2.25rem",
-      marginTop: "1.5rem",
-      marginBottom: "1rem",
-    },
-    h2: {
       fontSize: "1.5rem",
       fontWeight: "600",
       lineHeight: "2rem",
       marginTop: "1.5rem",
-      marginBottom: "0.75rem",
+      marginBottom: "1rem",
+      "@media (min-width: 640px)": {
+        fontSize: "1.875rem",
+        lineHeight: "2.25rem",
+      },
+      "@media (min-width: 768px)": {
+        fontSize: "2.25rem",
+        lineHeight: "2.5rem",
+      },
     },
-    h3: {
+    h2: {
       fontSize: "1.25rem",
       fontWeight: "600",
       lineHeight: "1.75rem",
       marginTop: "1.5rem",
-      marginBottom: "0.5rem",
+      marginBottom: "0.75rem",
+      "@media (min-width: 640px)": {
+        fontSize: "1.5rem",
+        lineHeight: "2rem",
+      },
+      "@media (min-width: 768px)": {
+        fontSize: "1.875rem",
+        lineHeight: "2.25rem",
+      },
     },
-    h4: {
+    h3: {
       fontSize: "1.125rem",
       fontWeight: "600",
       lineHeight: "1.5rem",
       marginTop: "1.5rem",
       marginBottom: "0.5rem",
+      "@media (min-width: 640px)": {
+        fontSize: "1.25rem",
+        lineHeight: "1.75rem",
+      },
+      "@media (min-width: 768px)": {
+        fontSize: "1.5rem",
+        lineHeight: "2rem",
+      },
     },
-    h5: {
+    h4: {
       fontSize: "1rem",
       fontWeight: "600",
       lineHeight: "1.5rem",
       marginTop: "1.5rem",
       marginBottom: "0.5rem",
+      "@media (min-width: 640px)": {
+        fontSize: "1.125rem",
+        lineHeight: "1.75rem",
+      },
+      "@media (min-width: 768px)": {
+        fontSize: "1.25rem",
+        lineHeight: "1.75rem",
+      },
+    },
+    h5: {
+      fontSize: "0.9375rem",
+      fontWeight: "600",
+      lineHeight: "1.5rem",
+      marginTop: "1.5rem",
+      marginBottom: "0.5rem",
+      "@media (min-width: 640px)": {
+        fontSize: "1rem",
+        lineHeight: "1.5rem",
+      },
+      "@media (min-width: 768px)": {
+        fontSize: "1.125rem",
+        lineHeight: "1.5rem",
+      },
     },
     h6: {
       fontSize: "0.875rem",
@@ -70,6 +118,14 @@ const style = {
       lineHeight: "1.25rem",
       marginTop: "1.5rem",
       marginBottom: "0.5rem",
+      "@media (min-width: 640px)": {
+        fontSize: "0.9375rem",
+        lineHeight: "1.25rem",
+      },
+      "@media (min-width: 768px)": {
+        fontSize: "1rem",
+        lineHeight: "1.5rem",
+      },
     },
   },
   list: {
@@ -84,9 +140,16 @@ const style = {
       borderRadius: "4px",
     },
     content: {
-      fontSize:
-        "1.125rem" /* Slightly larger font size for better readability */,
-      lineHeight: "1.75rem" /* Increased line height for better readability */,
+      fontSize: "1.125rem",
+      lineHeight: "1.75rem",
+      "@media (min-width: 640px)": {
+        fontSize: "1.25rem",
+        lineHeight: "2rem",
+      },
+      "@media (min-width: 768px)": {
+        fontSize: "1.5rem",
+        lineHeight: "2.25rem",
+      },
     },
   },
   table: {
