@@ -3,6 +3,8 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import React from "react";
+import CustomCodeRenderer from "./CustomCodeRenderer";
+
 
 // Dynamically import the editorjs-react-renderer without SSR
 const Output = dynamic(
@@ -271,14 +273,6 @@ function CustomImageRenderer({ data }: any) {
         </figcaption>
       )}
     </figure>
-  );
-}
-
-function CustomCodeRenderer({ data }: any) {
-  return (
-    <pre className="bg-gray-800 rounded-md p-4 my-4 overflow-x-auto">
-      <code className="text-gray-100 text-sm">{data.code}</code>
-    </pre>
   );
 }
 
