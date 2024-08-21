@@ -22,7 +22,7 @@ const CustomCodeRenderer = ({ data }: CodeRendererProps) => {
       setShowCheckmark(true);
       timeout = setTimeout(() => {
         setShowCheckmark(false);
-        setCopied(false); // Reset the copied state
+        setCopied(false);
       }, 1000);
     }
 
@@ -37,7 +37,7 @@ const CustomCodeRenderer = ({ data }: CodeRendererProps) => {
     <div className="relative my-4">
       <CopyToClipboard text={data.code} onCopy={() => setCopied(true)}>
         <button
-          className={`absolute top-2 right-2 p-2 rounded-md transition-transform hover:bg-gray-700 focus:outline-none text-gray-300`}
+          className={`absolute top-2 right-2 p-2 rounded-md transition-transform bg-gray-800 hover:bg-gray-700 focus:outline-none text-gray-300`}
           aria-label="Copy to clipboard"
           style={{ transition: "transform 0.2s" }}
         >

@@ -71,6 +71,7 @@ const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
   const processContent = (content: OutputData): OutputData => {
     return {
       ...content,
+      // @ts-ignore
       blocks: content.blocks.map((block) => {
         if (block.type === "header") {
           return {
