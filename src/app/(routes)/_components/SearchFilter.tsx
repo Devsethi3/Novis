@@ -1,5 +1,3 @@
-// SearchFilter.tsx
-
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -13,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { collection, query, getDocs, where } from "firebase/firestore";
 import { db } from "@/lib/firebase.config";
 import Link from "next/link";
-import { FiFile, FiFolder, FiSearch } from "react-icons/fi";
+import { FiFile, FiFolder, FiSearch, FiTrash2 } from "react-icons/fi";
 import useAuth from "@/lib/useAuth";
 
 interface SearchFilterProps {
@@ -27,6 +25,8 @@ interface SearchItem {
   title: string;
   type: "page" | "subpage";
   parentId?: string;
+  parentTitle?: string; // Added this field
+  isTrash: boolean;
 }
 
 const SearchFilter: React.FC<SearchFilterProps> = ({
@@ -60,10 +60,13 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
 
     notesSnapshot.forEach((doc) => {
       const data = doc.data();
+      const parentTitle = data.title || "Untitled"; // Set parent title
+
       fetchedItems.push({
         id: doc.id,
-        title: data.title || "Untitled",
+        title: parentTitle,
         type: "page",
+        isTrash: data.isTrash || false,
       });
 
       if (data.subpages && Array.isArray(data.subpages)) {
@@ -73,6 +76,8 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
             title: subpage.title || "Untitled",
             type: "subpage",
             parentId: doc.id,
+            parentTitle: parentTitle, // Set parent title for subpage
+            isTrash: subpage.isTrash || false,
           });
         });
       }
@@ -85,6 +90,14 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
   const filteredItems = items.filter((item) =>
     item.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  function truncateText(text: string, wordLimit: number) {
+    const words = text.split(" ");
+    if (words.length > wordLimit) {
+      return words.slice(0, wordLimit).join(" ") + "...";
+    }
+    return text;
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -122,7 +135,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
                       : `/dashboard/${item.parentId}/${item.id}`
                   }
                   className={cn(
-                    "flex items-center gap-3 p-3 rounded-lg transition-colors duration-200",
+                    "flex items-center gap-3 p-3 border rounded-lg transition-colors duration-200",
                     "hover:bg-accent hover:text-accent-foreground"
                   )}
                   onClick={() => onOpenChange(false)}
@@ -141,12 +154,32 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
                       <FiFile className="w-5 h-5" />
                     )}
                   </div>
-                  <div>
-                    <div className="font-medium">{item.title}</div>
+                  <div className="flex-1">
+                    <div className="font-medium line-clamp-1">{item.title}</div>
                     <div className="text-sm text-muted-foreground">
-                      {item.type === "page" ? "Page" : "Subpage"}
+                      <div className="flex items-center">
+                        {item.type === "page" ? "Page" : "Subpage"}
+                        {item.type === "subpage" && item.parentTitle && (
+                          <>
+                            {item.parentTitle && (
+                              <span className="mx-1">/</span>
+                            )}
+                            <div className="text-xs text-muted-foreground mt-1 truncate">
+                              Parent: {truncateText(item.parentTitle, 4)}
+                            </div>
+                          </>
+                        )}
+                        {item.isTrash && (
+                          <span className="ml-2 text-red-500 text-xs">
+                            (In Trash)
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
+                  {item.isTrash && (
+                    <FiTrash2 className="text-red-500 w-5 h-5" />
+                  )}
                 </Link>
               ))}
             </div>
