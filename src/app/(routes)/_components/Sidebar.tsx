@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -26,7 +27,6 @@ import {
   addDoc,
   doc,
   updateDoc,
-  deleteDoc,
   serverTimestamp,
   getDoc,
 } from "firebase/firestore";
@@ -367,11 +367,11 @@ const Sidebar = () => {
                         className={cn(
                           "flex items-center rounded-md px-4 py-3 transition-colors duration-200",
                           "hover:bg-accent hover:text-accent-foreground",
-                          "cursor-pointer"
+                          isActive(item.href) &&
+                            "bg-primary text-white hover:bg-primary hover:text-white"
                         )}
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={() => setIsSearchOpen(true)}
                       >
                         <div className="flex items-center justify-between w-full">
                           <div className="flex items-center gap-2">
@@ -390,6 +390,21 @@ const Sidebar = () => {
                               )}
                             </AnimatePresence>
                           </div>
+                          {sidebarOpen && (
+                            <motion.span
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: -10 }}
+                              transition={{ duration: 0.2 }}
+                              // className="ml-3 font-medium"
+                            >
+                              {item.badge && (
+                                <span className="bg-secondary px-2 py-1 text-sm rounded-md">
+                                  {item.badge}
+                                </span>
+                              )}
+                            </motion.span>
+                          )}
                         </div>
                       </motion.div>
                     </Link>
@@ -398,7 +413,6 @@ const Sidebar = () => {
               ))}
             </ul>
           </nav>
-
           {sidebarOpen ? (
             <>
               <div className="px-4 mt-4 flex gap-4 justify-between items-center">

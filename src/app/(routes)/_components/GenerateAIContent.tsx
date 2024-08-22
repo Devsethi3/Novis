@@ -35,12 +35,15 @@ const GenerateAIContent: React.FC<GenerateAIContentProps> = ({
       const prompt = `Generate template for editor.js in JSON format for: ${userInput}`;
       const result = await chatSession.sendMessage(prompt);
       const responseText = await result.response.text();
-  
+
       // Validate that the response is in valid JSON format before parsing
-      if (!responseText.trim().startsWith("{") && !responseText.trim().startsWith("[")) {
+      if (
+        !responseText.trim().startsWith("{") &&
+        !responseText.trim().startsWith("[")
+      ) {
         throw new Error("AI response is not in valid JSON format");
       }
-  
+
       let parsedContent;
       try {
         parsedContent = JSON.parse(responseText);
@@ -49,10 +52,10 @@ const GenerateAIContent: React.FC<GenerateAIContentProps> = ({
         toast.error("Failed to parse AI response. Please try again.");
         return;
       }
-  
+
       setGeneratedContent(parsedContent);
       console.log(parsedContent);
-  
+
       if (onContentGenerated) {
         onContentGenerated(parsedContent);
       }

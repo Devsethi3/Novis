@@ -16,6 +16,7 @@ import {
 import { TbWorld } from "react-icons/tb";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-hot-toast";
+import { FiCheck, FiCopy } from "react-icons/fi";
 
 interface NoteData {
   id: string;
@@ -48,6 +49,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
   const [publishedUrl, setPublishedUrl] = useState<string | null>(
     data.publishedUrl
   );
+  const [copied, setIsCopied] = useState(false);
 
   useEffect(() => {
     if (data.banner) {
@@ -104,6 +106,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
       await onUpdate("isPublished", true);
       await onUpdate("publishedUrl", newPublishedUrl);
       setIsPublished(true);
+      setIsCopied(true);
       setPublishedUrl(newPublishedUrl);
       toast.success("Note published successfully");
     } catch (error) {
@@ -128,7 +131,9 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
   const copyPublishedUrl = () => {
     if (publishedUrl) {
       navigator.clipboard.writeText(`${window.location.origin}${publishedUrl}`);
+      setIsCopied(true);
       toast.success("Published URL copied to clipboard");
+      setTimeout(() => setIsCopied(false), 1000); // Reset icon after 2 seconds
     }
   };
 
@@ -159,7 +164,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
           <DropdownMenuTrigger asChild>
             <Button>{isPublished ? "Published" : "Publish"}</Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-64 m-2 shadow-xl">
+          <DropdownMenuContent className="w-72 m-2 shadow-xl">
             <div className="flex items-center flex-col px-4 py-3">
               <TbWorld size={30} className="opacity-80" />
               <h3 className="text-xl font-bold text-center mt-2 opacity-80">
@@ -172,18 +177,27 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
               </p>
               {isPublished ? (
                 <div className="w-full mt-4 space-y-2">
-                  <Input
-                    type="text"
-                    value={`${window.location.origin}${publishedUrl}`}
-                    readOnly
-                    className="text-sm"
-                  />
-                  <Button className="w-full" onClick={copyPublishedUrl}>
-                    Copy link
-                  </Button>
+                  <div className="relative">
+                    <Input
+                      type="text"
+                      value={`${window.location.origin}${publishedUrl}`}
+                      readOnly
+                      className="text-sm pr-12 bg-transparent border rounded-md"
+                    />
+                    <div
+                      className="absolute inset-y-0 right-0 hover:bg-secondary rounded-r-md flex items-center px-3 cursor-pointer"
+                      onClick={copyPublishedUrl}
+                    >
+                      {copied ? (
+                        <FiCheck className="h-5 w-5 text-green-500" />
+                      ) : (
+                        <FiCopy className="h-5 w-5 text-gray-500" />
+                      )}
+                    </div>
+                  </div>
                   <Button
-                    variant="destructive"
-                    className="w-full"
+                    variant="secondary"
+                    className="w-full mt-2"
                     onClick={handleUnpublish}
                   >
                     Unpublish

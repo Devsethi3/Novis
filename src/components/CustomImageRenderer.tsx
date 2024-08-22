@@ -11,17 +11,17 @@ const CustomImageRenderer = ({ data }: { data: any }) => {
   let containerClasses = "relative";
 
   if (stretched) {
-    containerClasses += " w-full";
+    containerClasses += "w-full";
   } else {
-    containerClasses += " max-w-2xl mx-auto";
+    containerClasses += "max-w-2xl mx-auto";
   }
 
   if (withBackground) {
-    containerClasses += " bg-gray-100 p-4";
+    containerClasses += "bg-gray-100 p-4";
   }
 
   if (withBorder) {
-    imageClasses += " border border-gray-300";
+    imageClasses += "border border-gray-300";
   }
 
   return (

@@ -187,7 +187,7 @@ const UploadBanner: React.FC<UploadBannerProps> = ({
         {preview && (
           <div className="flex justify-center mt-4">
             <Button
-              variant="ghost"
+              variant="secondary"
               className="w-full"
               onClick={() => setPreview(null)}
             >
