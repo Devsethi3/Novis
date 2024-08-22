@@ -16,7 +16,6 @@ import {
 import { TbWorld } from "react-icons/tb";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-hot-toast";
-import GenerateAIContent from "./GenerateAIContent";
 
 interface NoteData {
   id: string;
@@ -162,8 +161,8 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-64 m-2 shadow-xl">
             <div className="flex items-center flex-col px-4 py-3">
-              <TbWorld size={30} className="opacity-60" />
-              <h3 className="text-xl font-bold text-center mt-2 opacity-60">
+              <TbWorld size={30} className="opacity-80" />
+              <h3 className="text-xl font-bold text-center mt-2 opacity-80">
                 {isPublished ? "Manage publication" : "Publish this note"}
               </h3>
               <p className="text-sm text-center mt-1">
@@ -177,7 +176,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
                     type="text"
                     value={`${window.location.origin}${publishedUrl}`}
                     readOnly
-                    className="bg-gray-100 px-3 py-2 rounded text-sm"
+                    className="text-sm"
                   />
                   <Button className="w-full" onClick={copyPublishedUrl}>
                     Copy link
@@ -209,17 +208,19 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
             />
           )}
           <div className="absolute bottom-4 right-4 flex gap-2">
-            <UploadBanner
-              noteId={noteId}
-              subpageId={isSubpage ? data.id : undefined}
-              currentBanner={bannerUrl}
-              onBannerUpdate={handleBannerUpdate}
-            />
             {bannerUrl && (
-              <Button variant="secondary" onClick={handleRemoveBanner}>
-                <IoClose className="mr-2" size={18} />
-                Remove Banner
-              </Button>
+              <>
+                <UploadBanner
+                  noteId={noteId}
+                  subpageId={isSubpage ? data.id : undefined}
+                  currentBanner={bannerUrl}
+                  onBannerUpdate={handleBannerUpdate}
+                />
+                <Button variant="secondary" onClick={handleRemoveBanner}>
+                  <IoClose className="mr-2" size={18} />
+                  Remove Banner
+                </Button>
+              </>
             )}
           </div>
         </div>
@@ -278,9 +279,6 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
           subpageId={isSubpage ? data.id : undefined}
         />
       </div>
-      {/* <div className="fixed bottom-5 md:ml-80 left-0 z-10">
-        <GenerateAIContent />
-      </div> */}
     </div>
   );
 };
