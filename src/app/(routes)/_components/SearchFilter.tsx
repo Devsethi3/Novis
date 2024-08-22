@@ -10,10 +10,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { collection, query, getDocs } from "firebase/firestore";
+import { collection, query, getDocs, where } from "firebase/firestore";
 import { db } from "@/lib/firebase.config";
 import Link from "next/link";
 import { FiFile, FiFolder, FiSearch } from "react-icons/fi";
+import useAuth from "@/lib/useAuth";
 
 interface SearchFilterProps {
   trigger: React.ReactNode;
@@ -36,17 +37,23 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [items, setItems] = useState<SearchItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const { currentUser } = useAuth(); // Get the current user
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && currentUser) {
       setSearchTerm("");
       fetchItems();
     }
-  }, [isOpen]);
+  }, [isOpen, currentUser]);
 
   const fetchItems = async () => {
+    if (!currentUser) return;
+
     setLoading(true);
-    const notesQuery = query(collection(db, "notes"));
+    const notesQuery = query(
+      collection(db, "notes"),
+      where("author", "==", currentUser.email)
+    );
     const notesSnapshot = await getDocs(notesQuery);
 
     const fetchedItems: SearchItem[] = [];

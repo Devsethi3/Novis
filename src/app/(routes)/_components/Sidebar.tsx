@@ -47,6 +47,7 @@ interface Note {
   id: string;
   title: string;
   emoji: string;
+  isTrash: boolean;
   author: string;
   subpages?: {
     id: string;
@@ -105,6 +106,7 @@ const Sidebar = () => {
               id: doc.id,
               title: data.title,
               emoji: data.emoji,
+              isTrash: data.isTrash,
               author: data.author,
               subpages: data.subpages || [],
             });
@@ -172,6 +174,7 @@ const Sidebar = () => {
       const noteRef = doc(db, "notes", noteId);
       await updateDoc(noteRef, {
         deleted: true,
+        isTrash: true,
         deletedAt: serverTimestamp(),
       });
       router.push("/dashboard");

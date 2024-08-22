@@ -68,6 +68,7 @@ const SubpagePage: React.FC = () => {
 
   return (
     <NotePageContent
+      // @ts-ignore
       data={subpageData}
       isSubpage={true}
       noteId={noteId}
