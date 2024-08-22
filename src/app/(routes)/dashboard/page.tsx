@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { db } from "@/lib/firebase.config";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
 import useAuth from "@/lib/useAuth";
@@ -19,10 +19,11 @@ const DashboardPage: React.FC = () => {
     try {
       const noteRef = await addDoc(collection(db, "notes"), {
         title: "Untitled",
-        emoji: "📝", // Default emoji
-        banner: "",
-        createdAt: new Date(),
+        emoji: "📝",
         author: currentUser?.email,
+        isTrash: false,
+        createdAt: serverTimestamp(),
+        subpages: [],
       });
 
       router.push(`/dashboard/${noteRef.id}`);

@@ -33,6 +33,8 @@ import {
 import { db } from "@/lib/firebase.config";
 import useAuth from "@/lib/useAuth";
 import { v4 as uuidv4 } from "uuid";
+import SearchFilter from "./SearchFilter";
+import toast from "react-hot-toast";
 
 interface NavItem {
   icon: React.ElementType;
@@ -55,7 +57,7 @@ interface Note {
 }
 
 const navItems: NavItem[] = [
-  { icon: FiSearch, label: "Search", href: "/", badge: "ctrl+k" },
+  { icon: FiSearch, label: "Search", href: "#search", badge: "ctrl+k" },
   { icon: FiSettings, label: "Settings", href: "/dashboard/settings" },
   { icon: FiTrash2, label: "Trash", href: "/dashboard/trash" },
 ];
@@ -75,6 +77,20 @@ const Sidebar = () => {
     }
     return pathname.startsWith(href);
   };
+
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
     if (currentUser) {
@@ -107,14 +123,17 @@ const Sidebar = () => {
         title: "Untitled",
         emoji: "📝",
         author: currentUser.email,
+        isTrash: false,
         createdAt: serverTimestamp(),
         subpages: [],
       };
 
       try {
-        await addDoc(collection(db, "notes"), newPage);
+        const docRef = await addDoc(collection(db, "notes"), newPage);
+        router.push(`/dashboard/${docRef.id}`);
       } catch (error) {
-        console.error("Error creating page:", error);
+        console.error("Error creating note:", error);
+        toast.error("Failed to create page.");
       }
     }
   };
@@ -128,6 +147,7 @@ const Sidebar = () => {
         emoji: "📄",
         author: currentUser.email,
         createdAt: new Date(),
+        isTrash: false,
       };
 
       try {
@@ -300,37 +320,85 @@ const Sidebar = () => {
             <ul>
               {navItems.map((item) => (
                 <li key={item.href} className="my-2 px-3">
-                  <Link href={item.href} passHref>
-                    <motion.div
-                      className={cn(
-                        "flex items-center rounded-md px-4 py-3 transition-colors duration-200",
-                        "hover:bg-accent hover:text-accent-foreground",
-                        isActive(item.href) &&
-                          "bg-primary text-white hover:bg-primary hover:text-white"
-                      )}
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <item.icon className="flex-shrink-0" />
-                      <AnimatePresence>
-                        {sidebarOpen && (
-                          <motion.span
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -10 }}
-                            transition={{ duration: 0.2 }}
-                            className="ml-3 font-medium"
-                          >
-                            {item.label}
-                          </motion.span>
+                  {item.href === "#search" ? (
+                    <SearchFilter
+                      isOpen={isSearchOpen}
+                      onOpenChange={setIsSearchOpen}
+                      trigger={
+                        <motion.div
+                          className={cn(
+                            "flex items-center rounded-md px-4 py-3 transition-colors duration-200",
+                            "hover:bg-accent hover:text-accent-foreground",
+                            "cursor-pointer"
+                          )}
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => setIsSearchOpen(true)}
+                        >
+                          <div className="flex items-center justify-between w-full">
+                            <div className="flex items-center gap-2">
+                              <item.icon className="flex-shrink-0" />
+                              <AnimatePresence>
+                                {sidebarOpen && (
+                                  <motion.span
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -10 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="ml-3 font-medium"
+                                  >
+                                    {item.label}
+                                  </motion.span>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                            {sidebarOpen && item.badge && (
+                              <span className="bg-secondary px-2 py-1 text-sm rounded-md">
+                                {item.badge}
+                              </span>
+                            )}
+                          </div>
+                        </motion.div>
+                      }
+                    />
+                  ) : (
+                    <Link href={item.href} passHref>
+                      <motion.div
+                        className={cn(
+                          "flex items-center rounded-md px-4 py-3 transition-colors duration-200",
+                          "hover:bg-accent hover:text-accent-foreground",
+                          "cursor-pointer"
                         )}
-                      </AnimatePresence>
-                    </motion.div>
-                  </Link>
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setIsSearchOpen(true)}
+                      >
+                        <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center gap-2">
+                            <item.icon className="flex-shrink-0" />
+                            <AnimatePresence>
+                              {sidebarOpen && (
+                                <motion.span
+                                  initial={{ opacity: 0, x: -10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  exit={{ opacity: 0, x: -10 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="ml-3 font-medium"
+                                >
+                                  {item.label}
+                                </motion.span>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
           </nav>
+
           {sidebarOpen ? (
             <>
               <div className="px-4 mt-4 flex gap-4 justify-between items-center">
@@ -346,9 +414,15 @@ const Sidebar = () => {
               </div>
               <div className="px-4 mt-4 flex flex-col">
                 <h2 className="text-sm font-semibold border-b pb-2">Notes</h2>
-                <Accordion type="single" collapsible>
-                  {notes.map(renderNoteItem)}
-                </Accordion>
+                {notes.length === 0 ? (
+                  <div className="text-sm mt-2 text-center text-muted-foreground">
+                    No notes yet. Create your first note to get started!
+                  </div>
+                ) : (
+                  <Accordion type="single" collapsible>
+                    {notes.map(renderNoteItem)}
+                  </Accordion>
+                )}
               </div>
             </>
           ) : (
