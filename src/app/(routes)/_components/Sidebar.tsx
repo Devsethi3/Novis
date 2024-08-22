@@ -47,14 +47,19 @@ interface Note {
   id: string;
   title: string;
   emoji: string;
-  isTrash: boolean;
   author: string;
-  subpages?: {
-    id: string;
-    title: string;
-    emoji: string;
-    author: string;
-  }[];
+  isTrash: boolean;
+  subpages?: Subpage[]; // Use the Subpage interface here
+}
+
+interface Subpage {
+  id: string;
+  title: string;
+  emoji: string;
+  author: string;
+  isTrash: boolean;
+  createdAt?: Date; // Optionally add these if needed
+  deletedAt?: Date;
 }
 
 const navItems: NavItem[] = [
@@ -106,7 +111,7 @@ const Sidebar = () => {
               id: doc.id,
               title: data.title,
               emoji: data.emoji,
-              isTrash: data.isTrash,
+              isTrash: false,
               author: data.author,
               subpages: data.subpages || [],
             });
@@ -123,9 +128,9 @@ const Sidebar = () => {
     if (currentUser) {
       const newPage = {
         title: "Untitled",
+        isTrash: false,
         emoji: "📝",
         author: currentUser.email,
-        isTrash: false,
         createdAt: serverTimestamp(),
         subpages: [],
       };
@@ -169,37 +174,82 @@ const Sidebar = () => {
     }
   };
 
-  const handleDeleteNote = async (noteId: string) => {
+  const handleDeletePage = async (noteId: string) => {
     if (currentUser) {
       const noteRef = doc(db, "notes", noteId);
-      await updateDoc(noteRef, {
-        deleted: true,
-        isTrash: true,
-        deletedAt: serverTimestamp(),
-      });
-      router.push("/dashboard");
+      try {
+        await updateDoc(noteRef, {
+          deleted: true,
+          isTrash: true,
+          deletedAt: serverTimestamp(),
+        });
+        toast.success("Note moved to trash");
+        router.push("/dashboard");
+      } catch (error) {
+        console.error("Error moving note to trash:", error);
+        toast.error("Failed to move note to trash");
+      }
     }
   };
 
   const handleDeleteSubpage = async (
     parentNoteId: string,
-    subpageIndex: number
+    subpageId: string
   ) => {
     if (currentUser) {
       const noteRef = doc(db, "notes", parentNoteId);
-      const noteDoc = await getDoc(noteRef);
+      try {
+        const noteDoc = await getDoc(noteRef);
+        if (noteDoc.exists()) {
+          const noteData = noteDoc.data() as {
+            subpages?: Subpage[];
+          };
+          if (noteData.subpages) {
+            // Check if subpages is defined
+            const updatedSubpages = noteData.subpages.map((subpage) => {
+              // Use Subpage type here
+              if (subpage.id === subpageId) {
+                return {
+                  ...subpage,
+                  isTrash: true,
+                  deletedAt: new Date(), // Optional, if you want to track when it was marked as trash
+                };
+              }
+              return subpage;
+            });
 
-      if (noteDoc.exists()) {
-        const noteData = noteDoc.data();
-        const updatedSubpages = [...noteData.subpages];
-        updatedSubpages.splice(subpageIndex, 1);
+            // Update document in the database
+            await updateDoc(noteRef, {
+              subpages: updatedSubpages,
+            });
 
-        await updateDoc(noteRef, {
-          subpages: updatedSubpages,
-        });
+            // Update UI state to remove subpage
+            setNotes((prevNotes) =>
+              prevNotes.map((note) =>
+                note.id === parentNoteId
+                  ? {
+                      ...note,
+                      subpages:
+                        note.subpages?.filter((sp) => sp.id !== subpageId) ||
+                        [],
+                    }
+                  : note
+              )
+            );
+
+            router.push("/dashboard");
+
+            toast.success("Subpage moved to trash");
+          }
+        }
+      } catch (error) {
+        console.error("Error moving subpage to trash:", error);
+        toast.error("Failed to move subpage to trash");
       }
     }
   };
+
+  // After deleting the page and subpage set the istrash true in the database so that i can fetch this notes in the trash page for further features
 
   const renderNoteItem = (note: Note) => (
     <AccordionItem value={note.id} key={note.id}>
@@ -232,7 +282,7 @@ const Sidebar = () => {
               className="h-8 w-8"
               onClick={(e) => {
                 e.stopPropagation();
-                handleDeleteNote(note.id);
+                handleDeletePage(note.id);
               }}
             >
               <FiTrash2 className="h-4 w-4" />
@@ -263,7 +313,7 @@ const Sidebar = () => {
                   className="h-8 w-8 px-2 mx-1"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleDeleteSubpage(note.id, index);
+                    handleDeleteSubpage(note.id, subpage.id);
                   }}
                 >
                   <FiTrash2 className="h-4 w-4" />
