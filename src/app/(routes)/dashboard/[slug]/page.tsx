@@ -11,6 +11,9 @@ interface NoteData {
   title: string;
   emoji: string;
   banner: string;
+  isPublished: boolean;
+  publishedUrl: string;
+  isTrash: boolean;
 }
 
 const NotePage: React.FC = () => {
@@ -46,6 +49,20 @@ const NotePage: React.FC = () => {
     }
   };
 
+  const handleRestore = async () => {
+    if (noteId) {
+      const noteDocRef = doc(db, "notes", noteId);
+      await updateDoc(noteDocRef, { isTrash: false });
+    }
+  };
+
+  const handleDelete = async () => {
+    if (noteId) {
+      const noteDocRef = doc(db, "notes", noteId);
+      await updateDoc(noteDocRef, { isTrash: true });
+    }
+  };
+
   if (!noteData || !noteId) {
     return <Loading />;
   }
@@ -57,6 +74,8 @@ const NotePage: React.FC = () => {
         isSubpage={false}
         noteId={noteId}
         onUpdate={handleUpdate}
+        onRestore={handleRestore}
+        onDelete={handleDelete}
       />
     </>
   );

@@ -25,6 +25,7 @@ interface NoteData {
   banner: string;
   isPublished: boolean;
   publishedUrl: string | null;
+  isTrash: boolean; // Added flag for trash status
 }
 
 interface NotePageContentProps {
@@ -32,6 +33,8 @@ interface NotePageContentProps {
   isSubpage: boolean;
   noteId: string;
   onUpdate: (field: string, value: any) => Promise<void>;
+  onRestore: () => void; // Function to restore note
+  onDelete: () => void; // Function to delete note permanently
 }
 
 const NotePageContent: React.FC<NotePageContentProps> = ({
@@ -39,6 +42,8 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
   isSubpage,
   noteId,
   onUpdate,
+  onRestore,
+  onDelete,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isBreadcrumbEditing, setIsBreadcrumbEditing] = useState(false);
@@ -298,3 +303,5 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
 };
 
 export default NotePageContent;
+
+// In this component, show the restore and delete button in the top of the note if the page or subpage has the isTrash true
