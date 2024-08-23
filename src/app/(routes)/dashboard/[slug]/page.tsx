@@ -64,8 +64,8 @@ const NotePage: React.FC = () => {
       try {
         const noteDocRef = doc(db, "notes", noteId);
         await deleteDoc(noteDocRef);
-        toast.success("Note deleted successfully");
         router.push("/dashboard");
+        toast.success("Note deleted successfully");
       } catch (error) {
         console.error("Error deleting note:", error);
         toast.error("Failed to delete note");
