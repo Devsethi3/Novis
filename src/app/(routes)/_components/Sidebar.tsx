@@ -249,8 +249,6 @@ const Sidebar = () => {
     }
   };
 
-  // After deleting the page and subpage set the istrash true in the database so that i can fetch this notes in the trash page for further features
-
   const renderNoteItem = (note: Note) => (
     <AccordionItem value={note.id} key={note.id}>
       <AccordionTrigger className="py-2 group">
