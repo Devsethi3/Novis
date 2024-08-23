@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { deleteDoc, doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase.config";
 import Loading from "@/app/loading";
 import NotePageContent from "../../_components/NotePageContent";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 interface NoteData {
   id: string;
@@ -19,6 +21,7 @@ interface NoteData {
 const NotePage: React.FC = () => {
   const [noteId, setNoteId] = useState<string | undefined>();
   const [noteData, setNoteData] = useState<NoteData | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const noteIdFromUrl = window.location.pathname.split("/").pop();
@@ -58,8 +61,15 @@ const NotePage: React.FC = () => {
 
   const handleDelete = async () => {
     if (noteId) {
-      const noteDocRef = doc(db, "notes", noteId);
-      await updateDoc(noteDocRef, { isTrash: true });
+      try {
+        const noteDocRef = doc(db, "notes", noteId);
+        await deleteDoc(noteDocRef);
+        toast.success("Note deleted successfully");
+        router.push("/dashboard");
+      } catch (error) {
+        console.error("Error deleting note:", error);
+        toast.error("Failed to delete note");
+      }
     }
   };
 
