@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { chatSession } from "@/lib/AiModel";
 import { toast } from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
 interface GenerateAIContentProps {
   onContentGenerated?: (content: any) => void;
@@ -27,16 +28,19 @@ const GenerateAIContent: React.FC<GenerateAIContentProps> = ({
   const [userInput, setUserInput] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [generatedContent, setGeneratedContent] = useState<any>(null);
 
   const generateFromAI = async () => {
+    if (!userInput.trim()) {
+      toast.error("Please enter a prompt");
+      return;
+    }
+
     setLoading(true);
     try {
       const prompt = `Generate template for editor.js in JSON format for: ${userInput}`;
       const result = await chatSession.sendMessage(prompt);
       const responseText = await result.response.text();
 
-      // Validate that the response is in valid JSON format before parsing
       if (
         !responseText.trim().startsWith("{") &&
         !responseText.trim().startsWith("[")
@@ -44,16 +48,7 @@ const GenerateAIContent: React.FC<GenerateAIContentProps> = ({
         throw new Error("AI response is not in valid JSON format");
       }
 
-      let parsedContent;
-      try {
-        parsedContent = JSON.parse(responseText);
-      } catch (error) {
-        console.error("Failed to parse AI response as JSON:", error);
-        toast.error("Failed to parse AI response. Please try again.");
-        return;
-      }
-
-      setGeneratedContent(parsedContent);
+      const parsedContent = JSON.parse(responseText);
       console.log(parsedContent);
 
       if (onContentGenerated) {
@@ -66,6 +61,12 @@ const GenerateAIContent: React.FC<GenerateAIContentProps> = ({
       toast.error("Failed to generate content. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      generateFromAI();
     }
   };
 
@@ -84,35 +85,46 @@ const GenerateAIContent: React.FC<GenerateAIContentProps> = ({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-center">
-            Generate AI Content
+          <DialogTitle className="text-2xl font-bold text-center">
+            AI Content Generator
           </DialogTitle>
-          <DialogDescription className="text-sm">
-            Enter a prompt below to generate content for your notes.
+          <DialogDescription className="text-sm text-center mt-2">
+            Enhance your notes with AI-generated content. Simply enter a prompt
+            describing what you'd like to create, and our AI will generate
+            structured content for your editor.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="notePrompt" className="text-sm opacity-80">
-            Prompt
+        <div className="flex flex-col gap-2 mt-4">
+          <Label htmlFor="notePrompt" className="text-sm font-medium">
+            Your Prompt
           </Label>
           <Input
             id="notePrompt"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
+            onKeyDown={handleKeyDown}
             className="col-span-3 p-2 border rounded-md"
             placeholder="e.g., Outline the key points for a marketing strategy"
           />
         </div>
-        <DialogFooter>
-          <Button variant="secondary" onClick={() => setOpen(false)}>
+        <DialogFooter className="mt-6">
+          <Button variant="outline" onClick={() => setOpen(false)}>
             Cancel
           </Button>
           <Button
             type="submit"
-            disabled={!userInput || loading}
+            disabled={!userInput.trim() || loading}
             onClick={generateFromAI}
+            className="ml-2"
           >
-            {loading ? "Generating..." : "Generate Content"}
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              "Generate Content"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -25,7 +25,7 @@ interface SearchItem {
   title: string;
   type: "page" | "subpage";
   parentId?: string;
-  parentTitle?: string; // Added this field
+  parentTitle?: string;
   isTrash: boolean;
 }
 
@@ -37,7 +37,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [items, setItems] = useState<SearchItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const { currentUser } = useAuth(); // Get the current user
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     if (isOpen && currentUser) {
@@ -60,7 +60,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
 
     notesSnapshot.forEach((doc) => {
       const data = doc.data();
-      const parentTitle = data.title || "Untitled"; // Set parent title
+      const parentTitle = data.title || "Untitled";
 
       fetchedItems.push({
         id: doc.id,
@@ -76,7 +76,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
             title: subpage.title || "Untitled",
             type: "subpage",
             parentId: doc.id,
-            parentTitle: parentTitle, // Set parent title for subpage
+            parentTitle: parentTitle,
             isTrash: subpage.isTrash || false,
           });
         });
@@ -91,6 +91,9 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
     item.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const pages = filteredItems.filter((item) => item.type === "page");
+  const subpages = filteredItems.filter((item) => item.type === "subpage");
+
   function truncateText(text: string, wordLimit: number) {
     const words = text.split(" ");
     if (words.length > wordLimit) {
@@ -99,10 +102,72 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
     return text;
   }
 
+  const renderSearchItems = (items: SearchItem[], title: string) => (
+    <div className="mb-6">
+      <h3 className="text-lg font-semibold mb-2">{title}</h3>
+      {items.length > 0 ? (
+        <div className="space-y-2">
+          {items.map((item) => (
+            <Link
+              key={item.id}
+              href={
+                item.type === "page"
+                  ? `/dashboard/${item.id}`
+                  : `/dashboard/${item.parentId}/${item.id}`
+              }
+              className={cn(
+                "flex items-center gap-3 p-3 border rounded-lg transition-colors duration-200",
+                "hover:bg-accent hover:text-accent-foreground"
+              )}
+              onClick={() => onOpenChange(false)}
+            >
+              <div
+                className={cn(
+                  "p-2 rounded-full",
+                  item.type === "page"
+                    ? "bg-blue-100 text-blue-600"
+                    : "bg-green-100 text-green-600"
+                )}
+              >
+                {item.type === "page" ? (
+                  <FiFolder className="w-5 h-5" />
+                ) : (
+                  <FiFile className="w-5 h-5" />
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="font-medium line-clamp-1">{item.title}</div>
+                <div className="text-sm text-muted-foreground">
+                  <div className="flex items-center">
+                    {item.type === "subpage" && item.parentTitle && (
+                      <div className="text-xs text-muted-foreground mt-1 truncate">
+                        Parent: {truncateText(item.parentTitle, 4)}
+                      </div>
+                    )}
+                    {item.isTrash && (
+                      <span className="ml-2 text-red-500 text-xs">
+                        (In Trash)
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              {item.isTrash && <FiTrash2 className="text-red-500 w-5 h-5" />}
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-muted-foreground">
+          No {title.toLowerCase()} found
+        </p>
+      )}
+    </div>
+  );
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <div onClick={() => onOpenChange(true)}>{trigger}</div>
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden">
         <DialogHeader className="p-4 pb-0">
           <DialogTitle className="text-2xl font-bold mb-2">
             Search Notes
@@ -119,70 +184,16 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
             />
           </div>
         </DialogHeader>
-        <ScrollArea className="h-[400px] p-4">
+        <ScrollArea className="h-[500px] p-4">
           {loading ? (
             <div className="flex items-center justify-center h-full">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
           ) : filteredItems.length > 0 ? (
-            <div className="space-y-2">
-              {filteredItems.map((item) => (
-                <Link
-                  key={item.id}
-                  href={
-                    item.type === "page"
-                      ? `/dashboard/${item.id}`
-                      : `/dashboard/${item.parentId}/${item.id}`
-                  }
-                  className={cn(
-                    "flex items-center gap-3 p-3 border rounded-lg transition-colors duration-200",
-                    "hover:bg-accent hover:text-accent-foreground"
-                  )}
-                  onClick={() => onOpenChange(false)}
-                >
-                  <div
-                    className={cn(
-                      "p-2 rounded-full",
-                      item.type === "page"
-                        ? "bg-blue-100 text-blue-600"
-                        : "bg-green-100 text-green-600"
-                    )}
-                  >
-                    {item.type === "page" ? (
-                      <FiFolder className="w-5 h-5" />
-                    ) : (
-                      <FiFile className="w-5 h-5" />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium line-clamp-1">{item.title}</div>
-                    <div className="text-sm text-muted-foreground">
-                      <div className="flex items-center">
-                        {item.type === "page" ? "Page" : "Subpage"}
-                        {item.type === "subpage" && item.parentTitle && (
-                          <>
-                            {item.parentTitle && (
-                              <span className="mx-1">/</span>
-                            )}
-                            <div className="text-xs text-muted-foreground mt-1 truncate">
-                              Parent: {truncateText(item.parentTitle, 4)}
-                            </div>
-                          </>
-                        )}
-                        {item.isTrash && (
-                          <span className="ml-2 text-red-500 text-xs">
-                            (In Trash)
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  {item.isTrash && (
-                    <FiTrash2 className="text-red-500 w-5 h-5" />
-                  )}
-                </Link>
-              ))}
-            </div>
+            <>
+              {renderSearchItems(pages, "Pages")}
+              {renderSearchItems(subpages, "Subpages")}
+            </>
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
               <FiSearch className="w-12 h-12 mb-4 text-gray-300" />
