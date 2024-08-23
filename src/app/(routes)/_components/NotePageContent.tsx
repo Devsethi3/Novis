@@ -144,6 +144,16 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
 
   return (
     <div>
+      {data.isTrash && (
+        <div className="w-full flex h-[7vh] px-6 items-center justify-end">
+          <Button variant="secondary" onClick={onRestore} className="mr-4">
+            Restore
+          </Button>
+          <Button variant="destructive" onClick={onDelete}>
+            Delete Permanently
+          </Button>
+        </div>
+      )}
       <div className="w-full flex h-[7vh] px-6 items-center justify-between">
         {isBreadcrumbEditing ? (
           <input
