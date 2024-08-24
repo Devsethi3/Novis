@@ -106,12 +106,12 @@ const Sidebar = () => {
         const noteList: Note[] = [];
         snapshot.forEach((doc) => {
           const data = doc.data();
-          if (data.author === currentUser?.email && !data.deleted) {
+          if (data.author === currentUser?.email && !data.isTrash) {
             noteList.push({
               id: doc.id,
               title: data.title,
               emoji: data.emoji,
-              isTrash: false,
+              isTrash: data.isTrash,
               author: data.author,
               subpages: data.subpages || [],
             });
@@ -507,3 +507,7 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+
+// After setting the trashed note { isTrash: false } from handleRestore function it does not get updated or shows in the sidebar even if i refreshed the page
+
+// If isTrash:false than show the notes in this sidebar component in real time, Provide the specific code after this implentation
