@@ -57,7 +57,7 @@ const NotePage: React.FC = () => {
       await updateDoc(noteDocRef, { [field]: value });
     }
   };
-  
+
   const handleRestore = async () => {
     if (noteId) {
       const noteDocRef = doc(db, "notes", noteId);
