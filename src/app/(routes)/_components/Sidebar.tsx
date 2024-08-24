@@ -49,7 +49,7 @@ interface Note {
   emoji: string;
   author: string;
   isTrash: boolean;
-  subpages?: Subpage[]; // Use the Subpage interface here
+  subpages?: Subpage[];
 }
 
 interface Subpage {
