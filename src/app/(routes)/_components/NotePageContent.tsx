@@ -142,16 +142,39 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
     }
   };
 
+  const handleRestore = async () => {
+    try {
+      await onRestore();
+      toast.success("Note restored successfully");
+    } catch (error) {
+      console.error("Error restoring note:", error);
+      toast.error("Failed to restore note");
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await onDelete();
+      toast.success("Note deleted permanently");
+    } catch (error) {
+      console.error("Error deleting note:", error);
+      toast.error("Failed to delete note");
+    }
+  };
+
   return (
     <div>
       {data.isTrash && (
-        <div className="w-full flex h-[7vh] px-6 items-center justify-end">
-          <Button variant="secondary" onClick={onRestore} className="mr-4">
-            Restore
-          </Button>
-          <Button variant="destructive" onClick={onDelete}>
-            Delete Permanently
-          </Button>
+        <div className="w-full bg-secondary p-4 flex items-center justify-between">
+          <div className="text-sm font-medium">This note is in Trash</div>
+          <div className="flex space-x-4">
+            <Button variant="outline" onClick={handleRestore}>
+              Restore
+            </Button>
+            <Button variant="destructive" onClick={handleDelete}>
+              Delete Permanently
+            </Button>
+          </div>
         </div>
       )}
       <div className="w-full flex h-[7vh] px-6 items-center justify-between">
@@ -313,5 +336,3 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
 };
 
 export default NotePageContent;
-
-// In this component, show the restore and delete button in the top of the note if the page or subpage has the isTrash true

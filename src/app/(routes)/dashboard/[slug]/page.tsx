@@ -58,26 +58,55 @@ const NotePage: React.FC = () => {
     }
   };
 
-  const handleRestore = async () => {
+  const handleRestore = async (subpageId?: string) => {
     if (noteId) {
       const noteDocRef = doc(db, "notes", noteId);
-      await updateDoc(noteDocRef, { isTrash: false });
-    }
-  };
 
-  const handleDelete = async () => {
-    if (noteId) {
-      try {
-        const noteDocRef = doc(db, "notes", noteId);
-        await deleteDoc(noteDocRef);
-        router.push("/dashboard");
-        toast.success("Note deleted successfully");
-      } catch (error) {
-        console.error("Error deleting note:", error);
-        toast.error("Failed to delete note");
+      if (!subpageId) {
+        // Restore main page
+        await updateDoc(noteDocRef, { isTrash: false });
+        toast.success("Page restored successfully");
+      } else {
+        // Restore subpage
+        const noteSnapshot = await getDoc(noteDocRef);
+        if (noteSnapshot.exists()) {
+          const noteData = noteSnapshot.data();
+          const updatedSubpages = noteData.subpages.map((sp: any) =>
+            sp.id === subpageId ? { ...sp, isTrash: false } : sp
+          );
+          await updateDoc(noteDocRef, { subpages: updatedSubpages });
+          toast.success("Subpage restored successfully");
+        }
       }
     }
   };
+
+  const handleDelete = async (subpageId?: string) => {
+    if (noteId) {
+      const noteDocRef = doc(db, "notes", noteId);
+
+      if (!subpageId) {
+        console.log(subpageId);
+        // Delete main page
+        await deleteDoc(noteDocRef);
+        router.push("/dashboard");
+        toast.success("Page deleted successfully");
+      } else {
+        // Delete subpage
+        const noteSnapshot = await getDoc(noteDocRef);
+        if (noteSnapshot.exists()) {
+          const noteData = noteSnapshot.data();
+          const updatedSubpages = noteData.subpages.filter(
+            (sp: any) => sp.id !== subpageId
+          );
+          await updateDoc(noteDocRef, { subpages: updatedSubpages });
+          toast.success("Subpage deleted successfully");
+        }
+      }
+    }
+  };
+
+  // It successfully works for the noteId but not for subpageId fix this i store the subpage in the array of notes in my database 
 
   if (!noteData || !noteId) {
     return <Loading />;
