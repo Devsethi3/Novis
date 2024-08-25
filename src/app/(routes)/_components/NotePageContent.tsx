@@ -27,7 +27,7 @@ interface NoteData {
   banner: string;
   isPublished: boolean;
   publishedUrl: string | null;
-  isTrash: boolean; // Added flag for trash status
+  isTrash: boolean; // Added flag 
 }
 
 interface NotePageContentProps {
