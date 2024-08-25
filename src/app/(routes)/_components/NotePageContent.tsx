@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { ref, getDownloadURL, deleteObject } from "firebase/storage";
-import { storage } from "@/lib/firebase.config";
+import { db, storage } from "@/lib/firebase.config";
 import { Button } from "@/components/ui/button";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { IoClose } from "react-icons/io5";
@@ -17,6 +17,8 @@ import { TbWorld } from "react-icons/tb";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-hot-toast";
 import { FiCheck, FiCopy } from "react-icons/fi";
+import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import { useRouter } from "next/navigation";
 
 interface NoteData {
   id: string;
@@ -33,8 +35,8 @@ interface NotePageContentProps {
   isSubpage: boolean;
   noteId: string;
   onUpdate: (field: string, value: any) => Promise<void>;
-  onRestore: () => void; // Function to restore note
-  onDelete: () => void; // Function to delete note permanently
+  // onRestore: () => void;
+  // onDelete: () => void;
 }
 
 const NotePageContent: React.FC<NotePageContentProps> = ({
@@ -42,8 +44,8 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
   isSubpage,
   noteId,
   onUpdate,
-  onRestore,
-  onDelete,
+  // onRestore,
+  // onDelete,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isBreadcrumbEditing, setIsBreadcrumbEditing] = useState(false);
@@ -55,6 +57,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
     data.publishedUrl
   );
   const [copied, setIsCopied] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (data.banner) {
@@ -142,23 +145,68 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
     }
   };
 
-  const handleRestore = async () => {
-    try {
-      await onRestore();
-      toast.success("Note restored successfully");
-    } catch (error) {
-      console.error("Error restoring note:", error);
-      toast.error("Failed to restore note");
+  const handleRestore = async (subpageId?: string) => {
+    if (noteId) {
+      const noteDocRef = doc(db, "notes", noteId);
+
+      try {
+        if (!subpageId) {
+          // Restore the main note
+          await updateDoc(noteDocRef, {
+            isTrash: false,
+            deletedAt: null,
+          });
+          toast.success("Note restored successfully");
+          router.push(`/dashboard/${noteId}`);
+        } else {
+          // Restore a subpage
+          const noteSnapshot = await getDoc(noteDocRef);
+          if (noteSnapshot.exists()) {
+            const noteData = noteSnapshot.data();
+            const updatedSubpages = noteData.subpages.map((sp: any) =>
+              sp.id === subpageId
+                ? { ...sp, isTrash: false, deletedAt: null }
+                : sp
+            );
+            await updateDoc(noteDocRef, { subpages: updatedSubpages });
+            toast.success("Subpage restored successfully");
+            router.push(`/dashboard/${noteId}`);
+          }
+        }
+      } catch (error) {
+        console.error("Error restoring note or subpage:", error);
+        toast.error("Failed to restore note or subpage");
+      }
     }
   };
 
-  const handleDelete = async () => {
-    try {
-      await onDelete();
-      toast.success("Note deleted permanently");
-    } catch (error) {
-      console.error("Error deleting note:", error);
-      toast.error("Failed to delete note");
+  const handleDelete = async (subpageId?: string) => {
+    if (noteId) {
+      const noteDocRef = doc(db, "notes", noteId);
+
+      try {
+        if (!subpageId) {
+          // Delete the main note
+          await deleteDoc(noteDocRef);
+          toast.success("Note deleted permanently");
+          router.push("/dashboard");
+        } else {
+          // Delete a subpage
+          const noteSnapshot = await getDoc(noteDocRef);
+          if (noteSnapshot.exists()) {
+            const noteData = noteSnapshot.data();
+            const updatedSubpages = noteData.subpages.filter(
+              (sp: any) => sp.id !== subpageId
+            );
+            await updateDoc(noteDocRef, { subpages: updatedSubpages });
+            toast.success("Subpage deleted permanently");
+            router.push(`/dashboard/${noteId}`);
+          }
+        }
+      } catch (error) {
+        console.error("Error deleting note or subpage:", error);
+        toast.error("Failed to delete note or subpage");
+      }
     }
   };
 
@@ -168,10 +216,10 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
         <div className="w-full bg-secondary p-4 flex items-center justify-between">
           <div className="text-sm font-medium">This note is in Trash</div>
           <div className="flex space-x-4">
-            <Button variant="outline" onClick={handleRestore}>
+            <Button variant="outline" onClick={() => handleRestore()}>
               Restore
             </Button>
-            <Button variant="destructive" onClick={handleDelete}>
+            <Button variant="destructive" onClick={() => handleDelete()}>
               Delete Permanently
             </Button>
           </div>
