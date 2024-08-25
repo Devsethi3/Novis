@@ -27,7 +27,7 @@ interface NoteData {
   banner: string;
   isPublished: boolean;
   publishedUrl: string | null;
-  isTrash: boolean; //
+  isTrash: boolean; 
 }
 
 interface NotePageContentProps {
