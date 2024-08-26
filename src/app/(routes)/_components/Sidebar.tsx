@@ -372,103 +372,6 @@ const Sidebar = () => {
               </AnimatePresence>
             </Button>
           </div>
-          {/* <nav className="mt-3">
-            <ul>
-              {navItems.map((item) => (
-                <li key={item.href} className="my-2 px-3">
-                  {item.href === "#search" ? (
-                    <SearchFilter
-                      isOpen={isSearchOpen}
-                      onOpenChange={setIsSearchOpen}
-                      trigger={
-                        <motion.div
-                          className={cn(
-                            "flex items-center rounded-md px-4 py-3 transition-colors duration-200",
-                            "hover:bg-accent hover:text-accent-foreground",
-                            "cursor-pointer"
-                          )}
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => setIsSearchOpen(true)}
-                        >
-                          <div className="flex items-center justify-between w-full">
-                            <div className="flex items-center gap-2">
-                              <item.icon className="flex-shrink-0" />
-                              <AnimatePresence>
-                                {sidebarOpen && (
-                                  <motion.span
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -10 }}
-                                    transition={{ duration: 0.2 }}
-                                    className="ml-3 font-medium"
-                                  >
-                                    {item.label}
-                                  </motion.span>
-                                )}
-                              </AnimatePresence>
-                            </div>
-                            {sidebarOpen && item.badge && (
-                              <span className="bg-secondary px-2 py-1 text-sm rounded-md">
-                                {item.badge}
-                              </span>
-                            )}
-                          </div>
-                        </motion.div>
-                      }
-                    />
-                  ) : (
-                    <Link href={item.href} passHref>
-                      <motion.div
-                        className={cn(
-                          "flex items-center rounded-md px-4 py-3 transition-colors duration-200",
-                          "hover:bg-accent hover:text-accent-foreground",
-                          isActive(item.href) &&
-                            "bg-primary text-white hover:bg-primary hover:text-white"
-                        )}
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <div className="flex items-center justify-between w-full">
-                          <div className="flex items-center gap-2">
-                            <item.icon className="flex-shrink-0" />
-                            <AnimatePresence>
-                              {sidebarOpen && (
-                                <motion.span
-                                  initial={{ opacity: 0, x: -10 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  exit={{ opacity: 0, x: -10 }}
-                                  transition={{ duration: 0.2 }}
-                                  className="ml-3 font-medium"
-                                >
-                                  {item.label}
-                                </motion.span>
-                              )}
-                            </AnimatePresence>
-                          </div>
-                          {sidebarOpen && (
-                            <motion.span
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, x: -10 }}
-                              transition={{ duration: 0.2 }}
-                              // className="ml-3 font-medium"
-                            >
-                              {item.badge && (
-                                <span className="bg-secondary px-2 py-1 text-sm rounded-md">
-                                  {item.badge}
-                                </span>
-                              )}
-                            </motion.span>
-                          )}
-                        </div>
-                      </motion.div>
-                    </Link>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </nav> */}
 
           <nav className="mt-3">
             <ul>
@@ -549,7 +452,7 @@ const Sidebar = () => {
                             </div>
                             {sidebarOpen && (
                               <span className="bg-secondary px-2 py-1 text-sm rounded-md">
-                                ctrl+t
+                                ctrl+d
                               </span>
                             )}
                           </div>
