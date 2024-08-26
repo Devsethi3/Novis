@@ -1,5 +1,3 @@
-// /dashboard/ [slug] / page.tsx
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -13,7 +11,6 @@ import {
 import { db } from "@/lib/firebase.config";
 import Loading from "@/app/loading";
 import NotePageContent from "../../_components/NotePageContent";
-import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 interface NoteData {
