@@ -58,9 +58,9 @@ async function getPublishedNote(noteId: string): Promise<NoteData | null> {
   }
 }
 
-export async function generateMetadata(
-  { params }: PublishedNoteProps,
-): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PublishedNoteProps): Promise<Metadata> {
   const note = await getPublishedNote(params.noteId);
 
   if (!note) {
@@ -68,9 +68,8 @@ export async function generateMetadata(
       title: "Page Not Found",
     };
   }
-
   // Create a base64-encoded favicon using the emoji
-  const faviconUrl = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%22.9em%22 font-size=%2232%22>${note.emoji}</text></svg>`;
+  const faviconUrl = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22 width=%2232%22 height=%2232%22><text x=%2250%25%22 y=%2265%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2230%22>${note.emoji}</text></svg>`;
 
   return {
     title: note.title,
