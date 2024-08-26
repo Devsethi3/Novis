@@ -27,7 +27,7 @@ interface NoteData {
   banner: string;
   isPublished: boolean;
   publishedUrl: string | null;
-  isTrash: boolean; 
+  isTrash: boolean;
 }
 
 interface NotePageContentProps {
@@ -145,12 +145,12 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
     }
   };
 
-  const handleRestore = async (subpageId?: string) => {
+  const handleRestore = async () => {
     if (noteId) {
       const noteDocRef = doc(db, "notes", noteId);
 
       try {
-        if (!subpageId) {
+        if (!isSubpage) {
           // Restore the main note
           await updateDoc(noteDocRef, {
             isTrash: false,
@@ -164,7 +164,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
           if (noteSnapshot.exists()) {
             const noteData = noteSnapshot.data();
             const updatedSubpages = noteData.subpages.map((sp: any) =>
-              sp.id === subpageId
+              sp.id === data.id
                 ? { ...sp, isTrash: false, deletedAt: null }
                 : sp
             );
@@ -180,12 +180,12 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
     }
   };
 
-  const handleDelete = async (subpageId?: string) => {
+  const handleDelete = async () => {
     if (noteId) {
       const noteDocRef = doc(db, "notes", noteId);
 
       try {
-        if (!subpageId) {
+        if (!isSubpage) {
           // Delete the main note
           await deleteDoc(noteDocRef);
           toast.success("Note deleted permanently");
@@ -196,7 +196,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
           if (noteSnapshot.exists()) {
             const noteData = noteSnapshot.data();
             const updatedSubpages = noteData.subpages.filter(
-              (sp: any) => sp.id !== subpageId
+              (sp: any) => sp.id !== data.id
             );
             await updateDoc(noteDocRef, { subpages: updatedSubpages });
             toast.success("Subpage deleted permanently");
@@ -209,17 +209,18 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
       }
     }
   };
-
   return (
     <div>
       {data.isTrash && (
         <div className="w-full bg-secondary p-4 flex items-center justify-between">
-          <div className="text-sm font-medium">This note is in Trash</div>
+          <div className="text-sm font-medium">
+            This {isSubpage ? "subpage" : "note"} is in Trash
+          </div>
           <div className="flex space-x-4">
-            <Button variant="outline" onClick={() => handleRestore()}>
+            <Button variant="outline" onClick={handleRestore}>
               Restore
             </Button>
-            <Button variant="destructive" onClick={() => handleDelete()}>
+            <Button variant="destructive" onClick={handleDelete}>
               Delete Permanently
             </Button>
           </div>
