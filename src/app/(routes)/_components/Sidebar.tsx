@@ -35,6 +35,7 @@ import useAuth from "@/lib/useAuth";
 import { v4 as uuidv4 } from "uuid";
 import SearchFilter from "./SearchFilter";
 import toast from "react-hot-toast";
+import TrashNotes from "./TrashNotes";
 
 interface NavItem {
   icon: React.ElementType;
@@ -58,18 +59,19 @@ interface Subpage {
   emoji: string;
   author: string;
   isTrash: boolean;
-  createdAt?: Date; 
+  createdAt?: Date;
   deletedAt?: Date;
 }
 
 const navItems: NavItem[] = [
   { icon: FiSearch, label: "Search", href: "#search", badge: "ctrl+k" },
   { icon: FiSettings, label: "Settings", href: "/dashboard/settings" },
-  { icon: FiTrash2, label: "Trash", href: "/dashboard/trash" },
+  { icon: FiTrash2, label: "Trash", href: "#trash", badge: "ctrl+d" },
 ];
 
 const Sidebar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isTrashOpen, setIsTrashOpen] = useState(false);
   const [notes, setNotes] = useState<Note[]>([]);
   const { currentUser } = useAuth();
   const pathname = usePathname();
@@ -87,15 +89,18 @@ const Sidebar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
-        e.preventDefault();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === "k") {
+        event.preventDefault();
         setIsSearchOpen(true);
+      } else if (event.ctrlKey && event.key === "d") {
+        event.preventDefault();
+        setIsTrashOpen(true);
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   useEffect(() => {
@@ -367,7 +372,7 @@ const Sidebar = () => {
               </AnimatePresence>
             </Button>
           </div>
-          <nav className="mt-3">
+          {/* <nav className="mt-3">
             <ul>
               {navItems.map((item) => (
                 <li key={item.href} className="my-2 px-3">
@@ -463,7 +468,147 @@ const Sidebar = () => {
                 </li>
               ))}
             </ul>
+          </nav> */}
+
+          <nav className="mt-3">
+            <ul>
+              {navItems.map((item) => (
+                <li key={item.href} className="my-2 px-3">
+                  {item.href === "#search" ? (
+                    <SearchFilter
+                      isOpen={isSearchOpen}
+                      onOpenChange={setIsSearchOpen}
+                      trigger={
+                        <motion.div
+                          className={cn(
+                            "flex items-center rounded-md px-4 py-3 transition-colors duration-200",
+                            "hover:bg-accent hover:text-accent-foreground",
+                            "cursor-pointer"
+                          )}
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => setIsSearchOpen(true)}
+                        >
+                          <div className="flex items-center justify-between w-full">
+                            <div className="flex items-center gap-2">
+                              <item.icon className="flex-shrink-0" />
+                              <AnimatePresence>
+                                {sidebarOpen && (
+                                  <motion.span
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -10 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="ml-3 font-medium"
+                                  >
+                                    {item.label}
+                                  </motion.span>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                            {sidebarOpen && item.badge && (
+                              <span className="bg-secondary px-2 py-1 text-sm rounded-md">
+                                {item.badge}
+                              </span>
+                            )}
+                          </div>
+                        </motion.div>
+                      }
+                    />
+                  ) : item.href === "#trash" ? (
+                    <TrashNotes
+                      isOpen={isTrashOpen}
+                      onOpenChange={setIsTrashOpen}
+                      trigger={
+                        <motion.div
+                          className={cn(
+                            "flex items-center rounded-md px-4 py-3 transition-colors duration-200",
+                            "hover:bg-accent hover:text-accent-foreground",
+                            "cursor-pointer"
+                          )}
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => setIsTrashOpen(true)}
+                        >
+                          <div className="flex items-center justify-between w-full">
+                            <div className="flex items-center gap-2">
+                              <FiTrash2 className="flex-shrink-0" />
+                              <AnimatePresence>
+                                {sidebarOpen && (
+                                  <motion.span
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -10 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="ml-3 font-medium"
+                                  >
+                                    Trash
+                                  </motion.span>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                            {sidebarOpen && (
+                              <span className="bg-secondary px-2 py-1 text-sm rounded-md">
+                                ctrl+t
+                              </span>
+                            )}
+                          </div>
+                        </motion.div>
+                      }
+                    />
+                  ) : (
+                    <Link href={item.href} passHref>
+                      <motion.div
+                        className={cn(
+                          "flex items-center rounded-md px-4 py-3 transition-colors duration-200",
+                          "hover:bg-accent hover:text-accent-foreground",
+                          isActive(item.href) &&
+                            "bg-primary text-white hover:bg-primary hover:text-white"
+                        )}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center gap-2">
+                            <item.icon className="flex-shrink-0" />
+                            <AnimatePresence>
+                              {sidebarOpen && (
+                                <motion.span
+                                  initial={{ opacity: 0, x: -10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  exit={{ opacity: 0, x: -10 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="ml-3 font-medium"
+                                >
+                                  {item.label}
+                                </motion.span>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                          {sidebarOpen && (
+                            <motion.span
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: -10 }}
+                              transition={{ duration: 0.2 }}
+                              // className="ml-3 font-medium"
+                            >
+                              {item.badge && (
+                                <span className="bg-secondary px-2 py-1 text-sm rounded-md">
+                                  {item.badge}
+                                </span>
+                              )}
+                            </motion.span>
+                          )}
+                        </div>
+                      </motion.div>
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
           </nav>
+
           {sidebarOpen ? (
             <>
               <div className="px-4 mt-4 flex gap-4 justify-between items-center">
@@ -507,7 +652,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
-// After setting the trashed note { isTrash: false } from handleRestore function it does not get updated or shows in the sidebar even if i refreshed the page
-
-// If isTrash:false than show the notes in this sidebar component in real time, Provide the specific code after this implentation
