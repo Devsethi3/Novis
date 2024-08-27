@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "@/lib/utils";
 
 const CustomTableRenderer = ({ data }: { data: any }) => {
   return (
@@ -10,7 +11,7 @@ const CustomTableRenderer = ({ data }: { data: any }) => {
               {data.content[0].map((heading: string, index: number) => (
                 <th
                   key={index}
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-gray-200 dark:bg-gray-700 text-left text-gray-700 dark:text-gray-300 font-semibold"
+                  className="px-4 py-2 border border-border bg-secondary text-left text-secondary-foreground font-semibold"
                 >
                   {heading}
                 </th>
@@ -24,16 +25,15 @@ const CustomTableRenderer = ({ data }: { data: any }) => {
             .map((row: string[], rowIndex: number) => (
               <tr
                 key={rowIndex}
-                className={
-                  rowIndex % 2 === 0
-                    ? "bg-white dark:bg-gray-800"
-                    : "bg-gray-50 dark:bg-gray-900"
-                }
+                className={cn(
+                  "transition-colors",
+                  rowIndex % 2 === 0 ? "bg-background" : "bg-muted/40"
+                )}
               >
                 {row.map((cell: string, cellIndex: number) => (
                   <td
                     key={cellIndex}
-                    className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-700 dark:text-gray-300"
+                    className="border border-border px-4 py-2 text-left text-foreground"
                   >
                     {cell}
                   </td>
