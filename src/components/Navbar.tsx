@@ -256,7 +256,7 @@ const Navbar = () => {
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
                       <DropdownMenuItem>
-                        <Link href="/dahsboard" className="flex items-center">
+                        <Link href="/dashboard" className="flex items-center">
                           <MdDashboard className="mr-4 h-4 w-4" />
                           <span>Dashboard</span>
                         </Link>
