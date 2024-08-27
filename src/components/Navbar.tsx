@@ -7,7 +7,7 @@ import {
   useScroll,
   useMotionValueEvent,
 } from "framer-motion";
-import { MdClose } from "react-icons/md";
+import { MdClose, MdDashboard } from "react-icons/md";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "./ui/button";
@@ -16,9 +16,32 @@ import useAuth from "@/lib/useAuth";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
+import {
+  FaUser,
+  FaCreditCard,
+  FaGithub,
+  FaKeyboard,
+  FaLifeRing,
+  FaSignOutAlt,
+  FaEnvelope,
+  FaComments,
+  FaPlusCircle,
+  FaCog,
+  FaUsers,
+  FaUserPlus,
+  FaCloud,
+} from "react-icons/fa";
 
 const Navbar = () => {
   const { currentUser, handleLogout, loading } = useAuth();
@@ -226,14 +249,34 @@ const Navbar = () => {
                       width={40}
                       height={40}
                       className="rounded-full w-12 p-1 hover:bg-secondary-foreground/10 h-12 object-cover cursor-pointer"
-                    />
+                    />{" "}
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent>
+                  <DropdownMenuContent className="w-56">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem>
+                        <Link href="/dahsboard" className="flex items-center">
+                          <MdDashboard className="mr-4 h-4 w-4" />
+                          <span>Dashboard</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <FaCog className="mr-4 h-4 w-4" />
+                        <span>Settings</span>
+                        <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem>
-                      <Link href="/dashboard">Dashboard</Link>
+                      <FaGithub className="mr-4 h-4 w-4" />
+                      <span>GitHub</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleLogout}>
-                      Sign Out
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="cursor-pointer">
+                      <FaSignOutAlt className="mr-4 h-4 w-4" />
+                      <span>Log out</span>
+                      <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
