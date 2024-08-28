@@ -186,9 +186,7 @@ const Hero = () => {
           >
             Looking for a smarter way to organize your thoughts? Our AI-enhanced
             note-taking platform transforms the way you capture ideas,
-            streamline tasks, and boost productivity. Let’s work together to
-            build a workspace that not only helps you stay organized but also
-            inspires creativity and drives success.
+            streamline tasks, and boost productivity.
           </motion.p>
         </motion.div>
         <motion.div
