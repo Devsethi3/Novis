@@ -184,9 +184,11 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.8 }}
           >
-            Looking for a web designer who cares about your business as much as
-            you do? Let's work together to build a website that not only looks
-            amazing but also drives conversions and grows your business.
+            Looking for a smarter way to organize your thoughts? Our AI-enhanced
+            note-taking platform transforms the way you capture ideas,
+            streamline tasks, and boost productivity. Let’s work together to
+            build a workspace that not only helps you stay organized but also
+            inspires creativity and drives success.
           </motion.p>
         </motion.div>
         <motion.div
