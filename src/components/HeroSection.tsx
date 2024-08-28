@@ -8,7 +8,6 @@ import { useTheme } from "next-themes";
 
 const Hero = () => {
   const { scrollY } = useScroll();
-  const { theme } = useTheme();
 
   const chatY = useTransform(scrollY, [0, 300], [0, -100]);
   const chatRotate = useTransform(scrollY, [0, 300], [0, -15]);
