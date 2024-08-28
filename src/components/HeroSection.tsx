@@ -4,7 +4,6 @@ import Image from "next/image";
 import React from "react";
 import { GoArrowRight } from "react-icons/go";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useTheme } from "next-themes";
 
 const Hero = () => {
   const { scrollY } = useScroll();
