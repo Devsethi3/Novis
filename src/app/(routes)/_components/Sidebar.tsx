@@ -119,7 +119,7 @@ const Sidebar = () => {
               (subpage: any) => !subpage.isTrash
             );
 
-            // Push the note with filtered subpages to the noteList
+            // Push the note with filtered subpages to the noteList 
             noteList.push({
               id: doc.id,
               title: data.title,

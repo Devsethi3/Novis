@@ -172,7 +172,7 @@ const TrashNotes: React.FC<TrashNotesProps> = ({
     <>
       {trigger}
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden">
+        <DialogContent className="sm:max-w-[600px] h-[620px] p-0 overflow-hidden">
           <DialogHeader className="p-4 pb-0">
             <DialogTitle className="text-2xl font-bold mb-2">Trash</DialogTitle>
             <div className="relative">
