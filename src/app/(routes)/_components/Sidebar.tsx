@@ -111,14 +111,22 @@ const Sidebar = () => {
         const noteList: Note[] = [];
         snapshot.forEach((doc) => {
           const data = doc.data();
+
+          // Check if the page is not in the trash
           if (data.author === currentUser?.email && !data.isTrash) {
+            // Filter out trashed subpages
+            const filteredSubpages = (data.subpages || []).filter(
+              (subpage: any) => !subpage.isTrash
+            );
+
+            // Push the note with filtered subpages to the noteList
             noteList.push({
               id: doc.id,
               title: data.title,
               emoji: data.emoji,
               isTrash: data.isTrash,
               author: data.author,
-              subpages: data.subpages || [],
+              subpages: filteredSubpages, // Only non-trashed subpages
             });
           }
         });
