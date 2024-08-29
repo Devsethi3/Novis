@@ -9,7 +9,6 @@ import {
 import { db } from "@/lib/firebase.config";
 import Loading from "@/app/loading";
 import NotePageContent from "../../_components/NotePageContent";
-import { useRouter } from "next/navigation";
 
 export interface NoteData {
   id: string;
@@ -25,7 +24,6 @@ export interface NoteData {
 const NotePage: React.FC = () => {
   const [noteId, setNoteId] = useState<string | undefined>();
   const [noteData, setNoteData] = useState<NoteData | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
     const noteIdFromUrl = window.location.pathname.split("/").pop();
