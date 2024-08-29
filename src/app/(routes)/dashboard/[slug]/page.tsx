@@ -11,7 +11,7 @@ import Loading from "@/app/loading";
 import NotePageContent from "../../_components/NotePageContent";
 import { useRouter } from "next/navigation";
 
-interface NoteData {
+export interface NoteData {
   id: string;
   title: string;
   emoji: string;
