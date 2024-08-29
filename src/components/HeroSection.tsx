@@ -76,7 +76,7 @@ const Hero = () => {
         // @ts-ignore
         animate={gradientAnimation}
       />
-      <div className="absolute h-[375px] w-[750px] sm:w-[2836px] sm:h-[768px] rounded-[100%] bg-background left-1/2 -translate-x-1/2 border-primary/20 bg-[radial-gradient(closest-side,hsl(var(--background))_82%,hsl(var(--primary)))] top-[calc(100%-96px)] sm:top-[calc(100%-120px)]"></div>
+      <div className="absolute h-[375px] w-[750px] sm:w-[3836px] sm:h-[768px] rounded-[100%] bg-background left-1/2 -translate-x-1/2 border-primary/20 bg-[radial-gradient(closest-side,hsl(var(--background))_82%,hsl(var(--primary)))] top-[calc(100%-96px)] sm:top-[calc(100%-120px)]"></div>
 
       <div className="container mx-auto px-4 relative">
         <motion.div

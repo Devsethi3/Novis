@@ -1,3 +1,4 @@
+import About from "@/components/About";
 import HeroSection from "@/components/HeroSection";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ const page = () => {
       <div>
         <Navbar />
         <HeroSection />
+        <About />
       </div>
     </>
   );
