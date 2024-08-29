@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from "react";
 import {
-  deleteDoc,
   doc,
-  getDoc,
   onSnapshot,
   updateDoc,
 } from "firebase/firestore";
@@ -58,71 +56,6 @@ const NotePage: React.FC = () => {
     }
   };
 
-  // const handleRestore = async (subpageId?: string) => {
-  //   if (noteId) {
-  //     const noteDocRef = doc(db, "notes", noteId);
-
-  //     try {
-  //       if (!subpageId) {
-  //         // Restore the main note
-  //         await updateDoc(noteDocRef, {
-  //           isTrash: false,
-  //           deletedAt: null,
-  //         });
-  //         toast.success("Note restored successfully");
-  //         router.push(`/dashboard/${noteId}`);
-  //       } else {
-  //         // Restore a subpage
-  //         const noteSnapshot = await getDoc(noteDocRef);
-  //         if (noteSnapshot.exists()) {
-  //           const noteData = noteSnapshot.data();
-  //           const updatedSubpages = noteData.subpages.map((sp: any) =>
-  //             sp.id === subpageId
-  //               ? { ...sp, isTrash: false, deletedAt: null }
-  //               : sp
-  //           );
-  //           await updateDoc(noteDocRef, { subpages: updatedSubpages });
-  //           toast.success("Subpage restored successfully");
-  //           router.push(`/dashboard/${noteId}`);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error("Error restoring note or subpage:", error);
-  //       toast.error("Failed to restore note or subpage");
-  //     }
-  //   }
-  // };
-
-  // const handleDelete = async (subpageId?: string) => {
-  //   if (noteId) {
-  //     const noteDocRef = doc(db, "notes", noteId);
-
-  //     try {
-  //       if (!subpageId) {
-  //         // Delete the main note
-  //         await deleteDoc(noteDocRef);
-  //         toast.success("Note deleted permanently");
-  //         router.push("/dashboard");
-  //       } else {
-  //         // Delete a subpage
-  //         const noteSnapshot = await getDoc(noteDocRef);
-  //         if (noteSnapshot.exists()) {
-  //           const noteData = noteSnapshot.data();
-  //           const updatedSubpages = noteData.subpages.filter(
-  //             (sp: any) => sp.id !== subpageId
-  //           );
-  //           await updateDoc(noteDocRef, { subpages: updatedSubpages });
-  //           toast.success("Subpage deleted permanently");
-  //           router.push(`/dashboard/${noteId}`);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error("Error deleting note or subpage:", error);
-  //       toast.error("Failed to delete note or subpage");
-  //     }
-  //   }
-  // };
-
   if (!noteData || !noteId) {
     return <Loading />;
   }
@@ -134,8 +67,6 @@ const NotePage: React.FC = () => {
         isSubpage={false}
         noteId={noteId}
         onUpdate={handleUpdate}
-        // onRestore={handleRestore}
-        // onDelete={handleDelete}
       />
     </>
   );

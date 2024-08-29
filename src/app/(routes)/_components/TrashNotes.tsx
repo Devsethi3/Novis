@@ -322,7 +322,3 @@ const TrashNotes: React.FC<TrashNotesProps> = ({
 };
 
 export default TrashNotes;
-
-// I am building a notion like project in next js, typescript and firebase for backend. Improve the ui for this component that enhances user experiences
-// Start this existing code and it should be perfectly responsive on all screen devices with a best ui for better user experience After that provide the full updated code
-// without use any external library, use only shadcn ui colors (primary,secondary,accent) and component

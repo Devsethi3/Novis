@@ -209,6 +209,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
       }
     }
   };
+
   return (
     <div>
       {data.isTrash && (

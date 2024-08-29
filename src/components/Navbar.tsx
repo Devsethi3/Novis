@@ -19,29 +19,11 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  FaUser,
-  FaCreditCard,
-  FaGithub,
-  FaKeyboard,
-  FaLifeRing,
-  FaSignOutAlt,
-  FaEnvelope,
-  FaComments,
-  FaPlusCircle,
-  FaCog,
-  FaUsers,
-  FaUserPlus,
-  FaCloud,
-} from "react-icons/fa";
+import { FaGithub, FaSignOutAlt, FaCog } from "react-icons/fa";
 
 const Navbar = () => {
   const { currentUser, handleLogout, loading } = useAuth();
@@ -242,7 +224,7 @@ const Navbar = () => {
             <div className="flex items-center space-x-4">
               {!loading && currentUser ? (
                 <DropdownMenu>
-                  <DropdownMenuTrigger>
+                  <DropdownMenuTrigger className="outline-none">
                     <Image
                       src={currentUser.photoURL || "/placeholder.png"}
                       alt="User Profile"
