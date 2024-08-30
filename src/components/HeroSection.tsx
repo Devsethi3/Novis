@@ -4,9 +4,11 @@ import Image from "next/image";
 import React from "react";
 import { GoArrowRight } from "react-icons/go";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useTheme } from "next-themes";
 
 const Hero = () => {
   const { scrollY } = useScroll();
+  const { theme } = useTheme();
 
   const chatY = useTransform(scrollY, [0, 300], [0, -100]);
   const chatRotate = useTransform(scrollY, [0, 300], [0, -15]);
@@ -39,12 +41,11 @@ const Hero = () => {
 
   const gradientAnimation = {
     background: [
-      // "linear-gradient(to bottom, hsl(var(--background)) 0%, hsl(var(--primary)) 50%, hsl(var(--secondary)) 100%)",
-      "linear-gradient(to bottom, hsl(var(--background)) 0%, hsl(var(--secondary)) 50%, hsl(var(--primary)) 100%)",
-      // "linear-gradient(to bottom, hsl(var(--background)) 0%, hsl(var(--primary)) 50%, hsl(var(--secondary)) 100%)",
+      "linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--primary)/0.2) 50%, hsl(var(--secondary)/0.2) 100%)",
+      "linear-gradient(225deg, hsl(var(--background)) 0%, hsl(var(--secondary)/0.2) 50%, hsl(var(--primary)/0.2) 100%)",
     ],
     transition: {
-      duration: 5,
+      duration: 10,
       repeat: Infinity,
       repeatType: "reverse",
     },
@@ -73,10 +74,10 @@ const Hero = () => {
     >
       <motion.div
         className="absolute inset-0 z-[-1]"
-        // @ts-ignore
+        //@ts-expect-error
         animate={gradientAnimation}
       />
-      <div className="absolute h-[375px] w-[750px] sm:w-[3836px] sm:h-[768px] rounded-[100%] bg-background left-1/2 -translate-x-1/2 border-primary/20 bg-[radial-gradient(closest-side,hsl(var(--background))_82%,hsl(var(--primary)))] top-[calc(100%-96px)] sm:top-[calc(100%-120px)]"></div>
+      <div className="absolute h-[375px] w-[750px] sm:w-[3836px] sm:h-[768px] rounded-[100%] bg-background/80 left-1/2 -translate-x-1/2 border-primary/20 bg-[radial-gradient(closest-side,hsl(var(--background))_82%,hsl(var(--primary)/0.3))] top-[calc(100%-96px)] sm:top-[calc(100%-120px)]"></div>
 
       <div className="container mx-auto px-4 relative">
         <motion.div
@@ -105,17 +106,17 @@ const Hero = () => {
         >
           <motion.a
             href="#"
-            className="border inline-flex gap-3 py-1 px-2 rounded-lg border-primary/50"
+            className="border inline-flex gap-3 py-2 px-4 rounded-full border-primary/50 bg-primary/10 backdrop-blur-sm"
             whileHover={{
               scale: 1.05,
-              boxShadow: "0px 0px 8px hsl(var(--primary) / 0.5)",
+              boxShadow: "0px 0px 15px hsl(var(--primary) / 0.5)",
             }}
             whileTap={{ scale: 0.95 }}
           >
-            <span className="bg-gradient-to-r from-emerald-400 to-emerald-600 text-transparent bg-clip-text">
+            <span className="bg-gradient-to-r from-emerald-400 to-emerald-600 text-transparent bg-clip-text font-semibold">
               Discover Our Expertise
             </span>
-            <span className="inline-flex items-center gap-2">
+            <span className="inline-flex items-center gap-2 text-foreground/80">
               <span>Read More</span>
               <motion.span
                 animate={{ x: [0, 5, 0] }}
@@ -127,22 +128,23 @@ const Hero = () => {
           </motion.a>
         </motion.div>
         <motion.div
-          className="flex justify-center mt-8"
+          className="flex justify-center mt-12"
           variants={itemVariants}
         >
           <div className="inline-flex relative">
             <motion.h1
-              className="text-4xl sm:text-6xl lg:text-7xl font-bold text-center"
+              className="text-4xl sm:text-6xl lg:text-7xl font-bold text-center leading-tight"
               variants={titleVariants}
             >
-              Boost Your Note with{" "}
+              Boost Your Notes with{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600">
-                AI Powered Notes
+                AI-Powered
               </span>{" "}
-              Tailored for Success
+              <br />
+              Insights Tailored for Success
             </motion.h1>
             <motion.div
-              className="absolute right-[6px] top-[188px] hidden sm:inline cursor-grab"
+              className="absolute right-[-50px] top-[188px] hidden sm:inline cursor-grab"
               style={{ y: chatY, rotate: chatRotate }}
               drag
               dragSnapToOrigin
@@ -159,7 +161,7 @@ const Hero = () => {
               />
             </motion.div>
             <motion.div
-              className="absolute top-[70px] left-[-50px] hidden sm:inline cursor-grab"
+              className="absolute top-[70px] left-[-80px] hidden sm:inline cursor-grab"
               style={{ y: cursorY, rotate: cursorRotate }}
               drag
               dragSnapToOrigin
@@ -179,25 +181,23 @@ const Hero = () => {
         </motion.div>
         <motion.div className="flex justify-center" variants={itemVariants}>
           <motion.p
-            className="text-center text-base sm:text-lg md:text-xl lg:text-2xl mt-8 max-w-3xl"
+            className="text-center text-base sm:text-lg md:text-xl lg:text-2xl mt-8 max-w-3xl text-foreground/80"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.8 }}
           >
-            Looking for a smarter way to organize your thoughts? Our AI-enhanced
-            note-taking platform transforms the way you capture ideas,
-            streamline tasks, and boost productivity.
+            Elevate your note-taking experience with our AI-enhanced platform. Capture ideas effortlessly, streamline tasks intelligently, and supercharge your productivity like never before.
           </motion.p>
         </motion.div>
         <motion.div
-          className="flex justify-center mt-8"
+          className="flex justify-center mt-12"
           variants={itemVariants}
         >
           <motion.button
-            className="bg-primary text-primary-foreground py-3 px-5 rounded-lg flex items-center"
+            className="bg-primary text-primary-foreground py-4 px-8 rounded-full flex items-center text-lg font-semibold shadow-lg"
             whileHover={{
               scale: 1.05,
-              boxShadow: "0px 0px 15px hsl(var(--primary) / 0.7)",
+              boxShadow: "0px 0px 20px hsl(var(--primary) / 0.7)",
             }}
             whileTap={{ scale: 0.95 }}
           >

@@ -9,6 +9,7 @@ import {
   useAnimation,
 } from "framer-motion";
 import Image from "next/image";
+import { GoArrowRight } from "react-icons/go";
 
 const About: React.FC = () => {
   const aboutRef = useRef<HTMLDivElement>(null);
@@ -18,10 +19,10 @@ const About: React.FC = () => {
 
   const { scrollYProgress } = useScroll({
     target: aboutRef,
-    offset: ["start end", "end end"],
+    offset: ["start end", "end start"],
   });
 
-  const translateY = useTransform(scrollYProgress, [0, 1], [200, -100]);
+  const translateY = useTransform(scrollYProgress, [0, 1], [100, -50]);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
   const titleY = useTransform(scrollYProgress, [0, 0.2], [50, 0]);
 
@@ -73,7 +74,7 @@ const About: React.FC = () => {
       ref={aboutRef}
       initial="hidden"
       id="about"
-      className="pt-6 dark:bg-[#09100D] bg-white overflow-hidden min-h-screen relative"
+      className="pt-20 pb-32 dark:bg-gradient-to-b dark:from-[#09100D] dark:to-[#0D1511] bg-gradient-to-b overflow-hidden min-h-screen relative"
     >
       <div
         className="w-[300px]
@@ -81,61 +82,74 @@ const About: React.FC = () => {
           rounded-full
           h-32
           absolute
-          bg-purple-500/20
+          bg-primary/20
           -z-10
           top-22
+          left-1/2
+          transform
+          -translate-x-1/2
         "
       />
       <div className="container mx-auto px-4">
-        <motion.h1
+        <motion.h2
           ref={titleRef}
           style={{ opacity: titleOpacity, y: titleY }}
-          className="text-4xl sm:text-7xl md:text-7xl font-bold mb-12 text-center relative"
+          className="text-4xl sm:text-6xl md:text-7xl font-bold mb-12 text-center relative"
         >
-          Elevate <motion.span className="text-primary">Your</motion.span>{" "}
+          Elevate{" "}
+          <motion.span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600">
+            Your
+          </motion.span>{" "}
           Productivity with AI
-        </motion.h1>
+        </motion.h2>
 
         <motion.div className="text-center mb-20">
-          <p className="text-lg sm:text-2xl md:text-3xl mb-8 max-w-6xl mx-auto">
+          <p className="text-lg sm:text-xl md:text-2xl mb-12 max-w-4xl mx-auto text-foreground/80">
             Transform the way you take notes, organize tasks, and collaborate.
             Our AI-powered platform adapts to your workflow, helping you stay
             focused and get more done.
           </p>
-          <motion.button
+          <motion.a
+            href="#features"
             whileHover={{
               scale: 1.05,
-              boxShadow: "0 0 15px rgba(26, 255, 156, 0.795)",
+              boxShadow: "0px 0px 15px hsl(var(--primary) / 0.5)",
             }}
             whileTap={{ scale: 0.95 }}
-            className="bg-gradient-to-r bg-primary to-emerald-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-all duration-300"
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 shadow-lg"
           >
-            ✨ Explore the Features
-          </motion.button>
+            Explore the Features
+            <motion.span
+              animate={{ x: [0, 5, 0] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
+            >
+              <GoArrowRight />
+            </motion.span>
+          </motion.a>
         </motion.div>
 
         <motion.div
-          style={{ translateY }}
-          className="absolute top-[20%] z-20 left-9 rotate-45 hidden lg:block"
+          style={{ y: translateY }}
+          className="absolute top-[20%] z-20 left-9 rotate-12 hidden lg:block"
         >
           <Image
             src="/rhombus.avif"
-            width={200}
-            height={200}
+            width={150}
+            height={150}
             alt="rhombus"
-            className="hero-object"
+            className="hero-object opacity-60"
           />
         </motion.div>
         <motion.div
-          style={{ translateY }}
-          className="absolute top-[40%] z-20 right-9 rotate-45 hidden lg:block"
+          style={{ y: translateY }}
+          className="absolute top-[40%] z-20 right-9 -rotate-12 hidden lg:block"
         >
           <Image
             src="/cube-1.avif"
-            width={200}
-            height={200}
+            width={150}
+            height={150}
             alt="cube"
-            className="hero-object"
+            className="hero-object opacity-60"
           />
         </motion.div>
 
@@ -151,7 +165,7 @@ const About: React.FC = () => {
             },
           }}
           id="features"
-          className="grid md:grid-cols-3 relative gap-12 mb-20"
+          className="grid md:grid-cols-3 relative gap-8 mb-32"
         >
           {features.map((feature, index) => (
             <motion.div
@@ -168,46 +182,51 @@ const About: React.FC = () => {
                 },
               }}
               whileHover={{
-                scale: 1.05,
-                boxShadow: "0 0 20px rgba(5, 255, 138, 0.3)",
+                scale: 1.03,
+                boxShadow: "0 0 20px hsl(var(--primary) / 0.2)",
               }}
-              className="bg-gradient-to-br from-[#60ebc8]/10 to-[#1e1e2d]/10 p-8 rounded-2xl backdrop-blur-md shadow-xl transition-all duration-300 relative"
+              className="bg-gradient-to-br from-primary/5 to-secondary/5 p-8 rounded-2xl backdrop-blur-sm shadow-xl transition-all duration-300 relative border border-primary/10"
             >
-              <div className="absolute z-10 top-[-13%] shadow-xl shadow-black left-[40%] bg-primary text-white rounded-full text-2xl font-medium w-16 h-16 grid place-items-center">
+              <div className="absolute z-10 top-[-10%] shadow-lg left-[40%] bg-primary text-primary-foreground rounded-full text-2xl font-medium w-14 h-14 grid place-items-center">
                 {index + 1}
               </div>
               <div className="text-4xl mb-4">{feature.icon}</div>
               <h3 className="text-2xl font-semibold mb-4">{feature.title}</h3>
-              <p className="text-lg">{feature.description}</p>
+              <p className="text-lg text-foreground/80">
+                {feature.description}
+              </p>
             </motion.div>
           ))}
         </motion.div>
 
-        <motion.p
+        <motion.div
           ref={paragraphRef}
           variants={paragraphVariants}
           initial="hidden"
           animate={controls}
-          className="mt-16 text-xl lg:text-4xl"
+          className="mt-16 text-xl lg:text-2xl max-w-4xl mx-auto"
         >
-          ✦ Welcome to our platform, where ideas become actionable insights.
-          <br />
-          <br />
-          <strong>What We Do:</strong> We help you streamline your workflow
-          through AI-enhanced note-taking and task management, making your
-          productivity effortless.
-          <br />
-          <br />
-          <strong>Our Approach:</strong> We provide an intuitive workspace where
-          collaboration, creativity, and organization meet. With real-time
-          updates and AI-powered assistance, your ideas come to life faster than
-          ever.
-          <br />
-          <br />
-          <strong>Maximize Your Potential:</strong> Our innovative platform
-          empowers you to focus on what matters most—turning your ideas into
-          results.
-        </motion.p>
+          <h3 className="text-3xl font-bold mb-8 text-center">Our Vision</h3>
+          <p className="mb-6">
+            ✦ Welcome to our platform, where ideas become actionable insights.
+          </p>
+          <p className="mb-6">
+            <strong>What We Do:</strong> We help you streamline your workflow
+            through AI-enhanced note-taking and task management, making your
+            productivity effortless.
+          </p>
+          <p className="mb-6">
+            <strong>Our Approach:</strong> We provide an intuitive workspace
+            where collaboration, creativity, and organization meet. With
+            real-time updates and AI-powered assistance, your ideas come to life
+            faster than ever.
+          </p>
+          <p>
+            <strong>Maximize Your Potential:</strong> Our innovative platform
+            empowers you to focus on what matters most—turning your ideas into
+            results.
+          </p>
+        </motion.div>
       </div>
     </motion.section>
   );
