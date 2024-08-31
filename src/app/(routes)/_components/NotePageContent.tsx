@@ -35,7 +35,6 @@ interface NotePageContentProps {
   isSubpage: boolean;
   noteId: string;
   onUpdate: (field: string, value: any) => Promise<void>;
-  // onRestore: () => void;
 }
 
 const NotePageContent: React.FC<NotePageContentProps> = ({
