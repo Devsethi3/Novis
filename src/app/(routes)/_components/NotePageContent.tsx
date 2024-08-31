@@ -36,7 +36,6 @@ interface NotePageContentProps {
   noteId: string;
   onUpdate: (field: string, value: any) => Promise<void>;
   // onRestore: () => void;
-  // onDelete: () => void;
 }
 
 const NotePageContent: React.FC<NotePageContentProps> = ({
