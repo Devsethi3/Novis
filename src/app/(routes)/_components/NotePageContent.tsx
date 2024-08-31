@@ -42,7 +42,6 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
   isSubpage,
   noteId,
   onUpdate,
-  // onRestore,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isBreadcrumbEditing, setIsBreadcrumbEditing] = useState(false);
