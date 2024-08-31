@@ -22,6 +22,7 @@ import {
   deleteDoc,
   arrayRemove,
   arrayUnion,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase.config";
 import useAuth from "@/lib/useAuth";
@@ -31,9 +32,9 @@ import {
   FiFile,
   FiFolder,
   FiSearch,
-  FiAlertCircle,
 } from "react-icons/fi";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 interface TrashNotesProps {
   isOpen: boolean;
@@ -59,6 +60,7 @@ const TrashNotes: React.FC<TrashNotesProps> = ({
   const [loading, setLoading] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const { currentUser } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     if (isOpen && currentUser) {
@@ -108,45 +110,64 @@ const TrashNotes: React.FC<TrashNotesProps> = ({
     });
   };
 
-  const handleRestore = useCallback(async (item: TrashedItem) => {
-    try {
-      if (item.type === "subpage" && item.parentId) {
-        const parentRef = doc(db, "notes", item.parentId);
-        await updateDoc(parentRef, {
-          subpages: arrayRemove({ ...item, isTrash: true }),
-        });
-        await updateDoc(parentRef, {
-          subpages: arrayUnion({ ...item, isTrash: false, deletedAt: null }),
-        });
-      } else {
-        await updateDoc(doc(db, "notes", item.id), {
-          isTrash: false,
-          deletedAt: null,
-        });
+  const handleRestore = useCallback(
+    async (item: TrashedItem) => {
+      try {
+        if (item.type === "subpage" && item.parentId) {
+          const parentRef = doc(db, "notes", item.parentId);
+          const parentSnapshot = await getDoc(parentRef);
+          if (parentSnapshot.exists()) {
+            const parentData = parentSnapshot.data();
+            const updatedSubpages = parentData.subpages.map((sp: any) =>
+              sp.id === item.id
+                ? { ...sp, isTrash: false, deletedAt: null }
+                : sp
+            );
+            await updateDoc(parentRef, { subpages: updatedSubpages });
+          }
+        } else {
+          await updateDoc(doc(db, "notes", item.id), {
+            isTrash: false,
+            deletedAt: null,
+          });
+        }
+        toast.success("Item restored successfully!");
+        router.push(`/dashboard/${item.parentId || item.id}`);
+      } catch (error) {
+        console.error("Error restoring item:", error);
+        toast.error("Failed to restore item");
       }
-      toast.success("Item restored succesfully!");
-    } catch (error) {
-      console.error("Error restoring item:", error);
-      toast.error("Failed to restore item");
-    }
-  }, []);
+    },
+    [router]
+  );
 
-  const handleDelete = useCallback(async (item: TrashedItem) => {
-    try {
-      if (item.type === "subpage" && item.parentId) {
-        const parentRef = doc(db, "notes", item.parentId);
-        await updateDoc(parentRef, {
-          subpages: arrayRemove({ ...item, isTrash: true }),
-        });
-      } else {
-        await deleteDoc(doc(db, "notes", item.id));
+  const handleDelete = useCallback(
+    async (item: TrashedItem) => {
+      try {
+        if (item.type === "subpage" && item.parentId) {
+          const parentRef = doc(db, "notes", item.parentId);
+          const parentSnapshot = await getDoc(parentRef);
+          if (parentSnapshot.exists()) {
+            const parentData = parentSnapshot.data();
+            const updatedSubpages = parentData.subpages.filter(
+              (sp: any) => sp.id !== item.id
+            );
+            await updateDoc(parentRef, { subpages: updatedSubpages });
+          }
+        } else {
+          await deleteDoc(doc(db, "notes", item.id));
+        }
+        toast.success("Item permanently deleted");
+        if (item.type === "page") {
+          router.push("/dashboard");
+        }
+      } catch (error) {
+        console.error("Error deleting item:", error);
+        toast.error("Failed to delete item");
       }
-      toast.success("Item permanently deleted");
-    } catch (error) {
-      console.error("Error deleting item:", error);
-      toast.error("Failed to delete item");
-    }
-  }, []);
+    },
+    [router]
+  );
 
   const handleBulkRestore = async () => {
     for (const itemId of selectedItems) {

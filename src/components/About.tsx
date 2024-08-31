@@ -204,7 +204,7 @@ const About: React.FC = () => {
           variants={paragraphVariants}
           initial="hidden"
           animate={controls}
-          className="mt-16 text-xl lg:text-2xl max-w-4xl mx-auto"
+          className="mt-16 text-xl lg:text-3xl max-w-6xl mx-auto"
         >
           <h3 className="text-3xl font-bold mb-8 text-center">Our Vision</h3>
           <p className="mb-6">
