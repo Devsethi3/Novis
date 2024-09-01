@@ -170,19 +170,45 @@ const TrashNotes: React.FC<TrashNotesProps> = ({
   );
 
   const handleBulkRestore = async () => {
+    const failedItems: string[] = [];
     for (const itemId of selectedItems) {
       const item = trashedItems.find((i) => i.id === itemId);
-      if (item) await handleRestore(item);
+      if (item) {
+        try {
+          await handleRestore(item);
+        } catch (error) {
+          console.error(`Failed to restore item ${itemId}:`, error);
+          failedItems.push(itemId);
+        }
+      }
     }
-    setSelectedItems([]);
+    setSelectedItems(failedItems);
+    if (failedItems.length === 0) {
+      toast.success("All selected items restored successfully!");
+    } else {
+      toast.error(`Failed to restore ${failedItems.length} item(s)`);
+    }
   };
 
   const handleBulkDelete = async () => {
+    const failedItems: string[] = [];
     for (const itemId of selectedItems) {
       const item = trashedItems.find((i) => i.id === itemId);
-      if (item) await handleDelete(item);
+      if (item) {
+        try {
+          await handleDelete(item);
+        } catch (error) {
+          console.error(`Failed to delete item ${itemId}:`, error);
+          failedItems.push(itemId);
+        }
+      }
     }
-    setSelectedItems([]);
+    setSelectedItems(failedItems);
+    if (failedItems.length === 0) {
+      toast.success("All selected items deleted successfully!");
+    } else {
+      toast.error(`Failed to delete ${failedItems.length} item(s)`);
+    }
   };
 
   const filteredItems = trashedItems.filter((item) =>
