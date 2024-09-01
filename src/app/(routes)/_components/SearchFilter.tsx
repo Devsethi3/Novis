@@ -202,7 +202,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
                   variant="ghost"
                   size="icon"
                   onClick={() => handleDelete(item)}
-                  className="ml-2 hover:bg-red-100"
+                  className="ml-2 bg-destructive/15 hover:bg-destructive/50"
                 >
                   <FiTrash2 className="text-red-500 w-5 h-5" />
                 </Button>
