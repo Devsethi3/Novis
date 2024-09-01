@@ -76,6 +76,7 @@ const Sidebar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isTrashOpen, setIsTrashOpen] = useState(false);
   const [notes, setNotes] = useState<Note[]>([]);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { currentUser } = useAuth();
   const pathname = usePathname();
@@ -89,8 +90,6 @@ const Sidebar = () => {
     }
     return pathname.startsWith(href);
   };
-
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -571,9 +570,11 @@ const Sidebar = () => {
               </div>
             </>
           )}
-          <div className="p-4">
-            <UserButton />
-          </div>
+          {sidebarOpen ? (
+            <div className="p-4">
+              <UserButton />
+            </div>
+          ) : null}
         </motion.aside>
       </IconContext.Provider>
     </div>
