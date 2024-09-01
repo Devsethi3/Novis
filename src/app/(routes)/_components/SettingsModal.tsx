@@ -19,6 +19,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { LucideLoader } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface UserData {
   uid: string;
@@ -44,13 +45,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     initialFirestoreUser
   );
   const [authUser, setAuthUser] = useState<User | null>(auth.currentUser);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newDisplayName, setNewDisplayName] = useState(
     firestoreUser?.displayName || ""
   );
   const [newPhotoURL, setNewPhotoURL] = useState(firestoreUser?.photoURL || "");
   const [newPhotoFile, setNewPhotoFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [loadingProfileUpdate, setLoadingProfileUpdate] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -87,6 +88,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       console.error("Error signing out:", error);
     }
   };
+
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setNewPhotoFile(e.target.files[0]);
@@ -95,6 +97,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   const handleUpdateProfile = async () => {
+    if (!newDisplayName.trim()) {
+      toast.error("Name cannot be empty");
+      return;
+    }
+
+    setLoadingProfileUpdate(true);
     try {
       if (!authUser) return;
 
@@ -120,10 +128,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       });
 
       toast.success("Profile updated successfully");
-      setIsDialogOpen(false);
+      onOpenChange(false);
     } catch (error) {
       console.error("Error updating profile:", error);
       toast.error("Failed to update profile");
+    } finally {
+      setLoadingProfileUpdate(false);
     }
   };
 
@@ -136,90 +146,86 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6">
-      {/* <div className="shadow-lg border rounded-lg p-8 w-full max-w-md">
-        {firestoreUser ? (
-          <div className="text-center">
-            <img
-              src={firestoreUser.photoURL || "/placeholder.jpg"}
-              alt="Profile"
-              className="w-24 h-24 rounded-full mx-auto mb-4"
-            />
-            <h2 className="text-xl font-semibold">
-              {firestoreUser.displayName || "Anonymous User"}
-            </h2>
-            <p className="text-gray-600">{firestoreUser.email}</p>
-
-            <div className="mt-6 space-x-4">
-              <Button
-                onClick={handleSignOut}
-                className="bg-red-500 text-white hover:bg-red-600"
-              >
-                Sign Out
-              </Button>
-              <Button onClick={() => setIsDialogOpen(true)}>Settings</Button>
-            </div>
-          </div>
-        ) : (
-          <div className="text-center">
-            <p className="text-gray-600">No user is signed in.</p>
-          </div>
-        )}
-      </div> */}
-
+    <>
       {/* Settings Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      {trigger}
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit Your Profile</DialogTitle>
+            <DialogTitle className="text-xl font-semibold">
+              Update Your Profile
+            </DialogTitle>
+            <p className="text-sm mt-1">
+            Make changes to your profile information, including your name and profile picture.
+            </p>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="name" className="text-right">
-                Name
-              </label>
-              <Input
-                id="name"
-                value={newDisplayName}
-                onChange={(e) => setNewDisplayName(e.target.value)}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label className="text-right">Photo</label>
-              <div className="col-span-3 flex items-center gap-4">
-                <Image
-                  src={newPhotoURL || "/placeholder.jpg"}
-                  alt="Profile"
-                  width={40}
-                  height={40}
-                  className="rounded-full w-10 h-10 object-cover"
-                />
-                <Button
-                  onClick={() => fileInputRef.current?.click()}
-                  variant="outline"
-                >
-                  Change
-                </Button>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handlePhotoChange}
-                  accept="image/*"
-                  className="hidden"
+          <AnimatePresence>
+            <motion.div
+              className="grid gap-4 py-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="grid grid-cols-4 items-center gap-4">
+                <label htmlFor="name" className="text-right">
+                  Name :
+                </label>
+                <Input
+                  id="name"
+                  value={newDisplayName}
+                  onChange={(e) => setNewDisplayName(e.target.value)}
+                  className="col-span-3 border border-accent rounded-md"
                 />
               </div>
-            </div>
-          </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <label className="text-right">Photo</label>
+                <div className="col-span-3 flex items-center gap-4">
+                  <Image
+                    src={newPhotoURL || "/placeholder.jpg"}
+                    alt="Profile"
+                    width={45}
+                    height={45}
+                    className="rounded-full w-12 h-12 object-cover"
+                  />
+                  <Button
+                    onClick={() => fileInputRef.current?.click()}
+                    variant="outline"
+                  >
+                    Change
+                  </Button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handlePhotoChange}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
           <DialogFooter>
-            <Button onClick={() => setIsDialogOpen(false)} variant="outline">
+            <Button onClick={() => onOpenChange(false)} variant="outline">
               Cancel
             </Button>
-            <Button onClick={handleUpdateProfile}>Save</Button>
+            <Button
+              onClick={handleUpdateProfile}
+              disabled={loadingProfileUpdate}
+            >
+              {loadingProfileUpdate ? (
+                <>
+                  Saving...
+                  <LucideLoader className="h-5 w-5 animate-spin" />
+                </>
+              ) : (
+                "Save"
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 };
 

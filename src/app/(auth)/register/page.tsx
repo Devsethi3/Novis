@@ -20,6 +20,7 @@ import {
 } from "react-icons/fa";
 import Link from "next/link";
 import { LucideGithub, LucideLoader, Mountain } from "lucide-react";
+import Image from "next/image";
 
 const FormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters long"),
@@ -70,7 +71,7 @@ const RegisterPage = () => {
     <div className="flex items-center justify-center min-h-screen px-4 lg:py-8 py-4">
       <div className="w-full max-w-md bg-card text-card-foreground rounded-lg lg:shadow-lg shadow-none lg:border sm:border-none lg:p-8 p-4">
         <h2 className="text-3xl flex items-center gap-6 flex-col font-bold text-center mb-8">
-          <Mountain className="text-primary" size={30} />
+          <Image src="/logo.svg" alt="logo" width={50} height={50} />
           Register your account
         </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

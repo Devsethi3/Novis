@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { FaGoogle, FaEnvelope, FaLock } from "react-icons/fa";
 import Link from "next/link";
 import { LucideLoader, Mountain } from "lucide-react";
+import Image from "next/image";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -45,7 +46,7 @@ const LoginPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-background px-4 lg:py-8 py-4">
       <div className="w-full max-w-md bg-card text-card-foreground rounded-lg lg:border sm:border-none lg:shadow-lg shadow-none lg:p-8 p-4">
         <h2 className="text-3xl flex items-center gap-6 flex-col font-bold text-center mb-8">
-          <Mountain className="text-primary" size={30} />
+          <Image src="/logo.svg" alt="logo" width={50} height={50} />
           Sign in to your account
         </h2>
         <form

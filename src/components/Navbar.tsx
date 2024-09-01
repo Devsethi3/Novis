@@ -169,8 +169,8 @@ const Navbar = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center space-x-2">
-              <Image src="/logo (2).png" alt="logo" width={30} height={30} />
-              <span className="text-xl pl-3 font-semibold">Web Realm</span>
+            <Image src="/logo.svg" alt="logo" width={45} height={45} />
+            <span className="text-2xl pl-3 font-semibold">Novis</span>
             </Link>
             <div className="hidden md:flex items-center space-x-10">
               {menuItems.map((item) => (

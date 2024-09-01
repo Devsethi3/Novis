@@ -39,6 +39,7 @@ import TrashNotes from "./TrashNotes";
 import Image from "next/image";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import UserButton from "@/components/UserButton";
+import SettingsModal from "./SettingsModal";
 
 interface NavItem {
   icon: React.ElementType;
@@ -68,13 +69,14 @@ interface Subpage {
 
 const navItems: NavItem[] = [
   { icon: FiSearch, label: "Search", href: "#search", badge: "ctrl+k" },
-  { icon: FiSettings, label: "Settings", href: "/dashboard/settings" },
+  { icon: FiSettings, label: "Settings", href: "#settings", badge: "ctrl+s" },
   { icon: FiTrash2, label: "Trash", href: "#trash", badge: "ctrl+d" },
 ];
 
 const Sidebar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isTrashOpen, setIsTrashOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [notes, setNotes] = useState<Note[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -99,6 +101,9 @@ const Sidebar = () => {
       } else if (event.ctrlKey && event.key === "d") {
         event.preventDefault();
         setIsTrashOpen(true);
+      } else if (event.ctrlKey && event.key === "s") {
+        event.preventDefault();
+        setIsSettingsOpen(true);
       }
     };
 
@@ -451,7 +456,7 @@ const Sidebar = () => {
                         >
                           <div className="flex items-center justify-between w-full">
                             <div className="flex items-center gap-2">
-                              <FiTrash2 className="flex-shrink-0" />
+                              <item.icon className="flex-shrink-0" />
                               <AnimatePresence>
                                 {sidebarOpen && (
                                   <motion.span
@@ -461,68 +466,62 @@ const Sidebar = () => {
                                     transition={{ duration: 0.2 }}
                                     className="ml-3 font-medium"
                                   >
-                                    Trash
+                                    {item.label}
                                   </motion.span>
                                 )}
                               </AnimatePresence>
                             </div>
                             {sidebarOpen && (
                               <span className="bg-secondary px-2 py-1 text-sm rounded-md">
-                                ctrl+d
+                                {item.badge}
                               </span>
                             )}
                           </div>
                         </motion.div>
                       }
                     />
-                  ) : (
-                    <Link href={item.href} passHref>
-                      <motion.div
-                        className={cn(
-                          "flex items-center rounded-md px-4 py-3 transition-colors duration-200",
-                          "hover:bg-accent hover:text-accent-foreground",
-                          isActive(item.href) &&
-                            "bg-primary text-white hover:bg-primary hover:text-white"
-                        )}
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <div className="flex items-center justify-between w-full">
-                          <div className="flex items-center gap-2">
-                            <item.icon className="flex-shrink-0" />
-                            <AnimatePresence>
-                              {sidebarOpen && (
-                                <motion.span
-                                  initial={{ opacity: 0, x: -10 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  exit={{ opacity: 0, x: -10 }}
-                                  transition={{ duration: 0.2 }}
-                                  className="ml-3 font-medium"
-                                >
-                                  {item.label}
-                                </motion.span>
-                              )}
-                            </AnimatePresence>
-                          </div>
-                          {sidebarOpen && (
-                            <motion.span
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, x: -10 }}
-                              transition={{ duration: 0.2 }}
-                              // className="ml-3 font-medium"
-                            >
-                              {item.badge && (
-                                <span className="bg-secondary px-2 py-1 text-sm rounded-md">
-                                  {item.badge}
-                                </span>
-                              )}
-                            </motion.span>
+                  ) : item.href === "#settings" ? (
+                    <SettingsModal
+                      isOpen={isSettingsOpen}
+                      onOpenChange={setIsSettingsOpen}
+                      trigger={
+                        <motion.div
+                          className={cn(
+                            "flex items-center rounded-md px-4 py-3 transition-colors duration-200",
+                            "hover:bg-accent hover:text-accent-foreground",
+                            "cursor-pointer"
                           )}
-                        </div>
-                      </motion.div>
-                    </Link>
-                  )}
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => setIsSettingsOpen(true)}
+                        >
+                          <div className="flex items-center justify-between w-full">
+                            <div className="flex items-center gap-2">
+                              <item.icon className="flex-shrink-0" />
+                              <AnimatePresence>
+                                {sidebarOpen && (
+                                  <motion.span
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -10 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="ml-3 font-medium"
+                                  >
+                                    {item.label}
+                                  </motion.span>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                            {sidebarOpen && (
+                              <span className="bg-secondary px-2 py-1 text-sm rounded-md">
+                                {item.badge}
+                              </span>
+                            )}
+                          </div>
+                        </motion.div>
+                      }
+                    />
+                  ) : null}
                 </li>
               ))}
             </ul>
