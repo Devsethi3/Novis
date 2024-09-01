@@ -36,6 +36,9 @@ import { v4 as uuidv4 } from "uuid";
 import SearchFilter from "./SearchFilter";
 import toast from "react-hot-toast";
 import TrashNotes from "./TrashNotes";
+import Image from "next/image";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import UserButton from "@/components/UserButton";
 
 interface NavItem {
   icon: React.ElementType;
@@ -73,6 +76,7 @@ const Sidebar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isTrashOpen, setIsTrashOpen] = useState(false);
   const [notes, setNotes] = useState<Note[]>([]);
+  const [loading, setLoading] = useState(false);
   const { currentUser } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
@@ -106,6 +110,7 @@ const Sidebar = () => {
   useEffect(() => {
     if (currentUser) {
       const q = query(collection(db, "notes"), orderBy("createdAt", "desc"));
+      setLoading(true);
 
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const noteList: Note[] = [];
@@ -131,6 +136,7 @@ const Sidebar = () => {
           }
         });
         setNotes(noteList);
+        setLoading(false);
       });
 
       return () => unsubscribe();
@@ -356,9 +362,12 @@ const Sidebar = () => {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.2 }}
-                  className="text-xl font-bold"
+                  className="text-xl ml-2 font-bold"
                 >
-                  Dashboard
+                  <div className="flex items-center gap-5">
+                    <Image src="/logo.svg" alt="logo" width={40} height={40} />
+                    <p>Novis</p>
+                  </div>
                 </motion.h1>
               )}
             </AnimatePresence>
@@ -535,15 +544,21 @@ const Sidebar = () => {
               </div>
               <div className="px-4 mt-4 flex flex-col">
                 <h2 className="text-sm font-semibold border-b pb-2">Notes</h2>
-                {notes.length === 0 ? (
-                  <div className="text-sm mt-2 text-center text-muted-foreground">
-                    No notes yet. Create your first note to get started!
-                  </div>
-                ) : (
-                  <Accordion type="single" collapsible>
-                    {notes.map(renderNoteItem)}
-                  </Accordion>
-                )}
+                <ScrollArea className="h-[270px]">
+                  {loading ? (
+                    <div className="flex items-center justify-center h-full">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                    </div>
+                  ) : notes.length === 0 ? (
+                    <div className="text-sm mt-2 text-center text-muted-foreground">
+                      No notes yet. Create your first note to get started!
+                    </div>
+                  ) : (
+                    <Accordion type="single" collapsible>
+                      {notes.map(renderNoteItem)}
+                    </Accordion>
+                  )}
+                </ScrollArea>
               </div>
             </>
           ) : (
@@ -556,6 +571,9 @@ const Sidebar = () => {
               </div>
             </>
           )}
+          <div className="p-4">
+            <UserButton />
+          </div>
         </motion.aside>
       </IconContext.Provider>
     </div>

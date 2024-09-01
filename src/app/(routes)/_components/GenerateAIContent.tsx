@@ -10,7 +10,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import GradientText from "@/components/GradientText";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
@@ -73,15 +72,7 @@ const GenerateAIContent: React.FC<GenerateAIContentProps> = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button onClick={() => setOpen(true)}>
-          <GradientText
-            animationSpeed={5}
-            showBorder={true}
-            className="custom-class"
-          >
-            Generate with AI
-          </GradientText>
-        </button>
+        <Button onClick={() => setOpen(true)}>Generate with AI</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
