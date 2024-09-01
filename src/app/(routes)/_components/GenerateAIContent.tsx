@@ -15,7 +15,9 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { chatSession } from "@/lib/AiModel";
 import { toast } from "react-hot-toast";
-import { Loader2 } from "lucide-react";
+import { ChevronRight, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import GradientText from "@/components/GradientText";
 
 interface GenerateAIContentProps {
   onContentGenerated?: (content: any) => void;
@@ -72,7 +74,16 @@ const GenerateAIContent: React.FC<GenerateAIContentProps> = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button onClick={() => setOpen(true)}>Generate with AI</Button>
+        <GradientText
+          onClick={() => setOpen(true)}
+          colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]} // Custom gradient colors
+          animationSpeed={3} // Custom animation speed in seconds
+          showBorder={true} // Show or hide border
+          className="custom-class px-3.5 py-2.5" // Add one or more custom classes
+        >
+          ✨ Generate with AI
+        </GradientText>
+        {/* <Button onClick={() => setOpen(true)}>Generate with AI</Button> */}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -114,7 +125,7 @@ const GenerateAIContent: React.FC<GenerateAIContentProps> = ({
                 Generating...
               </>
             ) : (
-              "Generate Content"
+              "✨ Generate Content"
             )}
           </Button>
         </DialogFooter>
