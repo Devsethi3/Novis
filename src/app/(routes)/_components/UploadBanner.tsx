@@ -45,7 +45,7 @@ const UploadBanner: React.FC<UploadBannerProps> = ({
       const file = e.target.files[0];
       setBanner(file);
 
-      // Create a preview of the 
+      // Preview of the image
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result as string);
