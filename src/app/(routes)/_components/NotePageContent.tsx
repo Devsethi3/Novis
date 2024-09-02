@@ -139,7 +139,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
       navigator.clipboard.writeText(`${window.location.origin}${publishedUrl}`);
       setIsCopied(true);
       toast.success("Published URL copied to clipboard");
-      setTimeout(() => setIsCopied(false), 1000); // Reset icon after 2s
+      setTimeout(() => setIsCopied(false), 1000); // Reset icon after 2 seconds
     }
   };
 
