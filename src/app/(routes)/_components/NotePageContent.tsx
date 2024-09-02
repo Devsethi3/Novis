@@ -211,7 +211,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
   return (
     <div>
       {data.isTrash && (
-        <div className="w-full bg-secondary p-4 flex items-center justify-between">
+        <div className="w-full bg-secondary lg:p-4 p-3 flex items-center justify-between">
           <div className="text-sm font-medium">
             This {isSubpage ? "subpage" : "note"} is in Trash
           </div>
@@ -248,7 +248,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
         )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button>{isPublished ? "Published" : "Publish"}</Button>
+            <Button size='sm'>{isPublished ? "Published" : "Publish"}</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-72 m-2 shadow-xl">
             <div className="flex items-center flex-col px-4 py-3">
@@ -299,7 +299,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
         </DropdownMenu>
       </div>
       <div className="w-full">
-        <div className="mb-10 relative">
+        <div className="lg:mb-10 mb-4 relative">
           {bannerUrl && (
             <img
               src={bannerUrl}
@@ -324,7 +324,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
             )}
           </div>
         </div>
-        <div className="flex items-center mx-20 border-t border-b py-8 justify-between">
+        <div className="flex items-center lg:mx-20 mx-0 border-t border-b py-8 justify-between">
           <div className="flex items-center gap-8">
             <div className="relative">
               <span

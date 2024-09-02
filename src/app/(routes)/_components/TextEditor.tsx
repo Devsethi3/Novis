@@ -235,8 +235,8 @@ const TextEditor: React.FC<TextEditorProps> = ({ noteId, subpageId }) => {
   };
 
   return (
-    <div className="px-20 py-4">
-      <div className="fixed bottom-5 md:ml-80 left-0 z-10">
+    <div className="lg:px-20 px-4 py-4">
+      <div className="fixed bottom-5 lg:ml-80 ml-28 left-0 z-10">
         <GenerateAIContent onContentGenerated={handleAIContentGenerated} />
       </div>
       <div id="editorjs"></div>

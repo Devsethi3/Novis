@@ -350,7 +350,7 @@ const Sidebar = () => {
   );
 
   return (
-    <div className="h-full bg-secondary/40 overflow-y-auto relative flex shadow-xl border-r">
+    <div className="h-full bg-secondary/40 overflow-y-auto z-20 relative flex shadow-xl border-r">
       <IconContext.Provider value={{ size: "1.3em" }}>
         <motion.aside
           initial={{ width: sidebarOpen ? 256 : 75 }}
