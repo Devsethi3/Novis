@@ -74,7 +74,7 @@ const navItems: NavItem[] = [
 ];
 
 const Sidebar = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isTrashOpen, setIsTrashOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [notes, setNotes] = useState<Note[]>([]);
@@ -350,7 +350,7 @@ const Sidebar = () => {
   );
 
   return (
-    <div className="h-full bg-secondary/40 overflow-y-auto z-20 relative flex shadow-xl border-r">
+    <div className="h-full bg-[#F0F4F3] dark:bg-[#111E19] overflow-y-auto z-20 relative flex shadow-xl border-r">
       <IconContext.Provider value={{ size: "1.3em" }}>
         <motion.aside
           initial={{ width: sidebarOpen ? 256 : 75 }}

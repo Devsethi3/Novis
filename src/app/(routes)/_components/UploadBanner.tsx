@@ -122,9 +122,14 @@ const UploadBanner: React.FC<UploadBannerProps> = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="flex items-center">
+        <Button className="flex lg:w-fit w-[90%] items-center">
           <LucideUpload size={15} className="mr-3" />
-          {currentBanner ? "Update Banner" : "Upload Banner"}
+          <div className="hidden lg:block">
+            {currentBanner ? "Update Banner" : "Upload Banner"}
+          </div>
+          <div className="block lg:hidden">
+            {currentBanner ? "Update" : "Upload Banner"}
+          </div>
         </Button>
       </DialogTrigger>
       <DialogContent>

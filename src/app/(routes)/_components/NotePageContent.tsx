@@ -178,6 +178,14 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
     }
   };
 
+  function truncateText(text: string, wordLimit: number) {
+    const words = text.split(" ");
+    if (words.length > wordLimit) {
+      return words.slice(0, wordLimit).join(" ") + "...";
+    }
+    return text;
+  }
+
   const handleDelete = async () => {
     if (noteId) {
       const noteDocRef = doc(db, "notes", noteId);
@@ -225,7 +233,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
           </div>
         </div>
       )}
-      <div className="w-full flex h-[7vh] px-6 items-center justify-between">
+      <div className="w-full flex h-[10vh] px-6 items-center justify-between">
         {isBreadcrumbEditing ? (
           <input
             type="text"
@@ -239,18 +247,26 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
             className="font-medium bg-transparent outline-none"
           />
         ) : (
-          <p
-            className="font-medium cursor-pointer"
-            onDoubleClick={() => setIsBreadcrumbEditing(true)}
-          >
-            {data.title}
-          </p>
+          <>
+            <p
+              className="font-medium hidden lg:block cursor-pointer"
+              onDoubleClick={() => setIsBreadcrumbEditing(true)}
+            >
+              {data.title}
+            </p>
+            <p
+              className="font-medium flex lg:hidden cursor-pointer"
+              onDoubleClick={() => setIsBreadcrumbEditing(true)}
+            >
+              {truncateText(data.title, 2)}
+            </p>
+          </>
         )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button size='sm'>{isPublished ? "Published" : "Publish"}</Button>
+            <Button size="sm">{isPublished ? "Published" : "Publish"}</Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-72 m-2 shadow-xl">
+          <DropdownMenuContent className="w-72 lg:m-2 m-0 shadow-xl">
             <div className="flex items-center flex-col px-4 py-3">
               <TbWorld size={30} className="opacity-80" />
               <h3 className="text-xl font-bold text-center mt-2 opacity-80">
@@ -316,16 +332,24 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
                   currentBanner={bannerUrl}
                   onBannerUpdate={handleBannerUpdate}
                 />
-                <Button variant="secondary" onClick={handleRemoveBanner}>
-                  <IoClose className="mr-2" size={18} />
-                  Remove Banner
-                </Button>
+                <div className="hidden lg:block">
+                  <Button variant="secondary" onClick={handleRemoveBanner}>
+                    <IoClose className="mr-2" size={18} />
+                    Remove Banner
+                  </Button>
+                </div>
+                <div className="block lg:hidden">
+                  <Button variant="secondary" onClick={handleRemoveBanner}>
+                    <IoClose className="mr-2" size={18} />
+                    Remove
+                  </Button>
+                </div>
               </>
             )}
           </div>
         </div>
-        <div className="flex items-center lg:mx-20 mx-0 border-t border-b py-8 justify-between">
-          <div className="flex items-center gap-8">
+        <div className="flex lg:flex-row flex-col gap-10 items-center lg:mx-20 mx-0 border-t border-b lg:py-8 py-3 justify-between">
+          <div className="flex items-center lg:gap-8 gap-2">
             <div className="relative">
               <span
                 className="text-5xl cursor-pointer"
@@ -350,11 +374,11 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
                     if (e.key === "Enter") handleTitleChange();
                   }}
                   autoFocus
-                  className="text-4xl bg-transparent font-bold outline-none"
+                  className="text-2xl lg:text-4xl bg-transparent font-bold outline-none"
                 />
               ) : (
                 <h1
-                  className="text-4xl font-bold cursor-pointer"
+                  className="text-2xl lg:text-4xl font-bold cursor-pointer"
                   onDoubleClick={() => setIsEditing(true)}
                 >
                   {data.title}
