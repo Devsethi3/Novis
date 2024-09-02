@@ -106,7 +106,7 @@ const Hero = () => {
         >
           <motion.a
             href="#"
-            className="border inline-flex gap-3 py-2 px-4 rounded-full border-primary/50 bg-primary/10 backdrop-blur-sm"
+            className="border inline-flex gap-3 text-sm lg:text-base py-2 px-4 rounded-full border-primary/50 bg-primary/10 backdrop-blur-sm"
             whileHover={{
               scale: 1.05,
               boxShadow: "0px 0px 15px hsl(var(--primary) / 0.5)",
@@ -133,14 +133,14 @@ const Hero = () => {
         >
           <div className="inline-flex relative">
             <motion.h1
-              className="text-4xl sm:text-6xl lg:text-7xl font-bold text-center leading-tight"
+              className="text-3xl sm:text-6xl lg:text-7xl font-bold text-center leading-tight"
               variants={titleVariants}
             >
               Boost Your Notes with{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600">
                 AI-Powered
               </span>{" "}
-              <br />
+              {/* <br /> */}
               Insights Tailored for Success
             </motion.h1>
             <motion.div
@@ -181,12 +181,13 @@ const Hero = () => {
         </motion.div>
         <motion.div className="flex justify-center" variants={itemVariants}>
           <motion.p
-            className="text-center text-base sm:text-lg md:text-xl lg:text-2xl mt-8 max-w-3xl text-foreground/80"
+            className="text-center text-lg md:text-xl lg:text-2xl mt-8 max-w-3xl text-foreground/80"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.8 }}
           >
-            Elevate your note-taking experience with our AI-enhanced platform. Capture ideas effortlessly, streamline tasks intelligently, and supercharge your productivity like never before.
+            Elevate your note-taking experience with our AI-enhanced platform.
+            Capture ideas effortlessly, streamline tasks intelligently.{" "}
           </motion.p>
         </motion.div>
         <motion.div
@@ -194,7 +195,7 @@ const Hero = () => {
           variants={itemVariants}
         >
           <motion.button
-            className="bg-primary text-primary-foreground py-4 px-8 rounded-full flex items-center text-lg font-semibold shadow-lg"
+            className="bg-primary text-primary-foreground lg:py-4 py-3 lg:px-8 px-5 rounded-xl flex items-center lg:text-lg text-sm font-semibold shadow-lg"
             whileHover={{
               scale: 1.05,
               boxShadow: "0px 0px 20px hsl(var(--primary) / 0.7)",

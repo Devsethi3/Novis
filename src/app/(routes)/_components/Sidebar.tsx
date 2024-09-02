@@ -542,7 +542,7 @@ const Sidebar = () => {
               </div>
               <div className="px-4 mt-4 flex flex-col">
                 <h2 className="text-sm font-semibold border-b pb-2">Notes</h2>
-                <ScrollArea className="h-[270px]">
+                <ScrollArea className="lg:h-[270px] h-[170px]">
                   {loading ? (
                     <div className="flex items-center justify-center h-full">
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>

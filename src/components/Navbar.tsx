@@ -24,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { FaGithub, FaSignOutAlt, FaCog } from "react-icons/fa";
+import { LogIn } from "lucide-react";
 
 const Navbar = () => {
   const { currentUser, handleLogout, loading } = useAuth();
@@ -169,8 +170,10 @@ const Navbar = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center space-x-2">
-            <Image src="/logo.svg" alt="logo" width={45} height={45} />
-            <span className="text-2xl pl-3 font-semibold">Novis</span>
+              <Image src="/logo.svg" alt="logo" width={45} height={45} />
+              <span className="text-2xl pl-3 font-semibold hidden lg:block">
+                Novis
+              </span>
             </Link>
             <div className="hidden md:flex items-center space-x-10">
               {menuItems.map((item) => (
@@ -206,7 +209,7 @@ const Navbar = () => {
                               >
                                 <Link
                                   href={subItem.href}
-                                  className="block px-4 py-2 text-sm text-gray-300 hover:text-white transition-colors"
+                                  className="block px-4 py-2 text-sm text-gray-300 hover:transition-colors"
                                 >
                                   {subItem.title}
                                 </Link>
@@ -263,19 +266,27 @@ const Navbar = () => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <div className="flex items-center gap-6">
+                <div className="flex items-center lg:gap-6 gap-2">
                   <Link href="/login">
-                    <Button>Login</Button>
+                    <Button size="sm">
+                      <LogIn size={14} className="mr-2 hidden lg:block" />
+                      Login
+                    </Button>
                   </Link>
                   <Link href="/register">
-                    <Button>Register</Button>
+                    <Button size="sm">Register</Button>
                   </Link>
                 </div>
               )}
               <div className="md:hidden">
-                <button onClick={toggleMenu} className="focus:outline-none">
-                  <HiMenu className="h-6 w-6" />
-                </button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={toggleMenu}
+                  className="focus:outline-none"
+                >
+                  <HiMenu className="h-5 w-5" />
+                </Button>
               </div>
             </div>
           </div>
@@ -288,34 +299,62 @@ const Navbar = () => {
             animate="open"
             exit="closed"
             variants={menuVariants}
-            className="fixed inset-y-0 right-0 w-full max-w-sm bg-[#0e0e16] bg-opacity-95 backdrop-blur-lg z-40 md:hidden"
+            className="fixed inset-y-0 right-0 w-full max-w-sm dark:bg-[#0e1613] bg-[#f5fffc] bg-opacity-95 backdrop-blur-lg z-40 md:hidden"
           >
-            <div className="flex flex-col items-start justify-center h-full p-10 space-y-8">
-              <button
-                onClick={toggleMenu}
-                className="self-end focus:outline-none"
-              >
-                <MdClose className="h-8 w-8 text-white" />
-              </button>
+            <div className="flex flex-col items-start justify-center h-full p-8">
               {menuItems.map((item, index) => (
                 <motion.div
                   key={item.title}
+                  className="my-4 w-full"
                   custom={index}
-                  initial="closed"
-                  animate="open"
-                  exit="closed"
                   variants={menuItemVariants}
                 >
-                  <Link
+                  <motion.a
                     href={item.href}
-                    className="block text-lg text-white font-semibold"
+                    className="text-2xl font-semibold"
+                    whileHover={{ x: 10 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   >
-                    {item.icon && <span className="mr-1">{item.icon}</span>}
+                    {item.icon && <span className="mr-2">{item.icon}</span>}
                     {item.title}
-                  </Link>
+                  </motion.a>
+                  {item.dropdown && (
+                    <div className="mt-2 ml-4">
+                      {item.dropdown.map((subItem) => (
+                        <motion.a
+                          key={subItem.title}
+                          href={subItem.href}
+                          className="block text-lg my-2"
+                          whileHover={{ x: 5 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 400,
+                            damping: 10,
+                          }}
+                        >
+                          {subItem.title}
+                        </motion.a>
+                      ))}
+                    </div>
+                  )}
                 </motion.div>
               ))}
+              <motion.button
+                className="bg-white hover:bg-white text-black px-6 py-2 rounded-lg mt-6 transition-colors duration-200"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Contact Us
+              </motion.button>
             </div>
+            <motion.button
+              className="absolute top-4 right-4"
+              onClick={toggleMenu}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <MdClose className="h-6 w-6" />
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>

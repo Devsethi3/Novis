@@ -29,6 +29,8 @@ yarn-error.log*
 .env*.local
 .env
 
+firebase.config.ts
+
 # vercel
 .vercel
 

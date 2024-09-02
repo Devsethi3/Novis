@@ -3,6 +3,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
+  GithubAuthProvider,
   fetchSignInMethodsForEmail,
   updateProfile,
 } from "firebase/auth";
@@ -10,6 +11,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "./firebase.config";
 
 const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
 
 export const signUp = async (email: string, password: string, name: string) => {
   try {
@@ -80,6 +82,31 @@ export const signInWithGoogle = async () => {
     return user;
   } catch (error) {
     console.error("Error signing in with Google:", error);
+    throw error;
+  }
+};
+
+export const signInWithGitHub = async () => {
+  try {
+    const result = await signInWithPopup(auth, githubProvider);
+    const user = result.user;
+
+    // Set user data in Firestore
+    await setDoc(
+      doc(db, "users", user.uid),
+      {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || "Anonymous User",
+        photoURL: user.photoURL, // Use GitHub's profile picture
+        createdAt: new Date(),
+      },
+      { merge: true }
+    );
+
+    return user;
+  } catch (error) {
+    console.error("Error signing in with GitHub:", error);
     throw error;
   }
 };

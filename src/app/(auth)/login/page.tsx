@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { signIn, signInWithGoogle } from "@/lib/auth";
+import { signIn, signInWithGitHub, signInWithGoogle } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FaGoogle, FaEnvelope, FaLock } from "react-icons/fa";
 import Link from "next/link";
-import { LucideLoader, Mountain } from "lucide-react";
+import { LucideGithub, LucideLoader, Mountain } from "lucide-react";
 import Image from "next/image";
 
 const LoginPage = () => {
@@ -42,11 +42,29 @@ const LoginPage = () => {
     }
   };
 
+  const handleGitHubSignIn = async () => {
+    setIsLoading(true);
+    try {
+      await signInWithGitHub();
+      router.push("/dashboard");
+    } catch (error) {
+      toast.error("GitHub Sign-In failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-background px-4 lg:py-8 py-4">
       <div className="w-full max-w-md bg-card text-card-foreground rounded-lg lg:border sm:border-none lg:shadow-lg shadow-none lg:p-8 p-4">
         <h2 className="text-3xl flex items-center gap-6 flex-col font-bold text-center mb-8">
-          <Image src="/logo.svg" alt="logo" width={50} height={50} />
+          <Image
+            src="/logo.svg"
+            alt="logo"
+            width={50}
+            height={50}
+            loading="lazy"
+          />
           Sign in to your account
         </h2>
         <form
@@ -105,15 +123,26 @@ const LoginPage = () => {
             </span>
           </div>
         </div>
-        <Button
-          variant="outline"
-          onClick={handleGoogleSignIn}
-          disabled={isLoading}
-          className="w-full"
-        >
-          <FaGoogle className="mr-2 h-4 w-4" />
-          {isLoading ? "Signing in..." : "Sign in with Google"}
-        </Button>
+        <div className="grid grid-cols-2 gap-4">
+          <Button
+            variant="outline"
+            onClick={handleGoogleSignIn}
+            disabled={isLoading}
+            className="w-full"
+          >
+            <FaGoogle className="mr-2 h-4 w-4" />
+            Google{" "}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleGitHubSignIn}
+            disabled={isLoading}
+            className="w-full"
+          >
+            <LucideGithub className="mr-2 h-4 w-4" />
+            GitHub{" "}
+          </Button>
+        </div>
         <p className="text-center text-sm text-muted-foreground mt-6">
           Don't have an account?{" "}
           <Link

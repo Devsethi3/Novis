@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { signInWithGoogle, signUp } from "@/lib/auth";
+import { signInWithGitHub, signInWithGoogle, signUp } from "@/lib/auth";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -32,6 +32,7 @@ type FormValues = z.infer<typeof FormSchema>;
 
 const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const {
@@ -44,6 +45,7 @@ const RegisterPage = () => {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    setIsLoading(true);
     try {
       await signUp(data.email, data.password, data.name);
       toast.success("Account Created Successfully!");
@@ -54,27 +56,44 @@ const RegisterPage = () => {
       } else {
         toast.error("Registration failed. Please try again.");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
+    setIsLoading(true);
     try {
       await signInWithGoogle();
       router.push("/dashboard");
       toast.success("Account Created Successfully!");
     } catch (error) {
-      toast.error("Google Sign-In failed. Please try again.");
+      toast.error("Google Sign-Up failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGitHubSignIn = async () => {
+    setIsLoading(true);
+    try {
+      await signInWithGitHub();
+      router.push("/dashboard");
+    } catch (error) {
+      toast.error("GitHub Sign-Up failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 lg:py-8 py-4">
-      <div className="w-full max-w-md bg-card text-card-foreground rounded-lg lg:shadow-lg shadow-none lg:border sm:border-none lg:p-8 p-4">
-        <h2 className="text-3xl flex items-center gap-6 flex-col font-bold text-center mb-8">
+    <div className="flex items-center justify-center h-full w-full min-h-screen px-4 lg:py-8 py-4">
+      <div className="w-full max-w-md bg-card text-card-foreground rounded-lg lg:shadow-lg shadow-none lg:border sm:border-none lg:p-8 p-5">
+        <h2 className="text-2xl lg:text-3xl flex items-center gap-6 flex-col font-bold text-center mb-8">
           <Image src="/logo.svg" alt="logo" width={50} height={50} />
           Register your account
         </h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="lg:space-y-6 space-y-4">
           <div className="space-y-1">
             <Label htmlFor="name" className="text-sm opacity-75">
               Name
@@ -162,11 +181,19 @@ const RegisterPage = () => {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <Button variant="outline" /*onClick={() => signIn("github")}*/>
+          <Button
+            disabled={isLoading}
+            variant="outline"
+            onClick={handleGitHubSignIn}
+          >
             <LucideGithub className="mr-2 h-4 w-4" />
             GitHub
           </Button>
-          <Button variant="outline" onClick={handleGoogleSignIn}>
+          <Button
+            disabled={isLoading}
+            variant="outline"
+            onClick={handleGoogleSignIn}
+          >
             <FaGoogle className="mr-2 h-4 w-4" />
             Google
           </Button>

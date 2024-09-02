@@ -74,7 +74,7 @@ const About: React.FC = () => {
       ref={aboutRef}
       initial="hidden"
       id="about"
-      className="pt-20 pb-32 dark:bg-gradient-to-b dark:from-[#09100D] dark:to-[#0D1511] bg-gradient-to-b overflow-hidden min-h-screen relative"
+      className="pt-20 pb-32 dark:bg-gradient-to-b dark:from-[#09100D] dark:to-emerald-400/30 from-[#F9FBFA] to-emerald-400/30 bg-gradient-to-b overflow-hidden min-h-screen relative"
     >
       <div
         className="w-[300px]
@@ -96,36 +96,18 @@ const About: React.FC = () => {
           style={{ opacity: titleOpacity, y: titleY }}
           className="text-4xl sm:text-6xl md:text-7xl font-bold mb-12 text-center relative"
         >
-          Elevate{" "}
+          Increase{" "}
           <motion.span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600">
             Your
           </motion.span>{" "}
-          Productivity with AI
+          Productivity
         </motion.h2>
 
         <motion.div className="text-center mb-20">
           <p className="text-lg sm:text-xl md:text-2xl mb-12 max-w-4xl mx-auto text-foreground/80">
             Transform the way you take notes, organize tasks, and collaborate.
-            Our AI-powered platform adapts to your workflow, helping you stay
-            focused and get more done.
+            Our AI-powered platform adapts to your workflow
           </p>
-          <motion.a
-            href="#features"
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0px 0px 15px hsl(var(--primary) / 0.5)",
-            }}
-            whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 shadow-lg"
-          >
-            Explore the Features
-            <motion.span
-              animate={{ x: [0, 5, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
-            >
-              <GoArrowRight />
-            </motion.span>
-          </motion.a>
         </motion.div>
 
         <motion.div
@@ -165,7 +147,7 @@ const About: React.FC = () => {
             },
           }}
           id="features"
-          className="grid md:grid-cols-3 relative gap-8 mb-32"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 relative lg:gap-8 gap-16 mb-32"
         >
           {features.map((feature, index) => (
             <motion.div
@@ -199,7 +181,7 @@ const About: React.FC = () => {
           ))}
         </motion.div>
 
-        <motion.div
+        {/* <motion.div
           ref={paragraphRef}
           variants={paragraphVariants}
           initial="hidden"
@@ -226,7 +208,7 @@ const About: React.FC = () => {
             empowers you to focus on what matters most—turning your ideas into
             results.
           </p>
-        </motion.div>
+        </motion.div> */}
       </div>
     </motion.section>
   );

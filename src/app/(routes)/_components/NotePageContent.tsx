@@ -65,7 +65,9 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
   }, [data.banner]);
 
   const handleTitleChange = async () => {
-    if (newTitle !== data.title) {
+    if (newTitle == "") {
+      toast.error("Title can not be empty");
+    } else if (newTitle !== data.title) {
       await onUpdate("title", newTitle);
       toast.success("Title updated successfully");
     }

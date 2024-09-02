@@ -2,8 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-#logo-72 {
-  filter: invert(1);
+.hero-object {
+  filter: drop-shadow(0 4px 32px hsla(0, 0%, 0%, 0.5));
+  z-index: 60;
 }
 
 ::-webkit-scrollbar {
