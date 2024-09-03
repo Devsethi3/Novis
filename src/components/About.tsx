@@ -74,7 +74,7 @@ const About: React.FC = () => {
       ref={aboutRef}
       initial="hidden"
       id="about"
-      className="pt-20 pb-32 dark:bg-gradient-to-b dark:from-[#09100D] dark:to-emerald-400/30 from-[#F9FBFA] to-emerald-400/30 bg-gradient-to-b overflow-hidden min-h-screen relative"
+      className="pt-20 pb-32 dark:bg-gradient-to-b dark:from-[#09100D] dark:to-emerald-400/5 from-[#F9FBFA] to-emerald-400/30 bg-gradient-to-b overflow-hidden min-h-screen relative"
     >
       <div
         className="w-[300px]

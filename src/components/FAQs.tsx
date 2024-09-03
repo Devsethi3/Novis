@@ -87,7 +87,7 @@ const AccordionItem = ({
 const FAQs = () => {
   return (
     <div id="faq">
-      <div className="pb-32 dark:bg-gradient-to-t dark:from-[#09100D] dark:to-emerald-400/30 from-[#F9FBFA] to-emerald-400/30 bg-gradient-to-t overflow-hidden min-h-screen relative">
+      <div className="pb-32 dark:bg-gradient-to-t dark:from-[#09100D] dark:to-emerald-400/5 from-[#F9FBFA] to-emerald-400/30 bg-gradient-to-t overflow-hidden min-h-screen relative">
         <div className="container">
           <h2 className="text-center text-4xl lg:text-5xl font-bold">
             Frequently Asked Question
