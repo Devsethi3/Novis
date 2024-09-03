@@ -12,14 +12,14 @@ const NotFoundPage = () => {
     router.push("/");
   };
 
-  return (  
+  return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background text-center p-6">
       <div className="mb-6">
         <SiPowerpages size={150} className="text-primary mx-auto" />
       </div>
       <h1 className="text-5xl font-extrabold text-primary mb-4">404</h1>
       <p className="text-lg text-muted-foreground mb-6">
-        Oops! The page you're looking for doesn't exist.
+        Oops! The page you&apos;re looking for doesn&apos;t exist.
       </p>
       <Button
         variant="secondary"

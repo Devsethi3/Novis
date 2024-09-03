@@ -92,7 +92,7 @@ const GenerateAIContent: React.FC<GenerateAIContentProps> = ({
           </DialogTitle>
           <DialogDescription className="text-sm text-center mt-2">
             Enhance your notes with AI-generated content. Simply enter a prompt
-            describing what you'd like to create, and our AI will generate
+            describing what you&apos;d like to create, and our AI will generate
             structured content for your editor.
           </DialogDescription>
         </DialogHeader>
