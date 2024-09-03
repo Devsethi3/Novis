@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { FaGithub, FaSignOutAlt, FaCog } from "react-icons/fa";
 import { LogIn } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const { currentUser, handleLogout, loading } = useAuth();
@@ -34,6 +35,7 @@ const Navbar = () => {
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const { scrollY } = useScroll();
   const [lastScrollY, setLastScrollY] = useState(0);
+  const router = useRouter();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     if (latest > lastScrollY && latest > 100) {
@@ -56,6 +58,16 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isOpen]);
+
+  const logOut = async () => {
+    try {
+      await handleLogout();
+      router.push("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Optionally, show an error message to the user
+    }
+  };
 
   const menuVariants = {
     closed: {
@@ -258,7 +270,10 @@ const Navbar = () => {
                       <span>GitHub</span>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="cursor-pointer">
+                    <DropdownMenuItem
+                      onClick={logOut}
+                      className="cursor-pointer"
+                    >
                       <FaSignOutAlt className="mr-4 h-4 w-4" />
                       <span>Log out</span>
                       <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>

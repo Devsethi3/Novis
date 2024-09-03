@@ -9,7 +9,6 @@ import {
   useAnimation,
 } from "framer-motion";
 import Image from "next/image";
-import { GoArrowRight } from "react-icons/go";
 
 const About: React.FC = () => {
   const aboutRef = useRef<HTMLDivElement>(null);
