@@ -15,7 +15,7 @@ import {
   FaEye,
 } from "react-icons/fa";
 import Link from "next/link";
-import { LucideGithub, LucideLoader, Mountain } from "lucide-react";
+import { LucideGithub, LucideLoader } from "lucide-react";
 import Image from "next/image";
 
 const LoginPage = () => {
@@ -30,8 +30,14 @@ const LoginPage = () => {
     try {
       await signIn(email, password);
       router.push("/dashboard");
-    } catch (error) {
-      toast.error("Login failed. Please check your credentials.");
+    } catch (error: any) {
+      if (error.code === "auth/user-not-found") {
+        toast.error("User not found. Please check your email or sign up.");
+      } else if (error.code === "auth/wrong-password") {
+        toast.error("Incorrect password. Please try again.");
+      } else {
+        toast.error("Login failed. Please check your credentials.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -146,7 +152,7 @@ const LoginPage = () => {
             className="w-full"
           >
             <FaGoogle className="mr-2 h-4 w-4" />
-            Google{" "}
+            Google
           </Button>
           <Button
             variant="outline"
@@ -155,7 +161,7 @@ const LoginPage = () => {
             className="w-full"
           >
             <LucideGithub className="mr-2 h-4 w-4" />
-            GitHub{" "}
+            GitHub
           </Button>
         </div>
         <p className="text-center text-sm text-muted-foreground mt-6">
