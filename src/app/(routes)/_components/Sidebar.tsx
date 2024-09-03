@@ -74,7 +74,7 @@ const navItems: NavItem[] = [
 ];
 
 const Sidebar = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isTrashOpen, setIsTrashOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [notes, setNotes] = useState<Note[]>([]);

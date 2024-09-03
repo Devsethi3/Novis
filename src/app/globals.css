@@ -1,6 +1,12 @@
+@import url(https://fonts.googleapis.com/css?family=Bricolage+Grotesque:200,300,regular,500,600,700,800);
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+  font-family: "Bricolage Grotesque", sans-serif;
+}
 
 .hero-object {
   filter: drop-shadow(0 4px 32px hsla(0, 0%, 0%, 0.5));
