@@ -7,7 +7,13 @@ import { signIn, signInWithGitHub, signInWithGoogle } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FaGoogle, FaEnvelope, FaLock } from "react-icons/fa";
+import {
+  FaGoogle,
+  FaEnvelope,
+  FaLock,
+  FaEyeSlash,
+  FaEye,
+} from "react-icons/fa";
 import Link from "next/link";
 import { LucideGithub, LucideLoader, Mountain } from "lucide-react";
 import Image from "next/image";
@@ -16,6 +22,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -98,14 +105,22 @@ const LoginPage = () => {
               <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="pl-10"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground focus:outline-none"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
             </div>
           </div>
+
           <Button type="submit" className="w-full" disabled={isLoading}>
             Login
             {isLoading ? (
