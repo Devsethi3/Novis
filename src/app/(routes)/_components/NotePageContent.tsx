@@ -219,9 +219,9 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
   return (
     <div>
       {data.isTrash && (
-        <div className="w-full bg-secondary lg:p-4 p-3 flex items-center justify-between">
+        <div className="w-full bg-secondary lg:p-4 p-3 flex items-center flex-col lg:flex-row lg:gap-0 gap-3 justify-between">
           <div className="text-sm font-medium">
-            This {isSubpage ? "subpage" : "note"} is in Trash
+            This {isSubpage ? "subpage" : "page"} is in Trash
           </div>
           <div className="flex space-x-4">
             <Button variant="outline" onClick={handleRestore}>
@@ -233,7 +233,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
           </div>
         </div>
       )}
-      <div className="w-full flex h-[10vh] px-6 items-center justify-between">
+      <div className="w-full flex h-[8vh] px-6 items-center justify-between">
         {isBreadcrumbEditing ? (
           <input
             type="text"
