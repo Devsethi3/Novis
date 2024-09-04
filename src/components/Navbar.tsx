@@ -182,7 +182,7 @@ const Navbar = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center space-x-2">
-              <Image src="/logo.svg" alt="logo" width={45} height={45} />
+              <Image src="/logo.svg" alt="logo" width={42} height={42} />
               <span className="text-2xl pl-3 font-semibold hidden lg:block">
                 Novis
               </span>
