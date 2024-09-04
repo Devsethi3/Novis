@@ -156,7 +156,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
               Update Your Profile
             </DialogTitle>
             <p className="text-sm mt-1">
-            Make changes to your profile information, including your name and profile picture.
+              Make changes to your profile information, including your name and
+              profile picture.
             </p>
           </DialogHeader>
           <AnimatePresence>
@@ -210,6 +211,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
               Cancel
             </Button>
             <Button
+              className="mb-2 lg:mb-0"
               onClick={handleUpdateProfile}
               disabled={loadingProfileUpdate}
             >
