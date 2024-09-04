@@ -48,7 +48,7 @@ const UserButton = () => {
       {currentUser ? (
         <div className="flex items-center gap-4 p-2 rounded-lg bg-secondary/50 transition-colors animate-fade-in">
           <img
-            src={currentUser.photoURL || "/placeholder.png"}
+            src={currentUser?.photoURL || "/placeholder.png"}
             alt="User Profile"
             className="rounded-full w-[60px] h-[45px] object-cover cursor-pointer hover:opacity-90 transition-opacity"
           />
