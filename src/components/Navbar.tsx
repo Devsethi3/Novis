@@ -26,6 +26,7 @@ import {
 import { FaGithub, FaSignOutAlt, FaCog } from "react-icons/fa";
 import { LogIn } from "lucide-react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
   const { currentUser, handleLogout, loading } = useAuth();
@@ -63,9 +64,21 @@ const Navbar = () => {
     try {
       await handleLogout();
       router.push("/");
+      toast.success("Successfully logged out!", {
+        style: {
+          border: "1px solid #50C878", // Emerald color border
+          padding: "12px 16px",
+          color: "#155724", // Dark green text for success message
+        },
+        iconTheme: {
+          primary: "#50C878", // Emerald color for the icon
+          secondary: "#F0FFF4", // Light green background for the icon
+        },
+      });
     } catch (error) {
       console.error("Logout failed:", error);
       // Optionally, show an error message to the user
+      toast.error("Failed to logout!");
     }
   };
 
