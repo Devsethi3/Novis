@@ -30,6 +30,7 @@ const LoginPage = () => {
     try {
       await signIn(email, password);
       router.push("/dashboard");
+      toast.success("Sign in successfully!");
     } catch (error: any) {
       if (error.code === "auth/user-not-found") {
         toast.error("User not found. Please check your email or sign up.");
@@ -48,6 +49,7 @@ const LoginPage = () => {
     try {
       await signInWithGoogle();
       router.push("/dashboard");
+      toast.success("Sign in successfully!");
     } catch (error) {
       toast.error("Google Sign-In failed. Please try again.");
     } finally {
@@ -60,6 +62,7 @@ const LoginPage = () => {
     try {
       await signInWithGitHub();
       router.push("/dashboard");
+      toast.success("Sign in successfully!");
     } catch (error) {
       toast.error("GitHub Sign-In failed. Please try again.");
     } finally {
