@@ -114,7 +114,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         photoURL = await getDownloadURL(storageRef);
       }
 
-          
+      // Update user profile in database
       await updateProfile(authUser, {
         displayName: newDisplayName,
         photoURL: photoURL,
