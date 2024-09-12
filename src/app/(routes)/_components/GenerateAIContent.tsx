@@ -116,7 +116,7 @@ const GenerateAIContent: React.FC<GenerateAIContentProps> = ({
             type="submit"
             disabled={!userInput.trim() || loading}
             onClick={generateFromAI}
-            className="ml-2"
+            className="lg:mb-0 mb-2"
           >
             {loading ? (
               <>
