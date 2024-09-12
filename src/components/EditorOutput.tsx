@@ -18,22 +18,21 @@ interface EditorOutputProps {
   content: any;
 }
 
-const renderers = {
-  image: CustomImageRenderer,
-  code: CustomCodeRenderer,
-  embed: CustomEmbedRenderer,
-  list: CustomListRenderer,
-  table: CustomTableRenderer,
-  alert: CustomAlertRenderer,
-};
-
+function CustomDelimiterRenderer() {
+  return (
+    <div className="delimiter-container my-6 flex justify-center">
+      {/* Render 3 centered stars */}
+      {/* <span className="text-2xl">★ ★ ★</span> */}
+      <span className="text-5xl opacity-75">* * *</span>
+    </div>
+  );
+}
 function CustomEmbedRenderer({ data }: any) {
   if (!data.embed) return null;
 
   return (
     <div className="embed-container my-4">
       <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-        {" "}
         {/* 16:9 aspect ratio */}
         <iframe
           src={data.embed}
@@ -49,6 +48,16 @@ function CustomEmbedRenderer({ data }: any) {
     </div>
   );
 }
+
+const renderers = {
+  image: CustomImageRenderer,
+  code: CustomCodeRenderer,
+  embed: CustomEmbedRenderer,
+  list: CustomListRenderer,
+  table: CustomTableRenderer,
+  alert: CustomAlertRenderer,
+  delimiter: CustomDelimiterRenderer,
+};
 
 const EditorOutput: React.FC<EditorOutputProps> = ({ content }) => {
   let parsedContent;
