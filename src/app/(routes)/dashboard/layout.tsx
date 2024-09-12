@@ -1,7 +1,12 @@
 import React from "react";
 import Sidebar from "../_components/Sidebar";
 import MobileSidebar from "@/components/MobileSidebar";
+import { Metadata } from "next"; 
 
+export const metadata: Metadata = {
+  title: "Dashboard | Novis", 
+  description: "Manage your tasks and settings in the dashboard.",
+};
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
@@ -22,3 +27,5 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default DashboardLayout;
+
+// Add custom title with description using metadata from next js in this dashboard layout
