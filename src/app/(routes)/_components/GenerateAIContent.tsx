@@ -15,8 +15,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { chatSession } from "@/lib/AiModel";
 import { toast } from "react-hot-toast";
-import { ChevronRight, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 import GradientText from "@/components/GradientText";
 
 interface GenerateAIContentProps {
