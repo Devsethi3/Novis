@@ -71,8 +71,8 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background px-4 lg:py-8 py-4">
-      <div className="w-full max-w-md bg-card text-card-foreground rounded-lg lg:border sm:border-none lg:shadow-lg shadow-none lg:p-8 p-4">
+    <div className="flex items-center justify-center lg:min-h-screen h-screen bg-background px-4 py-8">
+      <div className="w-full max-w-md bg-card text-card-foreground rounded-lg lg:border sm:border-none lg:shadow-lg shadow-none lg:p-8 p-6">
         <h2 className="text-3xl flex items-center gap-6 flex-col font-bold text-center mb-8">
           <Image
             src="/logo.svg"
