@@ -233,7 +233,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
           </div>
         </div>
       )}
-      <div className="w-full flex h-[8vh] px-6 items-center justify-between">
+      <div className="w-full pl-16 lg:pl-6 flex lg:mt-0 mt-2 h-[8vh] lg:pr-6 p-3 items-center justify-between">
         {isBreadcrumbEditing ? (
           <input
             type="text"
@@ -255,10 +255,10 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
               {data.title}
             </p>
             <p
-              className="font-medium flex lg:hidden cursor-pointer"
+              className="font-medium flex leading-tight lg:hidden cursor-pointer"
               onDoubleClick={() => setIsBreadcrumbEditing(true)}
             >
-              {truncateText(data.title, 2)}
+              {truncateText(data.title, 3)}
             </p>
           </>
         )}
@@ -315,7 +315,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
         </DropdownMenu>
       </div>
       <div className="w-full">
-        <div className="lg:mb-10 mb-4 relative">
+        <div className="lg:mb-10 mb-4 lg:mt-0 mt-2 relative">
           {bannerUrl && (
             <img
               src={bannerUrl}

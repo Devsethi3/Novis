@@ -1,10 +1,10 @@
 import React from "react";
 import Sidebar from "../_components/Sidebar";
 import MobileSidebar from "@/components/MobileSidebar";
-import { Metadata } from "next"; 
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Dashboard | Novis", 
+  title: "Dashboard | Novis",
   description: "Manage your tasks and settings in the dashboard.",
 };
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
@@ -12,13 +12,13 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     <>
       <div className="flex h-screen">
         {/* Sidebar */}
-        <Sidebar />
-        {/* <div className="hidden md:block">
+        {/* <Sidebar /> */}
+        <div className="hidden md:block">
           <Sidebar />
         </div>
         <div className="block md:hidden">
           <MobileSidebar />
-        </div> */}
+        </div>
         {/* Main content */}
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
