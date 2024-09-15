@@ -110,7 +110,7 @@ const UploadBanner: React.FC<UploadBannerProps> = ({
           // Call the onBannerUpdate callback with the new URL
           onBannerUpdate(downloadURL);
 
-          // Reset the preview and state
+          // Reset preview and file state
           setBanner(null);
           setPreview(null);
           setUploading(false);
