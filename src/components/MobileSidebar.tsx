@@ -30,7 +30,6 @@ const MobileSidebar = () => {
     },
   };
 
-  // Close the sidebar when scrolling
   useEffect(() => {
     const handleScroll = () => {
       setIsSidebarOpen(false);
