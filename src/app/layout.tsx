@@ -9,7 +9,7 @@ const font = Bricolage_Grotesque({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Novis | Streamline your workflow through AI",
   description:
-    "A Notion-inspired project built with Next.js, TypeScript, and Firebase",
+    "A modern workflow tool which combines note-making, task management, and real-time collaboration with a sleek, user-friendly dashboard",
   icons: {
     icon: "/logo.svg",
     apple: "/apple-touch-icon.png",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     },
   },
 };
-
+[]
 export default function RootLayout({
   children,
 }: Readonly<{
