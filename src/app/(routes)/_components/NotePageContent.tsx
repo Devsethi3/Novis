@@ -264,7 +264,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
         )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button size="sm" className="mr-14">{isPublished ? "Published" : "Publish"}</Button>
+            <Button size="sm" className="mr-14 lg:mr-0">{isPublished ? "Published" : "Publish"}</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-72 lg:m-2 m-0 shadow-xl">
             <div className="flex items-center flex-col px-4 py-3">

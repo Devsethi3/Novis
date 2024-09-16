@@ -184,9 +184,14 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
                   <div className="text-sm text-muted-foreground">
                     <div className="flex items-center">
                       {item.type === "subpage" && item.parentTitle && (
-                        <div className="text-xs text-muted-foreground mt-1 truncate">
+                        <>
+                        <div className="text-xs hidden lg:block text-muted-foreground mt-1 truncate">
                           Parent: {truncateText(item.parentTitle, 4)}
                         </div>
+                        <div className="text-xs block lg:hidden text-muted-foreground mt-1 truncate">
+                          Parent: {truncateText(item.parentTitle, 2)}
+                        </div>
+                        </>
                       )}
                       {item.isTrash && (
                         <span className="ml-2 text-red-500 text-xs">

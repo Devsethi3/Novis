@@ -235,18 +235,31 @@ const TrashNotes: React.FC<TrashNotesProps> = ({
           </DialogHeader>
           <div className="p-4">
             {selectedItems.length > 0 && (
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex flex-col lg:flex-row justify-between lg:gap-0 gap-4 items-center mb-4">
                 <span>{selectedItems.length} items selected</span>
-                <div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleBulkRestore}
-                    className="mr-2"
-                  >
-                    <FiRefreshCw className="mr-2 h-4 w-4" />
-                    Restore Selected
-                  </Button>
+                <div className="flex items-center gap-3">
+                  <div className="hidden lg:block">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleBulkRestore}
+                      className="mr-2"
+                    >
+                      <FiRefreshCw className="mr-2 h-4 w-4" />
+                      Restore Selected
+                    </Button>
+                  </div>
+                  <div className="lg:hidden block">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleBulkRestore}
+                      className="mr-2"
+                    >
+                      <FiRefreshCw className="mr-2 lg:hidden block h-4 w-4" />
+                      Restore
+                    </Button>
+                  </div>
                   <Button
                     variant="destructive"
                     size="sm"

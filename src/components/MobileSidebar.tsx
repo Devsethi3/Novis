@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { MdDashboard } from "react-icons/md";
-import { FaSignOutAlt } from "react-icons/fa";
+import { FaPlus, FaSignOutAlt } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Loader } from "lucide-react";
@@ -437,14 +437,17 @@ const MobileSidebar: React.FC = () => {
                 <Image src="/logo.svg" alt="logo" width={32} height={32} />
                 <h2 className="text-xl font-bold">Novis</h2>
               </div>
-              <ThemeSwitcher />
-              <Button
-                variant="ghost"
-                size="sidebarMenu"
-                onClick={() => setIsSidebarOpen(false)}
-              >
-                <IoClose className="h-6 w-6" />
-              </Button>
+              <div className="flex items-center gap-4">
+                <ThemeSwitcher />
+
+                <Button
+                  variant="outline"
+                  size="sidebarMenu"
+                  onClick={() => setIsSidebarOpen(false)}
+                >
+                  <IoClose className="h-6 w-6" />
+                </Button>
+              </div>
             </div>
 
             <div className="flex-grow flex flex-col">
@@ -454,7 +457,7 @@ const MobileSidebar: React.FC = () => {
                   className="w-full"
                   onClick={handleCreatePage}
                 >
-                  <FiPlus className="mr-2" /> New Note
+                  <FaPlus className="mr-2 opacity-80" /> Create New Page
                 </Button>
               </div>
 
