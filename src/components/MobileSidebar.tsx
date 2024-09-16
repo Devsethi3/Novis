@@ -318,16 +318,6 @@ const MobileSidebar: React.FC = () => {
     }
   };
 
-  function truncateText(text: string, maxLength: number) {
-    if (text.length <= maxLength) {
-      return text;
-    }
-    if (maxLength <= 3) {
-      return "...";
-    }
-    return `${text.slice(0, maxLength - 3)}...`;
-  }
-
   const renderNoteItem = (note: Note) => (
     <AccordionItem value={note.id} key={note.id}>
       <AccordionTrigger className="py-2 group">
