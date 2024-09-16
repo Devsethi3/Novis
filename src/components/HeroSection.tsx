@@ -4,11 +4,15 @@ import Image from "next/image";
 import React from "react";
 import { GoArrowRight } from "react-icons/go";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useTheme } from "next-themes";
+import useAuth from "@/lib/useAuth";
+import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 const Hero = () => {
   const { scrollY } = useScroll();
-  const { theme } = useTheme();
+  const { currentUser } = useAuth();
+  const router = useRouter();
 
   const chatY = useTransform(scrollY, [0, 300], [0, -100]);
   const chatRotate = useTransform(scrollY, [0, 300], [0, -15]);
@@ -101,7 +105,7 @@ const Hero = () => {
           />
         </motion.div>
         <motion.div
-          className="flex items-center justify-center mt-16"
+          className="flex items-center justify-center lg:mt-16 mt-12"
           variants={itemVariants}
         >
           <motion.a
@@ -128,7 +132,7 @@ const Hero = () => {
           </motion.a>
         </motion.div>
         <motion.div
-          className="flex justify-center mt-12"
+          className="flex justify-center lg:mt-12 mt-10"
           variants={itemVariants}
         >
           <div className="inline-flex relative">
@@ -194,28 +198,56 @@ const Hero = () => {
           className="flex justify-center mt-12"
           variants={itemVariants}
         >
-          <motion.button
-            className="bg-primary text-primary-foreground lg:py-4 py-3 lg:px-8 px-5 rounded-xl flex items-center lg:text-lg text-sm font-semibold shadow-lg"
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0px 0px 20px hsl(var(--primary) / 0.7)",
-            }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Start Your Journey
-            <motion.svg
-              className="ml-2 w-6 h-6"
-              viewBox="0 0 24 24"
-              initial={{ x: 0 }}
-              animate={{ x: [0, 5, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
+          {currentUser && (
+            <motion.button
+              onClick={() => router.push("/dashboard")}
+              className="bg-primary text-primary-foreground lg:py-4 py-3 lg:px-8 px-5 rounded-xl flex items-center lg:text-lg text-sm font-semibold shadow-lg"
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0px 0px 20px hsl(var(--primary) / 0.7)",
+              }}
+              whileTap={{ scale: 0.95 }}
             >
-              <path
-                fill="currentColor"
-                d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"
-              />
-            </motion.svg>
-          </motion.button>
+              Start Your Journey
+              <motion.svg
+                className="ml-2 w-6 h-6"
+                viewBox="0 0 24 24"
+                initial={{ x: 0 }}
+                animate={{ x: [0, 5, 0] }}
+                transition={{ repeat: Infinity, duration: 1.5 }}
+              >
+                <path
+                  fill="currentColor"
+                  d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"
+                />
+              </motion.svg>
+            </motion.button>
+          )}
+          {!currentUser && (
+            <motion.button
+              onClick={() => router.push("/login")}
+              className="bg-primary text-primary-foreground lg:py-4 py-3 lg:px-8 px-5 rounded-xl flex items-center lg:text-lg text-sm font-semibold shadow-lg"
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0px 0px 20px hsl(var(--primary) / 0.7)",
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Start Your Journey
+              <motion.svg
+                className="ml-2 w-6 h-6"
+                viewBox="0 0 24 24"
+                initial={{ x: 0 }}
+                animate={{ x: [0, 5, 0] }}
+                transition={{ repeat: Infinity, duration: 1.5 }}
+              >
+                <path
+                  fill="currentColor"
+                  d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"
+                />
+              </motion.svg>
+            </motion.button>
+          )}
         </motion.div>
       </div>
     </motion.div>

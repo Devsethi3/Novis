@@ -132,17 +132,20 @@ const Navbar = () => {
 
   const menuItems = [
     {
-      title: "Services",
-      href: "#services",
+      title: "Features",
+      href: "#about",
       dropdown: [
-        { title: "Web Development", href: "#" },
-        { title: "Web Design", href: "#" },
-        { title: "SEO Optimization", href: "#" },
+        { title: "AI Powered", href: "#" },
+        { title: "User Freindly Interface", href: "#" },
+        { title: "Real Time Features", href: "#" },
       ],
     },
-    { title: "About Us", href: "#about" },
+    {
+      title: "About The Developer(GitHub)",
+      href: "https://github.com/Devsethi3/Novis",
+      target: "_blank",
+    },
     { title: "FAQ", href: "#faq" },
-    { title: "Contact", href: "#contact" },
     { title: "Client Portal", href: "#", icon: "🔒" },
   ];
 
@@ -172,14 +175,27 @@ const Navbar = () => {
             <div className="container mx-auto">
               <p className="font-medium text-gray-800">
                 <span className="hidden sm:inline">
-                  Introducing a completely redesigned interface -{" "}
+                  Collaboration feature coming soon! Stay tuned for updates. -
                 </span>
-                <a
+                {"  "}
+                <span className="inline lg:hidden">
+                  Collaboration feature coming soon!
+                </span>
+                {/* <Link
+                  target="_blank"
                   href="#"
                   className="underline underline-offset-4 font-semibold hover:text-blue-700 transition-colors"
                 >
-                  Explore the demo
-                </a>
+                  Twitter
+                </Link>
+                <span className="mx-2">or</span>
+                <Link
+                  target="_blank"
+                  href="#"
+                  className="underline underline-offset-4 font-semibold hover:text-blue-700 transition-colors"
+                >
+                  LinkedIn
+                </Link> */}
               </p>
             </div>
             {/* <button
@@ -210,6 +226,7 @@ const Navbar = () => {
                 >
                   <Link
                     href={item.href}
+                    target={item.target || "_self"}
                     className="transition-colors duration-200 flex items-center"
                   >
                     {item.icon && <span className="mr-1">{item.icon}</span>}
@@ -339,6 +356,7 @@ const Navbar = () => {
                 >
                   <motion.a
                     href={item.href}
+                    target={item.target || "_self"}
                     className="text-2xl font-semibold"
                     whileHover={{ x: 10 }}
                     transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -367,13 +385,33 @@ const Navbar = () => {
                   )}
                 </motion.div>
               ))}
-              <motion.button
-                className="bg-white hover:bg-white text-black px-6 py-2 rounded-lg mt-6 transition-colors duration-200"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Contact Us
-              </motion.button>
+              {!loading && currentUser ? (
+                <div className="flex items-center mt-5 gap-4">
+                  <Image
+                    src={currentUser.photoURL || "/placeholder.png"}
+                    alt="User Profile"
+                    width={40}
+                    height={40}
+                    className="rounded-full w-16 p-1 hover:bg-secondary-foreground/10 h-16 object-cover cursor-pointer"
+                  />
+                  <Button onClick={logOut} variant="destructive">
+                    <FaSignOutAlt className="mr-2 h-4 w-4" />
+                    Logout
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex mt-5 items-center gap-4">
+                  <Link href="/login">
+                    <Button size="lg">
+                      <LogIn size={14} className="mr-2 hidden lg:block" />
+                      Login
+                    </Button>
+                  </Link>
+                  <Link href="/register">
+                    <Button size="lg">Register</Button>
+                  </Link>
+                </div>
+              )}
             </div>
             <motion.button
               className="absolute top-4 right-4"

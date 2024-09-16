@@ -233,7 +233,7 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
           </div>
         </div>
       )}
-      <div className="w-full flex lg:mt-0 mt-2 h-[8vh] p-3 items-center justify-between">
+      <div className="w-full flex lg:mt-0 mt-2 h-[8vh] p-3 px-5 items-center justify-between">
         {isBreadcrumbEditing ? (
           <input
             type="text"
@@ -348,8 +348,8 @@ const NotePageContent: React.FC<NotePageContentProps> = ({
             )}
           </div>
         </div>
-        <div className="flex lg:flex-row flex-col gap-10 items-center lg:mx-20 mx-0 border-t border-b lg:py-8 py-3 justify-between">
-          <div className="flex items-center lg:gap-8 gap-2">
+        <div className="flex lg:flex-row flex-col gap-5 items-center lg:mx-20 mx-0 border-t border-b lg:py-8 py-3 justify-between">
+          <div className="flex items-center lg:gap-8 px-4 lg:px-0 gap-2">
             <div className="relative">
               <span
                 className="text-5xl cursor-pointer"

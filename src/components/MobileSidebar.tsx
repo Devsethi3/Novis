@@ -89,7 +89,7 @@ const navItems: NavItem[] = [
 ];
 
 const MobileSidebar: React.FC = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isTrashOpen, setIsTrashOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -412,7 +412,7 @@ const MobileSidebar: React.FC = () => {
   );
   return (
     <>
-      <div className="fixed top-[.9rem] right-4 z-50 md:hidden">
+      <div className="fixed top-4 right-4 z-50 md:hidden">
         <Button
           variant="outline"
           size="sidebarMenu"
@@ -462,7 +462,7 @@ const MobileSidebar: React.FC = () => {
               </div>
 
               <h2 className="font-semibold border-b mb-1 p-4">Recent Notes</h2>
-              <ScrollArea className="h-[340px] mx-4">
+              <ScrollArea className="h-[370px] mx-4">
                 {loading ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
