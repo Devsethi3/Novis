@@ -86,13 +86,6 @@ const Sidebar = () => {
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  const isActive = (href: string) => {
-    if (href === "/") {
-      return pathname === href;
-    }
-    return pathname.startsWith(href);
-  };
-
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey && event.key === "k") {
