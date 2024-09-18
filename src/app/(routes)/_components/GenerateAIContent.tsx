@@ -75,7 +75,7 @@ const GenerateAIContent: React.FC<GenerateAIContentProps> = ({
       <DialogTrigger asChild>
         <GradientText
           onClick={() => setOpen(true)}
-          colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]} // Custom gradient
+          colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]} // Custom 
           animationSpeed={3} // Custom animation speed in seconds
           showBorder={true} // Show or hide border
           className="custom-class px-3.5 py-2.5" // Add one or more custom classes
