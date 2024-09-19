@@ -228,7 +228,7 @@ const Sidebar = () => {
                 return {
                   ...subpage,
                   isTrash: true,
-                  deletedAt: new Date(), // Optional, to track when it was marked as trash
+                  deletedAt: new Date(), // Optional, to track when it was marked trash
                 };
               }
               return subpage;
