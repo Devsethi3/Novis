@@ -128,7 +128,7 @@ const Sidebar = () => {
               emoji: data.emoji,
               isTrash: data.isTrash,
               author: data.author,
-              subpages: filteredSubpages, // Only non-trashed subpages
+              subpages: filteredSubpages, // Only non-trashed
             });
           }
         });
