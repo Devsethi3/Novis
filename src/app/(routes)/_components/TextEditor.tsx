@@ -7,7 +7,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/lib/firebase.config";
 import GenerateAIContent from "./GenerateAIContent";
 
-// Import all your EditorJS tools here
+// Import all your EditorJS tools
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
 import Embed from "@editorjs/embed";
