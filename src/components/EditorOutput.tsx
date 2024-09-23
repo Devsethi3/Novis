@@ -21,7 +21,7 @@ interface EditorOutputProps {
 function CustomDelimiterRenderer() {
   return (
     <div className="delimiter-container my-6 flex justify-center">
-      {/* <span className="text">★ ★ ★</span> */}
+      {/* <span className="text">★ ★ </span> */}
       <span className="text-5xl opacity-75">* * *</span>
     </div>
   );
