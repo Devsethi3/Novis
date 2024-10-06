@@ -42,9 +42,9 @@ const CustomCodeRenderer = ({ data }: CodeRendererProps) => {
           style={{ transition: "transform 0.2s" }}
         >
           {showCheckmark ? (
-            <FiCheck size={20} className="text-white" />
+            <FiCheck className="text-white" />
           ) : (
-            <FiCopy size={20} />
+            <FiCopy />
           )}
         </button>
       </CopyToClipboard>
